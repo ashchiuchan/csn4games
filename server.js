@@ -204,7 +204,6 @@ setInterval(() => {
             await roundRecord.save();
             io.to('arcade_dvt').emit('dvt_state_update', { status: dvtGame.status, dragonCard: dvtGame.dragonCard, tigerCard: dvtGame.tigerCard, winner: dvtGame.winner, winners, bets: dvtGame.bets, history: dvtGame.history });
             
-            // Allow 6 seconds for the frontend to show the staggered reveal and win animation
             setTimeout(() => { dvtGame.bets = []; dvtGame.status = 'betting'; dvtGame.betEndTime = Date.now() + 12000; io.to('arcade_dvt').emit('dvt_state_update', { status: dvtGame.status, betEndTime: dvtGame.betEndTime, history: dvtGame.history }); }, 6000);
         }, 1000); 
     }
@@ -244,7 +243,6 @@ setInterval(() => {
             }
             await roundRecord.save();
             
-            // We tell the frontend if a 3rd card was drawn so it knows to add an extra animation pause
             let timeToResolve = thirdCardTarget ? 9000 : 7000;
             io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, pCards: baccaratGame.pCards, bCards: baccaratGame.bCards, pVal: baccaratGame.pVal, bVal: baccaratGame.bVal, winner: baccaratGame.winner, winners, bets: baccaratGame.bets, history: baccaratGame.history, thirdCardTarget });
             
@@ -907,7 +905,10 @@ io.on('connection', (socket) => {
             if(existingBetAmt + amount > 50000) return socket.emit('arcade_error', 'Limit is 50,000 per tile!');
 
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) return socket.emit('arcade_error', 'Insufficient credits');
+            if (!user) {
+                socket.emit('arcade_error', 'Bet failed: Insufficient DB funds or user not found.');
+                return; 
+            }
             await new Transaction({ username: user.username, type: 'DRAGON VS TIGER', amount: -amount }).save();
             let existingBetObj = dvtGame.bets.find(b => b.username.toLowerCase() === user.username.toLowerCase() && b.choice === choice);
             if (existingBetObj) existingBetObj.amount += amount; else dvtGame.bets.push({ username: user.username, choice, amount }); 
@@ -924,7 +925,10 @@ io.on('connection', (socket) => {
             if(betAmount < 100 || betAmount > 50000) return socket.emit('arcade_error', 'Invalid bet amount.');
             
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: betAmount } }, { $inc: { credits: -betAmount } }, { new: true });
-            if (!user) return socket.emit('arcade_error', 'Insufficient credits');
+            if (!user) {
+                socket.emit('arcade_error', 'Spin failed: Insufficient DB funds or user not found.');
+                return; 
+            }
             
             let r1 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
             let r2 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
@@ -965,7 +969,10 @@ io.on('connection', (socket) => {
             if(existingBetAmt + amount > 50000) return socket.emit('arcade_error', 'Limit is 50,000 per tile!');
 
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) return socket.emit('arcade_error', 'Insufficient credits');
+            if (!user) {
+                socket.emit('arcade_error', 'Bet failed: Insufficient DB funds or user not found.');
+                return; 
+            }
             await new Transaction({ username: user.username, type: 'BACCARAT', amount: -amount }).save();
             let existingBetObj = baccaratGame.bets.find(b => b.username.toLowerCase() === user.username.toLowerCase() && b.choice === choice);
             if (existingBetObj) existingBetObj.amount += amount; else baccaratGame.bets.push({ username: user.username, choice, amount }); 
@@ -984,7 +991,10 @@ io.on('connection', (socket) => {
             if(existingBetAmt + amount > 50000) return socket.emit('arcade_error', 'Limit is 50,000 per tile!');
 
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) return socket.emit('arcade_error', 'Insufficient credits');
+            if (!user) {
+                socket.emit('arcade_error', 'Bet failed: Insufficient DB funds or user not found.');
+                return; 
+            }
             await new Transaction({ username: user.username, type: 'HIGH-LOW DICE', amount: -amount }).save();
             let existingBetObj = diceGame.bets.find(b => b.username.toLowerCase() === user.username.toLowerCase() && b.choice === choice);
             if (existingBetObj) existingBetObj.amount += amount; else diceGame.bets.push({ username: user.username, choice, amount }); 
@@ -1003,7 +1013,10 @@ io.on('connection', (socket) => {
             if(existingBetAmt + amount > 50000) return socket.emit('arcade_error', 'Limit is 50,000 per lane!');
 
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) return socket.emit('arcade_error', 'Insufficient credits');
+            if (!user) {
+                socket.emit('arcade_error', 'Bet failed: Insufficient DB funds or user not found.');
+                return; 
+            }
             await new Transaction({ username: user.username, type: '8-BIT DERBY', amount: -amount }).save();
             let existingBetObj = derbyGame.bets.find(b => b.username.toLowerCase() === user.username.toLowerCase() && b.choice === choiceIdx);
             if (existingBetObj) existingBetObj.amount += amount; else derbyGame.bets.push({ username: user.username, choice: choiceIdx, amount }); 
@@ -1022,7 +1035,10 @@ io.on('connection', (socket) => {
             if(existingBetAmt + amount > 50000) return socket.emit('arcade_error', 'Limit is 50,000 per color!');
 
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) return socket.emit('arcade_error', 'Insufficient credits');
+            if (!user) {
+                socket.emit('arcade_error', 'Bet failed: Insufficient DB funds or user not found.');
+                return; 
+            }
             await new Transaction({ username: user.username, type: 'COLOR GAME', amount: -amount }).save();
             let existingBetObj = colorGame.bets.find(b => b.username.toLowerCase() === user.username.toLowerCase() && b.choice === choice);
             if (existingBetObj) existingBetObj.amount += amount; else colorGame.bets.push({ username: user.username, choice, amount }); 
@@ -1044,7 +1060,10 @@ io.on('connection', (socket) => {
             if(existingBetAmt + amount > 50000) return socket.emit('arcade_error', 'Limit is 50,000 per cup!');
 
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) return socket.emit('arcade_error', 'Insufficient credits');
+            if (!user) {
+                socket.emit('arcade_error', 'Bet failed: Insufficient DB funds or user not found.');
+                return; 
+            }
             await new Transaction({ username: user.username, type: '3 CUPS', amount: -amount }).save();
             let existingBetObj = cupsGame.bets.find(b => b.username.toLowerCase() === user.username.toLowerCase() && b.choice === choice);
             if (existingBetObj) existingBetObj.amount += amount; else cupsGame.bets.push({ username: user.username, choice, amount }); 
@@ -1063,7 +1082,10 @@ io.on('connection', (socket) => {
             if(existingBet) return socket.emit('arcade_error', 'You already placed a bet this round.');
 
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) return socket.emit('arcade_error', 'Insufficient credits');
+            if (!user) {
+                socket.emit('arcade_error', 'Bet failed: Insufficient DB funds or user not found.');
+                return; 
+            }
             
             await new Transaction({ username: user.username, type: 'CRASH BET', amount: -amount }).save();
             crashGame.bets.push({ username: user.username, amount, cashedOut: false, winAmount: 0 });
@@ -1254,7 +1276,11 @@ io.on('connection', (socket) => {
             let room = rooms[roomId]; if (!room) return; const seat = room.seats[seatIndex]; if (!seat || seat.username.toLowerCase() !== username.toLowerCase() || room.status !== 'betting') return;
             if (betAmount >= 100 && betAmount <= 50000) {
                 const updatedUser = await User.findOneAndUpdate({ username: new RegExp('^' + seat.username + '$', 'i'), credits: { $gte: betAmount } }, { $inc: { credits: -betAmount } }, { new: true });
-                if (!updatedUser) return; seat.credits = updatedUser.credits; seat.hands[0].bet = betAmount; seat.kickAt = null; 
+                if (!updatedUser) {
+                    socket.emit('arcade_error', 'Bet failed: User not found or insufficient DB funds.');
+                    return; 
+                }
+                seat.credits = updatedUser.credits; seat.hands[0].bet = betAmount; seat.kickAt = null; 
                 await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId), amount: -betAmount }).save();
                 io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); 
                 room.betEndTime = Date.now() + 15000; clearInterval(room.betTimerInterval);
@@ -1443,7 +1469,7 @@ async function processDealerTurn(roomId) {
 
 async function resolveBets(roomId, dealerValue) {
     try {
-        let room = rooms[roomId]; if (!room) return; room.status = 'resolving'; room.nextRoundTime = Date.now() + 7000; // Increased buffer for UI animation
+        let room = rooms[roomId]; if (!room) return; room.status = 'resolving'; room.nextRoundTime = Date.now() + 7000; 
         for (const seat of room.seats) {
             if (seat) {
                 for (const hand of seat.hands) {
