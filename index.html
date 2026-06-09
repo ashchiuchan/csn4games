@@ -32,203 +32,70 @@
             --rarity-mythic: #f472b6;
         }
         
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'VT323', monospace; 
-            text-transform: uppercase; 
-            user-select: none; 
-        }
-
-        body { 
-            background-color: #020617; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100dvh; 
-            overflow: hidden; 
-            color: var(--text-main); 
-            letter-spacing: 1px;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'VT323', monospace; text-transform: uppercase; user-select: none; }
+        body { background-color: #020617; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: var(--text-main); letter-spacing: 1px;}
         
-        .text-black, [style*="color: #000"], [style*="color:#000"] { 
-            text-shadow: none !important; 
-        }
-
-        input, select { 
-            background: #0f172a; 
-            border: 2px solid #334155; 
-            color: #fff; 
-            padding: 12px; 
-            font-size: 22px; 
-            outline: none; 
-            text-align: center; 
-            border-radius: 6px; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); 
-            user-select: auto !important; 
-            width: 100%;
-        }
-
-        input:focus, select:focus { 
-            border-color: var(--blue); 
-        }
-
-        .hidden { 
-            display: none !important; 
-        }
+        .text-black, [style*="color: #000"], [style*="color:#000"] { text-shadow: none !important; }
+        input, select { background: #0f172a; border: 2px solid #334155; color: #fff; padding: 12px; font-size: 22px; outline: none; text-align: center; border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); user-select: auto !important; width: 100%;}
+        input:focus, select:focus { border-color: var(--blue); }
+        .hidden { display: none !important; }
         
-        ::-webkit-scrollbar { 
-            width: 8px; 
-        } 
-        ::-webkit-scrollbar-track { 
-            background: #0f172a; 
-        } 
-        ::-webkit-scrollbar-thumb { 
-            background: #475569; 
-            border-radius: 4px;
-        } 
-        ::-webkit-scrollbar-thumb:hover { 
-            background: var(--blue); 
-        }
+        ::-webkit-scrollbar { width: 8px; } 
+        ::-webkit-scrollbar-track { background: #0f172a; } 
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px;} 
+        ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
 
         /* SCALABLE MAIN CABINET */
-        #arcade-container { 
-            width: 100vw; 
-            height: 100dvh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-        }
-
-        #arcade-cabinet { 
-            width: 1400px; 
-            height: 800px; 
-            max-width: 100%; 
-            max-height: 100%; 
-            background: var(--bg-dark); 
-            border: 4px solid #334155; 
-            border-radius: 12px; 
-            position: relative; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
-        }
+        #arcade-container { width: 100vw; height: 100dvh; display: flex; justify-content: center; align-items: center; }
+        #arcade-cabinet { width: 1400px; height: 800px; max-width: 100%; max-height: 100%; background: var(--bg-dark); border: 4px solid #334155; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 
         /* TOASTS */
-        #toast-container { 
-            position: absolute; 
-            top: 20px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            z-index: 9999; 
-            pointer-events: none; 
-            align-items: center; 
-        }
-        .toast { 
-            background: rgba(15,23,42,0.95); 
-            border: 2px solid var(--text-muted); 
-            padding: 12px 24px; 
-            font-size: 22px; 
-            text-align: center; 
-            border-radius: 8px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
-            transition: 0.3s; 
-            pointer-events: auto; 
-        }
-        .toast-error { border-color: var(--red); color: var(--red); } 
-        .toast-success { border-color: var(--green); color: var(--green); } 
-        .toast.fade-out { opacity: 0; transform: translateY(-20px); }
+        #toast-container { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 9999; pointer-events: none; align-items: center; }
+        .toast { background: rgba(15,23,42,0.95); border: 2px solid var(--text-muted); padding: 12px 24px; font-size: 22px; text-align: center; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: 0.3s; pointer-events: auto; }
+        .toast-error { border-color: var(--red); color: var(--red); } .toast-success { border-color: var(--green); color: var(--green); } .toast.fade-out { opacity: 0; transform: translateY(-20px); }
 
         /* BUTTONS - SYNCED & RESPONSIVE */
-        .btn { 
-            background: #1e293b; 
-            border: 2px solid #475569; 
-            color: var(--text-main); 
-            padding: 12px 20px; 
-            font-size: 24px; 
-            cursor: pointer; 
-            transition: 0.1s; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.5); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
-            width: 100%;
-        }
-        .btn:hover:not(:disabled) { 
-            background: #334155; 
-            border-color: #cbd5e1; 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-        }
-        .btn:active:not(:disabled) { 
-            transform: translateY(2px); 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.4);
-        }
-        .btn.small { 
-            padding: 6px 12px; 
-            font-size: 20px; 
-            width: auto; 
-        }
-        .btn:disabled { 
-            opacity: 0.5; 
-            cursor: not-allowed; 
-            border-color: #334155; 
-            color: #64748b;
-        }
+        .btn { background: #1e293b; border: 2px solid #475569; color: var(--text-main); padding: 12px 20px; font-size: 24px; cursor: pointer; transition: 0.1s; border-radius: 6px; font-weight: bold; text-shadow: 1px 1px 0 rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); width: 100%;}
+        .btn:hover:not(:disabled) { background: #334155; border-color: #cbd5e1; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.4);}
+        .btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0,0,0,0.4);}
+        .btn.small { padding: 6px 12px; font-size: 20px; width: auto; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #334155; color: #64748b;}
         
-        .btn-blue { background: #0284c7; border-color: var(--blue); } 
-        .btn-blue:hover:not(:disabled) { background: #0ea5e9; }
-        .btn-red { background: #b91c1c; border-color: var(--red); } 
-        .btn-red:hover:not(:disabled) { background: #ef4444; }
-        .btn-green { background: #059669; border-color: var(--green); } 
-        .btn-green:hover:not(:disabled) { background: #10b981; }
-        .btn-gold { background: #d97706; border-color: var(--gold); } 
-        .btn-gold:hover:not(:disabled) { background: #f59e0b; }
+        .btn-blue { background: #0284c7; border-color: var(--blue); } .btn-blue:hover:not(:disabled) { background: #0ea5e9; }
+        .btn-red { background: #b91c1c; border-color: var(--red); } .btn-red:hover:not(:disabled) { background: #ef4444; }
+        .btn-green { background: #059669; border-color: var(--green); } .btn-green:hover:not(:disabled) { background: #10b981; }
+        .btn-gold { background: #d97706; border-color: var(--gold); } .btn-gold:hover:not(:disabled) { background: #f59e0b; }
 
         /* MODALS & LAYOUTS */
         .full-menu, .overlay-menu { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 200; }
         .full-menu { background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); }
         .overlay-menu { background: rgba(2,6,23,0.9); z-index: 300; backdrop-filter: blur(4px); }
         
-        .hub-layout {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; z-index: 200;
-            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
-            padding: 25px; 
-        }
-        
-        .hub-content-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; width: 100%; overflow-y: auto; padding-top: 15px;}
+        .hub-layout { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; z-index: 200; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); padding: 25px; }
+        .hub-content-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; overflow-y: auto; padding-top: 15px;}
 
         .panel { background: var(--panel-bg); border: 3px solid #334155; border-radius: 12px; padding: 40px; width: 600px; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8);}
         .panel-content { display:flex; flex-direction:column; align-items:center; width:100%; }
 
         /* CLEAN BRANDING HEADER */
-        .main-header { font-size: 70px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; justify-content: center; font-weight:bold; letter-spacing: 2px;}
+        .main-header { font-size: 80px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; justify-content: center; font-weight:bold; letter-spacing: 2px; width: 100%; text-align: center;}
         .txt-gold { color: var(--gold); text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
         .txt-plain { color: #f8fafc; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-        /* MENU GRID (Justified 500px Style) */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 500px; margin-top: 10px;}
-        .menu-grid .btn { padding: 20px; font-size: 26px; justify-content: space-between; }
+        /* MAIN MENU GRID */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 600px; margin-top: 10px;}
+        .menu-grid .btn { padding: 20px; font-size: 28px; justify-content: center; text-align: center;}
         .menu-grid .btn.full-width { grid-column: span 2; justify-content: center; }
 
-        /* BOTTOM RIGHT CORNER CONTROLS (Hidden on Login) */
+        /* BOTTOM RIGHT CONTROLS */
         .bottom-right-controls { position: absolute; bottom: 25px; right: 25px; display: flex; gap: 15px; z-index: 250; }
         .circle-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(15,23,42,0.95); border: 3px solid #334155; color: #fff; font-size: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: relative; }
         .circle-btn:hover { transform: translateY(-4px); border-color: var(--blue); background: #1e293b; box-shadow: 0 8px 15px rgba(0,0,0,0.6); }
-        .circle-btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-        
+
         /* NOTIFICATION BADGE */
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(248,113,113,0.7); } 70% { box-shadow: 0 0 0 10px rgba(248,113,113,0); } 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0); } }
         .notif-badge { background: var(--red); color: #fff; padding: 2px 6px; border-radius: 12px; font-size: 14px; position: absolute; top: -5px; right: -5px; animation: pulseRed 2s infinite; font-weight: bold; border: 2px solid #0f172a;}
+        .inline-badge { position: relative; top: auto; right: auto; margin-left: 5px; animation: pulseRed 2s infinite; border-color: transparent;}
 
         /* NAVIGATION & GRID */
         .category-nav { display: flex; justify-content: center; gap: 15px; margin: 0 0 20px 0; width: 100%; flex-shrink: 0; }
@@ -241,7 +108,6 @@
         .realm-title { font-size: 26px; color: #fff; font-weight: bold; line-height: 1.2; text-shadow: 1px 1px 0 rgba(0,0,0,0.5); }
         .realm-desc { font-size: 18px; color: var(--text-muted); }
         .realm-status { font-size: 16px; background: rgba(0,0,0,0.6); padding: 4px 15px; border-radius: 20px; color: var(--green); font-weight: bold; border: 1px solid #334155;}
-        .realm-status.offline { color: var(--red); }
 
         /* GAME FRAMEWORK */
         .game-interface { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; z-index: 100; background: radial-gradient(circle at center, var(--table-green) 0%, var(--table-dark) 100%);}
@@ -278,58 +144,65 @@
         .bet-tile-title { font-size: 24px; font-weight: bold; line-height: 1; margin-bottom: 5px; color:#f8fafc;}
         .bet-tile-payout { font-size: 18px; color: var(--text-muted); font-weight: bold; }
         
-        /* MARIO COIN BET BADGE ANIMATIONS */
         @keyframes coinPop { 0% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(-30px) scale(1.5); opacity: 1; } 100% { transform: translateY(-40px) scale(1); opacity: 0; } }
         .bet-badge { position: absolute; top: -10px; right: -10px; background: var(--blue); color: #fff; padding: 2px 8px; border: 2px solid #0f172a; font-size: 18px; font-weight: bold; z-index: 10; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); transition: 0.3s;}
         .bet-badge.win { background: var(--green); border-color: #fff; }
         .bet-badge.lose { background: var(--red); opacity: 0.8; }
         .mario-coin { position: absolute; font-size: 24px; color: var(--gold); pointer-events: none; animation: coinPop 0.8s ease-out forwards; z-index: 50;}
 
-        /* CARDS */
-        .hands-wrapper { display: flex; gap: 6px; justify-content: center; min-height: 110px; align-items: flex-end; width: 100%;}
-        @keyframes dealAnim { 0% { transform: translateY(-50px) scale(0.8) rotateY(90deg); opacity: 0; } 100% { transform: translateY(0) scale(1) rotateY(0deg); opacity: 1; } }
-        .card { width: 70px; height: 100px; background: #f8fafc; border: 2px solid #0f172a; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #0f172a; position: relative; font-family: Arial; box-shadow: 2px 4px 8px rgba(0,0,0,0.4); margin-left: -35px; animation: dealAnim 0.3s ease-out forwards;}
-        .card:first-child { margin-left: 0; } .card.red { color: var(--red); }
+        /* CARDS & ANIMATIONS */
+        .hands-wrapper { display: flex; gap: 8px; justify-content: center; min-height: 110px; align-items: flex-end; width: 100%;}
+        
+        @keyframes dealSlide { 0% { transform: translateY(-100px) translateX(-50px) scale(0.5); opacity: 0; } 100% { transform: translateY(0) translateX(0) scale(1); opacity: 1; } }
+        @keyframes cardFlip { 0% { transform: rotateY(90deg); opacity: 0; } 100% { transform: rotateY(0deg); opacity: 1; } }
+        
+        .card { width: 70px; height: 100px; background: #f8fafc; border: 2px solid #0f172a; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #0f172a; position: relative; font-family: Arial; box-shadow: 2px 4px 8px rgba(0,0,0,0.4); margin-left: -35px; animation: dealSlide 0.3s ease-out forwards;}
+        .card:first-child { margin-left: 0; } 
+        .card.red { color: var(--red); }
         .card-corner { position: absolute; font-size: 16px; font-weight: bold; line-height: 1; text-align: center; }
         .card-corner.tl { top: 4px; left: 4px; } .card-corner.br { bottom: 4px; right: 4px; transform: rotate(180deg); }
         .card-center { font-size: 36px; }
         .card.hidden-card { background: repeating-linear-gradient(45deg, #1e293b, #1e293b 5px, #334155 5px, #334155 10px); color: transparent; border-color: #0f172a; animation:none;}
+        
+        .flip-reveal { animation: cardFlip 0.5s ease-out forwards; } /* Used for Baccarat/DVT */
 
-        /* PERFECT BLACKJACK ALIGNMENT */
-        .bj-table { display: flex; justify-content: center; align-items: flex-end; gap: 20px; width: 100%; position: absolute; bottom: 20px; height: 260px;}
-        .seat { display: flex; flex-direction: column; align-items: center; width: 160px; transition: 0.3s; justify-content: flex-end; position: relative;}
-        .seat.active-turn { transform: translateY(-10px); }
+        /* PERFECT BLACKJACK ALIGNMENT (Bigger Seats & Centered) */
+        .bj-table { display: flex; justify-content: center; align-items: flex-end; gap: 40px; width: 100%; position: absolute; bottom: 20px; height: 280px;}
+        .seat { display: flex; flex-direction: column; align-items: center; width: 180px; transition: 0.3s; justify-content: flex-end; position: relative;}
+        .seat.active-turn { transform: translateY(-15px); }
         .seat.active-turn .nameplate { border-color: var(--gold); color: var(--gold); }
         
-        .nameplate { background: rgba(15,23,42,0.9); border: 2px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 20px; font-weight: bold; width: 100%; text-align: center; margin-top: 0px; color:#f8fafc; box-shadow: 0 4px 6px rgba(0,0,0,0.4);}
+        .nameplate { background: rgba(15,23,42,0.9); border: 2px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 22px; font-weight: bold; width: 100%; text-align: center; margin-top: 5px; color:#f8fafc; box-shadow: 0 4px 6px rgba(0,0,0,0.4);}
         
-        /* The Hand Container holds the cards and the bet pill right below it */
-        .hand-container { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; margin-bottom: 4px; gap: 4px;}
-        .hand-score { position: absolute; top: -12px; left: -12px; background: #0f172a; border: 2px solid #e2e8f0; border-radius: 50%; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; z-index: 10; color: #f8fafc;}
+        .hand-container { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; margin-bottom: 4px; gap: 4px; min-height: 140px;}
+        .hand-score { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 2px solid #e2e8f0; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: bold; z-index: 10; color: #f8fafc; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
         
-        .bj-bet-line { font-size: 18px; color: #fff; font-weight: bold; background: var(--blue); padding: 2px 10px; border-radius: 12px; border: 2px solid #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+        .bj-bet-line { font-size: 20px; color: #fff; font-weight: bold; background: var(--blue); padding: 2px 15px; border-radius: 12px; border: 2px solid #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
         .bj-bet-line.win { background: var(--green); }
+        .bj-bet-line.lose { background: var(--red); opacity: 0.8; }
         
-        .seat-empty-box { height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 3px dashed rgba(255,255,255,0.2); width: 100%; border-radius: 8px; margin-bottom: 10px; background: rgba(0,0,0,0.4);}
+        /* Action Result Indicator */
+        .bj-action-res { position: absolute; top: 40px; font-size: 24px; font-weight: bold; color: var(--gold); text-shadow: 2px 2px 0 #000; z-index: 20; opacity: 0; pointer-events: none;}
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-40px); } }
+        .bj-action-res.show { animation: floatUp 1s ease-out forwards; }
+
+        .seat-empty-box { height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 3px dashed rgba(255,255,255,0.2); width: 100%; border-radius: 8px; margin-bottom: 10px; background: rgba(0,0,0,0.4);}
 
         /* BACCARAT / DVT */
         .card-zone-split { display: flex; gap: 60px; justify-content: center; align-items: center; width: 100%; }
         .baccarat-zone { border: 2px solid #334155; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; width: 300px; display: flex; flex-direction: column; align-items: center; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.3);}
-        .zone-title { font-size: 24px; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px; }
-        .zone-score { position: absolute; bottom: -15px; background: #0f172a; border: 2px solid #fff; padding: 2px 15px; font-size: 24px; font-weight: bold; border-radius: 6px; z-index: 20; color: #fff;}
+        .zone-title { font-size: 28px; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px; }
+        .zone-score { position: absolute; bottom: -15px; background: #0f172a; border: 2px solid #fff; padding: 2px 15px; font-size: 26px; font-weight: bold; border-radius: 6px; z-index: 20; color: #fff;}
 
-        /* ECONOMY MODALS */
-        .modal-split { display:flex; gap:20px; height: 400px; text-align:left; width: 100%;}
-        .modal-col { flex:1; background:#0f172a; border:2px solid #334155; padding:20px; border-radius: 8px; overflow-y:auto; position: relative;}
-        .inv-slot { width: 60px; height: 60px; border: 2px solid #475569; display:flex; justify-content:center; align-items:center; background:#1e293b; font-size:32px; cursor:pointer; border-radius: 6px; transition:0.1s;}
-        .inv-slot:hover { border-color: #fff; transform: translateY(-2px); background:#334155;}
-        
-        .market-item { border:2px solid #475569; background:#1e293b; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
-        
-        /* CHAT SIDEBAR */
+        /* CHAT SYSTEM */
         .chat-sidebar { position: absolute; right: -350px; top: 0; width: 350px; height: 100%; background: rgba(15,23,42,0.95); border-left: 2px solid #334155; display: flex; flex-direction: column; transition: 0.3s; z-index: 150; box-shadow: -5px 0 20px rgba(0,0,0,0.5);}
         .chat-sidebar.open { right: 0; }
         .chat-header { padding: 15px; background: #0f172a; border-bottom: 2px solid #334155; font-size: 26px; font-weight: bold; color: var(--blue); display: flex; justify-content: space-between; align-items: center;}
+        
+        .chat-tabs { display: flex; width: 100%; background: #0f172a; border-bottom: 2px solid #334155; }
+        .chat-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; color: var(--text-muted); font-weight: bold; transition: 0.2s; font-size: 20px; }
+        .chat-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); background: rgba(255,255,255,0.05); }
+
         .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 20px; }
         .chat-messages .msg { line-height: 1.3; word-wrap: break-word;}
         .chat-messages .sys { color: var(--text-muted); font-style: italic; }
@@ -337,39 +210,54 @@
         .chat-input-box input { flex: 1; padding: 8px; font-size: 20px; text-align: left; }
 
         /* MAILBOX UI */
-        .mail-split { display:flex; gap:15px; height: 500px; text-align:left; width: 100%; }
+        .mail-split { display:flex; gap:15px; height: 450px; text-align:left; width: 100%; }
         .mail-list { flex: 1; background: #0f172a; border: 2px solid #334155; border-radius: 8px; overflow-y: auto; }
         .mail-view { flex: 2; background: #0f172a; border: 2px solid #334155; border-radius: 8px; display:flex; flex-direction:column; }
         .mail-item { padding: 15px; border-bottom: 1px solid #334155; cursor: pointer; transition: 0.2s; display:flex; justify-content:space-between; align-items:center; }
         .mail-item:hover { background: #1e293b; }
-        .mail-item.unread { border-left: 4px solid var(--red); font-weight: bold; }
+        .mail-item.unread { border-left: 4px solid var(--red); }
         .mail-thread { flex: 1; padding: 15px; overflow-y: auto; display:flex; flex-direction:column; gap: 10px; }
         .mail-msg { background: #1e293b; padding: 15px; border-radius: 6px; border: 1px solid #475569; }
         .mail-msg.reply { margin-left: 30px; background: #334155; border-color: var(--blue); }
 
         /* ROULETTE WHEEL */
-        .roulette-container { position: relative; width: 300px; height: 300px; margin: 0 auto 20px auto; border: 6px solid #f8fafc; border-radius: 50%; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        .roulette-wheel { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(var(--red) 0 60deg, var(--blue) 60deg 120deg, var(--green) 120deg 180deg, var(--gold) 180deg 240deg, var(--purple) 240deg 300deg, var(--text-muted) 300deg 360deg); transition: transform 4s cubic-bezier(0.1, 0.9, 0.2, 1); }
+        .roulette-container { position: relative; width: 250px; height: 250px; margin: 0 auto 20px auto; border: 6px solid #f8fafc; border-radius: 50%; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        .roulette-wheel { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(var(--red) 0 60deg, var(--blue) 60deg 120deg, var(--green) 120deg 180deg, var(--gold) 180deg 240deg, var(--purple) 240deg 300deg, var(--text-muted) 300deg 360deg); }
         .roulette-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #f8fafc; z-index: 10; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); }
 
-        /* LEDGER */
+        /* ECONOMY MODALS */
+        .modal-split { display:flex; gap:20px; height: 400px; text-align:left; width: 100%;}
+        .modal-col { flex:1; background:#0f172a; border:2px solid #334155; padding:20px; border-radius: 8px; overflow-y:auto; position: relative;}
+        .inv-slot { width: 60px; height: 60px; border: 2px solid #475569; display:flex; justify-content:center; align-items:center; background:#1e293b; font-size:32px; cursor:pointer; border-radius: 6px; transition:0.1s;}
+        .inv-slot:hover { border-color: #fff; transform: translateY(-2px); background:#334155;}
+        .market-item { border:2px solid #475569; background:#1e293b; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
         .ledger-entry { border-left: 4px solid #475569; padding: 10px 12px; background: #1e293b; margin-bottom: 8px; border-radius: 4px;}
         .ledger-entry.win { border-color: var(--green); } .ledger-entry.loss { border-color: var(--red); }
         .ledger-running-bal { font-size: 18px; color: var(--gold); background: #0f172a; padding: 2px 8px; border-radius: 4px; display: inline-block; width: max-content;}
 
-        /* ARCADE MINIFIED */
+        /* ARCADE MINIFIED WITH ANIMATIONS */
+        @keyframes diceShake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+        .shake { animation: diceShake 0.3s infinite; }
+        
         .dice-display { font-size: 120px; font-family: Arial; display:flex; gap: 20px; text-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .derby-track { width: 800px; height: 220px; background: rgba(0,0,0,0.3); border: 2px solid #334155; display: flex; flex-direction: column; position: relative; border-radius:8px;} 
         .derby-lane { flex: 1; border-bottom: 2px dashed #334155; position: relative; display: flex; align-items: center; padding: 0 10px; } 
         .horse { height: 80%; width: 40px; background: #e2e8f0; position: absolute; bottom: 10%; transition: left 0.1s linear; border-radius:4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.5);}
+        
         .color-rack { display: flex; gap: 20px; } 
+        @keyframes flashColors { 0% { background: var(--red); } 20% { background: var(--blue); } 40% { background: var(--gold); } 60% { background: var(--green); } 80% { background: var(--pink); } 100% { background: #f8fafc; } }
         .color-die { width: 100px; height: 100px; border: 4px solid #fff; border-radius: 12px; transition: 0.1s; box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.3);} 
+        .color-die.rolling { animation: flashColors 0.5s infinite; border-color: var(--gold); }
         .c-red{background:var(--red);} .c-blue{background:var(--blue);} .c-yellow{background:var(--gold);} .c-green{background:var(--green);} .c-pink{background:var(--pink);} .c-white{background:#f8fafc; color:#0f172a;}
-        .cups-rack { display: flex; gap: 40px; height: 120px; align-items: flex-end; } 
+        
+        .cups-rack { display: flex; gap: 40px; height: 120px; align-items: flex-end; position: relative;} 
+        @keyframes shuffleCups { 0% { transform: translateX(0); } 25% { transform: translateX(-80px); } 50% { transform: translateX(80px); } 75% { transform: translateX(-40px); } 100% { transform: translateX(0); } }
         .cup-wrapper { position: relative; width: 80px; display:flex; justify-content:center;} 
+        .cup-wrapper.shuffling { animation: shuffleCups 0.6s infinite; }
         .cup-shape { width: 70px; height: 90px; background: var(--red); border-radius: 30px 30px 4px 4px; z-index: 10; transition: 0.2s; box-shadow: inset -5px -5px 15px rgba(0,0,0,0.3);} 
         .cup-ball { font-size: 30px; position: absolute; bottom: -5px; z-index: 5; opacity: 0; } 
         .cup-wrapper.reveal .cup-shape { transform: translateY(-50px); } .cup-wrapper.reveal .cup-ball { opacity: 1; }
+        
         .pvp-arena { display: flex; justify-content: center; align-items: center; gap: 20px; } 
         .pvp-seat { width: 220px; height: 200px; background: rgba(15,23,42,0.8); border: 2px solid #334155; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px; border-radius:8px;}
     </style>
@@ -387,11 +275,18 @@
 
             <div id="chat-sidebar" class="chat-sidebar">
                 <div class="chat-header">
-                    <span>ROOM CHAT</span>
+                    <span>COMM-LINK</span>
                     <button class="btn small" onclick="toggleChat()">✖</button>
                 </div>
-                <div class="chat-messages custom-scroll" id="chat-box-messages">
-                    <div class="msg sys">SYSTEM: Welcome to Stick N' Trade Arcade!</div>
+                <div class="chat-tabs">
+                    <div class="chat-tab active" id="tab-chat-room" onclick="switchChatTab('room')">ROOM</div>
+                    <div class="chat-tab" id="tab-chat-global" onclick="switchChatTab('global')">GLOBAL</div>
+                </div>
+                <div class="chat-messages custom-scroll" id="chat-box-room">
+                    <div class="msg sys">SYSTEM: Joined Room Channel.</div>
+                </div>
+                <div class="chat-messages custom-scroll hidden" id="chat-box-global">
+                    <div class="msg sys">SYSTEM: Joined Global Channel.</div>
                 </div>
                 <div class="chat-input-box">
                     <input type="text" id="chat-input" placeholder="Type..." maxlength="60">
@@ -794,7 +689,8 @@
                     <button class="btn small" onclick="exitGame('blackjack')">◄ LEAVE</button>
                     <div class="hud-center" id="bj-hud-title">CLASSIC BLACKJACK <button class="btn small btn-blue" style="display:inline-block; margin-left:10px; border-radius:50%; width:30px; height:30px; padding:0;" onclick="showRules('blackjack')">?</button></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn small btn-gold" onclick="toggleChat()">💬 CHAT</button>
+                        <button class="btn small btn-gold" onclick="openMailbox()">✉️<span class="notif-badge inline-badge" style="display:none;">0</span></button>
+                        <button class="btn small btn-gold" onclick="toggleChat()">💬</button>
                         <div class="wallet-display">🪙 <span id="bj-hud-credits">0</span></div>
                     </div>
                 </div>
@@ -805,7 +701,7 @@
                 <div class="game-surface">
                     <div style="text-align:center; position:absolute; top:20px; z-index:10;">
                         <div style="font-size:24px; margin-bottom:5px; color:var(--text-muted); font-weight:bold;">DEALER</div>
-                        <div class="hand-container">
+                        <div class="hand-container" style="min-height:110px;">
                             <div id="bj-dealer-cards" class="hands-wrapper"></div>
                             <div id="bj-dealer-val" class="hand-score hidden">0</div>
                         </div>
@@ -819,7 +715,8 @@
                     <button class="btn small" onclick="exitGame('bac')">◄ LEAVE</button>
                     <div class="hud-center">PUNTO BANCO <button class="btn small btn-blue" style="display:inline-block; margin-left:10px; border-radius:50%; width:30px; height:30px; padding:0;" onclick="showRules('baccarat')">?</button></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn small btn-gold" onclick="toggleChat()">💬 CHAT</button>
+                        <button class="btn small btn-gold" onclick="openMailbox()">✉️<span class="notif-badge inline-badge" style="display:none;">0</span></button>
+                        <button class="btn small btn-gold" onclick="toggleChat()">💬</button>
                         <div class="wallet-display">🪙 <span id="bac-hud-credits">0</span></div>
                     </div>
                 </div>
@@ -876,7 +773,8 @@
                     <button class="btn small" onclick="exitGame('dvt')">◄ LEAVE</button>
                     <div class="hud-center" style="color:var(--gold);">DRAGON VS TIGER <button class="btn small btn-blue" style="display:inline-block; margin-left:10px; border-radius:50%; width:30px; height:30px; padding:0;" onclick="showRules('dvt')">?</button></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn small btn-gold" onclick="toggleChat()">💬 CHAT</button>
+                        <button class="btn small btn-gold" onclick="openMailbox()">✉️<span class="notif-badge inline-badge" style="display:none;">0</span></button>
+                        <button class="btn small btn-gold" onclick="toggleChat()">💬</button>
                         <div class="wallet-display">🪙 <span id="dvt-hud-credits">0</span></div>
                     </div>
                 </div>
@@ -931,7 +829,8 @@
                     <button class="btn small" onclick="exitGame('dice')">◄ LEAVE</button>
                     <div class="hud-center">HIGH-LOW DICE <button class="btn small btn-blue" style="display:inline-block; margin-left:10px; border-radius:50%; width:30px; height:30px; padding:0;" onclick="showRules('dice')">?</button></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn small btn-gold" onclick="toggleChat()">💬 CHAT</button>
+                        <button class="btn small btn-gold" onclick="openMailbox()">✉️<span class="notif-badge inline-badge" style="display:none;">0</span></button>
+                        <button class="btn small btn-gold" onclick="toggleChat()">💬</button>
                         <div class="wallet-display">🪙 <span id="dice-hud-credits">0</span></div>
                     </div>
                 </div>
@@ -974,7 +873,8 @@
                     <button class="btn small" onclick="exitGame('derby')">◄ LEAVE</button>
                     <div class="hud-center" style="color:var(--gold);">8-BIT DERBY <button class="btn small btn-blue" style="display:inline-block; margin-left:10px; border-radius:50%; width:30px; height:30px; padding:0;" onclick="showRules('derby')">?</button></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn small btn-gold" onclick="toggleChat()">💬 CHAT</button>
+                        <button class="btn small btn-gold" onclick="openMailbox()">✉️<span class="notif-badge inline-badge" style="display:none;">0</span></button>
+                        <button class="btn small btn-gold" onclick="toggleChat()">💬</button>
                         <div class="wallet-display">🪙 <span id="derby-hud-credits">0</span></div>
                     </div>
                 </div>
@@ -994,16 +894,8 @@
                             <div class="horse" id="racer-2" style="background:var(--green);"></div>
                         </div>
                         <div class="derby-lane">
-                            <div style="position:absolute; left:10px; color:var(--purple); font-weight:bold; z-index:5;">PUR</div>
-                            <div class="horse" id="racer-3" style="background:var(--purple);"></div>
-                        </div>
-                        <div class="derby-lane">
-                            <div style="position:absolute; left:10px; color:var(--pink); font-weight:bold; z-index:5;">PNK</div>
-                            <div class="horse" id="racer-4" style="background:var(--pink);"></div>
-                        </div>
-                        <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--gold); font-weight:bold; z-index:5;">GLD</div>
-                            <div class="horse" id="racer-5" style="background:var(--gold);"></div>
+                            <div class="horse" id="racer-3" style="background:var(--gold);"></div>
                         </div>
                     </div>
                 </div>
@@ -1017,30 +909,26 @@
                         <div class="chip chip-50k" onclick="selectChip(50000)">50K</div>
                         <button class="btn small" onclick="actRebet('derby')">REBET</button>
                     </div>
-                    <div class="bet-grid" style="display:grid; grid-template-columns:repeat(6, 1fr); gap:10px; width:100%; max-width: 900px;">
-                        <div class="bet-tile" style="width:100%; height:70px; border-color:var(--red);" onclick="placeBet('derby', 0)">
+                    <div class="bet-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; width:100%; max-width: 800px;">
+                        <div class="bet-tile" style="width:100%; height:80px; border-color:var(--red);" onclick="placeBet('derby', 0)">
                             <div class="bet-badge hidden" id="badge-derby-0">0</div>
-                            <div class="bet-tile-title" style="color:var(--red); font-size:24px;">RED</div>
+                            <div class="bet-tile-title" style="color:var(--red); font-size:28px;">RED</div>
+                            <div class="bet-tile-payout" id="odds-derby-0">2.0x</div>
                         </div>
-                        <div class="bet-tile" style="width:100%; height:70px; border-color:var(--blue);" onclick="placeBet('derby', 1)">
+                        <div class="bet-tile" style="width:100%; height:80px; border-color:var(--blue);" onclick="placeBet('derby', 1)">
                             <div class="bet-badge hidden" id="badge-derby-1">0</div>
-                            <div class="bet-tile-title" style="color:var(--blue); font-size:24px;">BLUE</div>
+                            <div class="bet-tile-title" style="color:var(--blue); font-size:28px;">BLUE</div>
+                            <div class="bet-tile-payout" id="odds-derby-1">3.0x</div>
                         </div>
-                        <div class="bet-tile" style="width:100%; height:70px; border-color:var(--green);" onclick="placeBet('derby', 2)">
+                        <div class="bet-tile" style="width:100%; height:80px; border-color:var(--green);" onclick="placeBet('derby', 2)">
                             <div class="bet-badge hidden" id="badge-derby-2">0</div>
-                            <div class="bet-tile-title" style="color:var(--green); font-size:24px;">GREEN</div>
+                            <div class="bet-tile-title" style="color:var(--green); font-size:28px;">GREEN</div>
+                            <div class="bet-tile-payout" id="odds-derby-2">5.0x</div>
                         </div>
-                        <div class="bet-tile" style="width:100%; height:70px; border-color:var(--purple);" onclick="placeBet('derby', 3)">
+                        <div class="bet-tile" style="width:100%; height:80px; border-color:var(--gold);" onclick="placeBet('derby', 3)">
                             <div class="bet-badge hidden" id="badge-derby-3">0</div>
-                            <div class="bet-tile-title" style="color:var(--purple); font-size:24px;">PURP</div>
-                        </div>
-                        <div class="bet-tile" style="width:100%; height:70px; border-color:var(--pink);" onclick="placeBet('derby', 4)">
-                            <div class="bet-badge hidden" id="badge-derby-4">0</div>
-                            <div class="bet-tile-title" style="color:var(--pink); font-size:24px;">PINK</div>
-                        </div>
-                        <div class="bet-tile" style="width:100%; height:70px; border-color:var(--gold);" onclick="placeBet('derby', 5)">
-                            <div class="bet-badge hidden" id="badge-derby-5">0</div>
-                            <div class="bet-tile-title" style="color:var(--gold); font-size:24px;">GOLD</div>
+                            <div class="bet-tile-title" style="color:var(--gold); font-size:28px;">GOLD</div>
+                            <div class="bet-tile-payout" id="odds-derby-3">10.0x</div>
                         </div>
                     </div>
                 </div>
@@ -1051,7 +939,8 @@
                     <button class="btn small" onclick="exitGame('color')">◄ LEAVE</button>
                     <div class="hud-center" style="color:var(--green);">PERYA COLOR <button class="btn small btn-blue" style="display:inline-block; margin-left:10px; border-radius:50%; width:30px; height:30px; padding:0;" onclick="showRules('color')">?</button></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn small btn-gold" onclick="toggleChat()">💬 CHAT</button>
+                        <button class="btn small btn-gold" onclick="openMailbox()">✉️<span class="notif-badge inline-badge" style="display:none;">0</span></button>
+                        <button class="btn small btn-gold" onclick="toggleChat()">💬</button>
                         <div class="wallet-display">🪙 <span id="col-hud-credits">0</span></div>
                     </div>
                 </div>
@@ -1107,7 +996,8 @@
                     <button class="btn small" onclick="exitGame('cups')">◄ LEAVE</button>
                     <div class="hud-center" style="color:var(--purple);">STREET HUSTLE <button class="btn small btn-blue" style="display:inline-block; margin-left:10px; border-radius:50%; width:30px; height:30px; padding:0;" onclick="showRules('cups')">?</button></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn small btn-gold" onclick="toggleChat()">💬 CHAT</button>
+                        <button class="btn small btn-gold" onclick="openMailbox()">✉️<span class="notif-badge inline-badge" style="display:none;">0</span></button>
+                        <button class="btn small btn-gold" onclick="toggleChat()">💬</button>
                         <div class="wallet-display">🪙 <span id="cups-hud-credits">0</span></div>
                     </div>
                 </div>
@@ -1160,7 +1050,8 @@
                     <button class="btn small" onclick="exitGame('pvp')">◄ LEAVE</button>
                     <div class="hud-center" style="color:var(--red);">THE ARENA <button class="btn small btn-blue" style="display:inline-block; margin-left:10px; border-radius:50%; width:30px; height:30px; padding:0;" onclick="showRules('pvp')">?</button></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn small btn-gold" onclick="toggleChat()">💬 CHAT</button>
+                        <button class="btn small btn-gold" onclick="openMailbox()">✉️<span class="notif-badge inline-badge" style="display:none;">0</span></button>
+                        <button class="btn small btn-gold" onclick="toggleChat()">💬</button>
                         <div class="wallet-display">🪙 <span id="pvp-hud-credits">0</span></div>
                     </div>
                 </div>
@@ -1270,7 +1161,7 @@
             'mystery': { icon: '🎁', name: 'Mystery Box', value: 'UNKNOWN', desc: 'A sealed crate of unknown value.', perk: 'Open to reveal contents.', soulbound: true }
         };
 
-        let myInventory = ['staff', 'crown', 'orb', 'vip', 'shield', 'token', 'token'];
+        let myInventory = [];
         let tradeOfferSlots = [null, null, null, null, null, null, null, null, null]; 
         let pendingConversionIndex = null;
         let equippedItem = null; 
@@ -1283,7 +1174,7 @@
             'baccarat': "Bet on which hand (Player or Banker) will score closest to 9.<br><br>● Face cards and 10s are worth 0.<br>● Player pays 1:1.<br>● Banker pays 0.95:1 (5% commission).<br>● Tie pays 8:1.",
             'dvt': "Dragon vs Tiger is a simple high-card wins game.<br><br>● Aces are low.<br>● Kings are high.<br>● Winning hand pays 1:1.<br>● Tie pays 8:1.",
             'dice': "Predict the total of two 6-sided dice.<br><br>● Under 7 pays 1:1<br>● Over 7 pays 1:1<br>● Exact 7 pays 4:1",
-            'derby': "Bet on which color horse will win the virtual sprint.<br><br>● The horses move using provably fair RNG.<br>● Payouts scale dynamically based on the winner.",
+            'derby': "Bet on which color horse will win the virtual sprint. ONE bet per player.<br><br>● The horses move using provably fair RNG.<br>● Payouts scale dynamically based on the winner.",
             'color': "Bet on which colors will appear on the 3 dice rolled.<br><br>● 1 Match: Pays 1:1<br>● 2 Matches: Pays 2:1<br>● 3 Matches: Pays 3:1",
             'cups': "Follow the ball. If you successfully pick the cup hiding the ball, you win 2.5x your bet.",
             'pvp': "Challenge another player in the Arena.<br><br>● You must sit down to play.<br>● Winner takes the pot minus a small arena tax."
@@ -1296,7 +1187,7 @@
         }
 
         // ==========================================
-        // 5. UTILITIES, CHAT, NOTIFS & NAVIGATION
+        // 5. UTILITIES, NOTIFS & NAVIGATION
         // ==========================================
         function formatNumber(num) { 
             return num ? num.toLocaleString() : '0'; 
@@ -1305,7 +1196,6 @@
         // Auto-Commas for Input Fields
         document.querySelectorAll('.num-format').forEach(input => {
             input.addEventListener('input', function(e) {
-                // Remove non-digits
                 let value = this.value.replace(/,/g, '').replace(/\D/g, '');
                 if (value) {
                     this.value = parseInt(value, 10).toLocaleString();
@@ -1315,18 +1205,16 @@
             });
         });
 
-        // Get raw numeric value from auto-comma inputs
         function getRawNumber(id) {
             const val = document.getElementById(id).value;
-            return parseInt(val.replace(/,/g, ''), 10);
+            return parseInt(val.replace(/,/g, ''), 10) || 0;
         }
         
         function showToast(msg, type = 'error') { 
             const c = document.getElementById('toast-container'); 
             if (!c) return; 
             
-            // SINGLE TOAST RULE: Clear previous toasts before showing new one
-            c.innerHTML = '';
+            c.innerHTML = ''; // Force clear previous toasts (Anti-Spam)
             
             const t = document.createElement('div'); 
             t.className = `toast toast-${type}`; 
@@ -1355,7 +1243,6 @@
             const modals = document.querySelectorAll('.overlay-menu:not(.hidden)');
             
             if (modals.length > 0) {
-                // Close the top-most modal via History Stack
                 const lastModal = menuHistory.pop();
                 if (lastModal) {
                     document.getElementById(lastModal).classList.add('hidden');
@@ -1363,17 +1250,16 @@
                     modals.forEach(m => m.classList.add('hidden')); 
                 }
                 
-                // If there's another modal underneath, show it to keep flow intact
                 if (menuHistory.length > 0) {
                     const prev = menuHistory[menuHistory.length - 1];
                     const el = document.getElementById(prev); 
                     if (el) el.classList.remove('hidden');
                 }
             } else {
-                // Return to Main Menu from Hubs
                 document.getElementById('casino-hub-view').classList.add('hidden');
                 document.getElementById('exchange-hub-view').classList.add('hidden');
                 document.getElementById('main-menu-view').classList.remove('hidden');
+                document.getElementById('global-controls').classList.remove('hidden'); // Reveal Main Menu Buttons
             }
         }
 
@@ -1389,14 +1275,34 @@
                 audioNodes[id].play().catch(() => {}); 
             } 
         }
-        
+
+        // ==========================================
+        // 6. CHAT TABS SYSTEM
+        // ==========================================
         window.toggleChat = function() {
             const chat = document.getElementById('chat-sidebar');
             if (chat.classList.contains('open')) {
                 chat.classList.remove('open');
             } else {
                 chat.classList.add('open');
+                // Scroll both to bottom on open
+                const bRoom = document.getElementById('chat-box-room');
+                const bGlobal = document.getElementById('chat-box-global');
+                if(bRoom) bRoom.scrollTop = bRoom.scrollHeight;
+                if(bGlobal) bGlobal.scrollTop = bGlobal.scrollHeight;
             }
+        }
+
+        window.switchChatTab = function(tab) {
+            document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-chat-${tab}`).classList.add('active');
+            
+            document.getElementById('chat-box-room').classList.add('hidden');
+            document.getElementById('chat-box-global').classList.add('hidden');
+            document.getElementById(`chat-box-${tab}`).classList.remove('hidden');
+            
+            const activeBox = document.getElementById(`chat-box-${tab}`);
+            if(activeBox) activeBox.scrollTop = activeBox.scrollHeight;
         }
 
         window.sendChat = function() {
@@ -1404,25 +1310,38 @@
             const msg = input.value.trim();
             if (!msg || !currentUser) return;
             
-            const chatBox = document.getElementById('chat-box-messages');
-            let nameColor = 'var(--blue)';
-            let nameTag = currentUser.username;
+            const isGlobal = document.getElementById('tab-chat-global').classList.contains('active');
+            const targetRoom = isGlobal ? 'global' : (currentRoomId || 'global');
             
-            // Check Perks
-            if (myInventory.includes('guitar')) nameColor = 'var(--red)';
-            if (myInventory.includes('vip')) nameTag = '[VIP] ' + nameTag;
-            
-            chatBox.innerHTML += `
-                <div class="msg">
-                    <span style="color:${nameColor}; font-weight:bold;">${nameTag}:</span> 
-                    <span style="color:#f8fafc;">${msg}</span>
-                </div>
-            `;
-            
+            if(socket) socket.emit('send_chat', { roomId: targetRoom, username: currentUser.username, message: msg });
             input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        if(socket) {
+            socket.on('receive_chat', (data) => {
+                let nameColor = 'var(--blue)';
+                let nameTag = data.username;
+                
+                // Route message to correct box
+                const boxId = data.roomId === 'global' ? 'chat-box-global' : 'chat-box-room';
+                const box = document.getElementById(boxId);
+                
+                if(box) {
+                    box.innerHTML += `
+                        <div class="msg">
+                            <span style="color:${nameColor}; font-weight:bold;">${nameTag}:</span> 
+                            <span style="color:#f8fafc;">${data.message}</span>
+                        </div>
+                    `;
+                    box.scrollTop = box.scrollHeight;
+                }
+            });
+            
+            socket.on('chat_wiped', () => {
+                document.getElementById('chat-box-room').innerHTML = '<div class="msg sys">SYSTEM: Chat history cleared by admin.</div>';
+            });
+        }
+        
         window.logout = function() { 
             try { 
                 localStorage.removeItem('cr_user'); 
@@ -1439,12 +1358,14 @@
         // HUB ROUTING
         window.openCasinoHub = function() {
             document.getElementById('main-menu-view').classList.add('hidden');
+            document.getElementById('global-controls').classList.add('hidden'); // Hide from Hubs
             document.getElementById('casino-hub-view').classList.remove('hidden');
             switchRealmTab('casino');
         }
 
         window.openMarketHub = function() {
             document.getElementById('main-menu-view').classList.add('hidden');
+            document.getElementById('global-controls').classList.add('hidden'); // Hide from Hubs
             document.getElementById('exchange-hub-view').classList.remove('hidden');
         }
 
@@ -1462,37 +1383,13 @@
         }
 
         // ==========================================
-        // 6. MAILBOX (PUSH NOTIFICATIONS) SYSTEM
+        // 7. MAILBOX (PUSH NOTIFICATIONS) SYSTEM
         // ==========================================
-        let mailData = [
-            { 
-                id: 1, 
-                sender: "SYSTEM ADMIN", 
-                subject: "Welcome to SNT Arcade!", 
-                read: false, 
-                canReply: false,
-                thread: [
-                    { sender: "SYSTEM ADMIN", text: "Welcome to Stick N' Trade. Remember to claim your daily rewards and follow the community rules.", date: "Today 10:00 AM" }
-                ]
-            },
-            { 
-                id: 2, 
-                sender: "Player_99", 
-                subject: "Re: Mystic Orb", 
-                read: true, 
-                canReply: true,
-                thread: [
-                    { sender: "Player_99", text: "I'll give you 50k CR for the Mystic Orb. Deal?", date: "Yesterday 4:30 PM" },
-                    { sender: "YOU", text: "No way, it's worth at least 70k.", date: "Yesterday 5:00 PM" },
-                    { sender: "Player_99", text: "Fine, 65k and we call it even.", date: "Yesterday 5:05 PM" }
-                ]
-            }
-        ];
-
+        let mailData = [];
         let activeMailThreadId = null;
 
         function updateMailBadge() {
-            const unreadCount = mailData.filter(m => !m.read).length;
+            const unreadCount = mailData.filter(m => m.unreadPlayer).length;
             const badges = document.querySelectorAll('.notif-badge');
             
             badges.forEach(badge => {
@@ -1506,82 +1403,100 @@
         }
 
         window.openMailbox = function() {
-            renderMailList();
+            if(socket) socket.emit('req_inbox', { username: currentUser.username });
             document.getElementById('mail-thread-view').innerHTML = '<div style="color:var(--text-muted); text-align:center; margin-top:20px;">Select a message to view thread.</div>';
             document.getElementById('mail-reply-box').classList.add('hidden');
             activeMailThreadId = null;
             showModal('mail-modal');
         }
 
-        function renderMailList() {
-            const listEl = document.getElementById('mail-inbox-list');
-            listEl.innerHTML = '';
-            
-            if (mailData.length === 0) {
-                listEl.innerHTML = '<div style="padding:20px; color:var(--text-muted); text-align:center;">Inbox is empty.</div>';
-                return;
-            }
-
-            mailData.forEach(mail => {
-                const itemClass = mail.read ? "mail-item" : "mail-item unread";
-                const iconColor = mail.sender === "SYSTEM ADMIN" ? "var(--red)" : "var(--blue)";
+        if(socket) {
+            socket.on('inbox_data', (tickets) => {
+                mailData = tickets;
+                const listEl = document.getElementById('mail-inbox-list');
+                if(!listEl) return;
+                listEl.innerHTML = '';
                 
-                const html = `
-                    <div class="${itemClass}" onclick="openMailThread(${mail.id})">
-                        <div style="flex:1;">
-                            <div style="color:${iconColor}; font-size:18px; margin-bottom:4px;">${mail.sender}</div>
-                            <div style="font-size:22px; color:var(--text-main);">${mail.subject}</div>
+                if (mailData.length === 0) {
+                    listEl.innerHTML = '<div style="padding:20px; color:var(--text-muted); text-align:center;">Inbox is empty.</div>';
+                    updateMailBadge();
+                    return;
+                }
+
+                mailData.forEach(mail => {
+                    const isUnread = mail.unreadPlayer && (!mail.readBy || !mail.readBy.includes(currentUser.username));
+                    const itemClass = isUnread ? "mail-item unread" : "mail-item";
+                    
+                    const html = `
+                        <div class="${itemClass}" onclick="openMailThread('${mail._id}')">
+                            <div style="flex:1;">
+                                <div style="color:var(--blue); font-size:18px; margin-bottom:4px;">${mail.type.toUpperCase()}</div>
+                                <div style="font-size:22px; color:var(--text-main);">${mail.subject}</div>
+                            </div>
+                            <div style="color:var(--text-muted); font-size:24px;">►</div>
                         </div>
-                        <div style="color:var(--text-muted); font-size:24px;">►</div>
-                    </div>
-                `;
-                listEl.insertAdjacentHTML('beforeend', html);
+                    `;
+                    listEl.insertAdjacentHTML('beforeend', html);
+                });
+                updateMailBadge();
             });
-            updateMailBadge();
+
+            socket.on('new_mail', (data) => {
+                if (data.username === currentUser.username || data.username === 'GLOBAL') {
+                    showToast("NEW MESSAGE RECEIVED!", "success");
+                    if(socket) socket.emit('req_inbox', { username: currentUser.username });
+                }
+            });
         }
 
         window.openMailThread = function(id) {
-            const mail = mailData.find(m => m.id === id);
+            const mail = mailData.find(m => m._id === id);
             if (!mail) return;
             
             activeMailThreadId = id;
-            mail.read = true; // Mark as read
-            renderMailList(); // Refresh list to remove unread border
+            if(socket) socket.emit('read_ticket', { id: mail._id, username: currentUser.username });
+            
+            // Re-render local list visually
+            mail.unreadPlayer = false;
+            if(!mail.readBy) mail.readBy = [];
+            mail.readBy.push(currentUser.username);
             
             const threadEl = document.getElementById('mail-thread-view');
             threadEl.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #334155; padding-bottom:10px; margin-bottom:10px;">
                     <h3 style="color:#fff; font-size:24px;">${mail.subject}</h3>
-                    <button class="btn btn-red small" onclick="deleteMail(${id})">DELETE</button>
+                    <button class="btn btn-red small" onclick="deleteMail('${id}')">DELETE</button>
                 </div>
             `;
             
-            mail.thread.forEach(msg => {
-                const isMe = msg.sender === "YOU" || (currentUser && msg.sender === currentUser.username);
+            mail.messages.forEach(msg => {
+                const isMe = msg.sender.toLowerCase() === currentUser.username.toLowerCase();
                 const msgClass = isMe ? "mail-msg reply" : "mail-msg";
                 const senderColor = isMe ? "var(--green)" : (msg.sender === "SYSTEM ADMIN" ? "var(--red)" : "var(--blue)");
                 
+                const dateObj = new Date(msg.date);
+                const timeStr = `${dateObj.getHours().toString().padStart(2,'0')}:${dateObj.getMinutes().toString().padStart(2,'0')}`;
+
                 threadEl.innerHTML += `
                     <div class="${msgClass}">
                         <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                             <span style="color:${senderColor}; font-weight:bold;">${msg.sender}</span>
-                            <span style="color:var(--text-muted); font-size:16px;">${msg.date}</span>
+                            <span style="color:var(--text-muted); font-size:16px;">${timeStr}</span>
                         </div>
                         <div style="color:#f8fafc;">${msg.text}</div>
                     </div>
                 `;
             });
 
-            // Toggle Reply Box
             const replyBox = document.getElementById('mail-reply-box');
-            if (mail.canReply) {
+            if (mail.status === 'open' && mail.type !== 'announcement' && mail.type !== 'message') {
                 replyBox.classList.remove('hidden');
             } else {
                 replyBox.classList.add('hidden');
             }
             
-            // Scroll to bottom
             threadEl.scrollTop = threadEl.scrollHeight;
+            updateMailBadge();
         }
 
         window.sendMailReply = function() {
@@ -1589,32 +1504,22 @@
             const text = input.value.trim();
             if (!text || activeMailThreadId === null) return;
             
-            const mail = mailData.find(m => m.id === activeMailThreadId);
-            if (!mail || !mail.canReply) return;
-            
-            mail.thread.push({
-                sender: "YOU",
-                text: text,
-                date: "Just now"
-            });
-            
+            if(socket) socket.emit('player_reply', { id: activeMailThreadId, username: currentUser.username, text });
             input.value = '';
-            openMailThread(activeMailThreadId); // Re-render thread
             showToast("Reply sent.", "success");
         }
 
         window.deleteMail = function(id) {
-            mailData = mailData.filter(m => m.id !== id);
+            if(socket) socket.emit('del_ticket', { id, username: currentUser.username });
             activeMailThreadId = null;
             document.getElementById('mail-thread-view').innerHTML = '<div style="color:var(--text-muted); text-align:center; margin-top:20px;">Message deleted.</div>';
             document.getElementById('mail-reply-box').classList.add('hidden');
-            renderMailList();
             showToast("Message deleted.");
         }
 
 
         // ==========================================
-        // 7. AUTHENTICATION (REAL DB VERIFICATION RESTORED)
+        // 8. AUTHENTICATION & ACTUAL DB LOGIN
         // ==========================================
         document.getElementById('login-pass').addEventListener('keypress', function (e) { 
             if (e.key === 'Enter') { systemLogin(); } 
@@ -1633,7 +1538,6 @@
                 
                 if(!u || !p) return showToast("Enter credentials."); 
                 
-                // ACTUAL DATABASE CALL RESTORED
                 const res = await fetch('/api/login', { 
                     method: 'POST', 
                     headers: {'Content-Type': 'application/json'}, 
@@ -1651,10 +1555,12 @@
                     
                     document.getElementById('auth-view').classList.add('hidden'); 
                     document.getElementById('main-menu-view').classList.remove('hidden');
-                    document.getElementById('global-controls').classList.remove('hidden'); // Show Mail/Rewards
+                    document.getElementById('global-controls').classList.remove('hidden'); // Reveal Main Controls
                     
+                    if (data.inventory) myInventory = data.inventory;
+
                     updateAllCredits(); 
-                    updateMailBadge();
+                    if(socket) socket.emit('req_inbox', { username: currentUser.username });
                     playSfx('deal'); 
                     renderInventory(); 
                 } else { 
@@ -1707,7 +1613,7 @@
         }
 
         // ==========================================
-        // 8. DYNAMIC LEDGER & DAILY ROULETTE
+        // 9. DYNAMIC LEDGER & DAILY ROULETTE
         // ==========================================
         function addLedgerEntry(title, amount, isWin, newBalance) {
             const ledger = document.getElementById('dossier-ledger'); 
@@ -1807,13 +1713,11 @@
             document.getElementById('btn-claim-reward').disabled = true;
             playSfx('bet');
 
-            // Wheel mapping (based on conic-gradient from CSS)
             const extraSpins = 5 * 360; 
             const randomDeg = Math.floor(Math.random() * 360);
             const totalDeg = extraSpins + randomDeg;
             
             const wheel = document.getElementById('roulette-wheel');
-            // Reset transition for new spin
             wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.9, 0.2, 1)';
             wheel.style.transform = `rotate(${totalDeg}deg)`;
             
@@ -1821,9 +1725,7 @@
                 isSpinning = false;
                 document.getElementById('btn-claim-reward').disabled = false;
                 
-                // Calculate landing spot (0 degree is top)
                 let actualDeg = (360 - (randomDeg % 360)) % 360;
-                
                 let payout = 0;
                 let prizeName = "";
                 let isItem = false;
@@ -1838,7 +1740,7 @@
                     prizeName = "FREE RETRY";
                     showToast("Landed on RETRY! Spin again.", "success");
                     playSfx('win');
-                    return; // Return immediately to allow another spin without cooldown
+                    return; // No cooldown
                 } else if (actualDeg >= 180 && actualDeg < 240) {
                     payout = 50000;
                     prizeName = "JACKPOT! 50,000 CR";
@@ -1865,7 +1767,6 @@
                     playSfx('lose');
                 }
                 
-                // Set cooldown
                 localStorage.setItem('cr_last_reward', Date.now().toString()); 
                 checkRewardStatus();
                 
@@ -1873,7 +1774,7 @@
         }
 
         // ==========================================
-        // 9. ECONOMY MENUS & INVENTORY
+        // 10. ECONOMY MENUS & INVENTORY
         // ==========================================
         window.showBank = function() { 
             if (!currentUser) return; 
@@ -1887,7 +1788,6 @@
         
         window.submitBank = async function(type) {
             const amtStr = document.getElementById('bank-amt').value; 
-            // Strip commas
             const amt = parseInt(amtStr.replace(/,/g, ''), 10);
             
             if (isNaN(amt) || amt <= 0) return showToast("Invalid amount."); 
@@ -1922,12 +1822,12 @@
             
             myInventory.forEach((itemKey, idx) => {
                 const item = SNT_ITEMS[itemKey];
-                if (!item) return; // Failsafe
+                if (!item) return; 
                 
                 let border = '#334155';
                 
                 if(item.value === 'PRICELESS') border = 'var(--rarity-rare)';
-                else if(item.value === 'UNKNOWN') border = 'var(--rarity-mythic)'; // Mystery
+                else if(item.value === 'UNKNOWN') border = 'var(--rarity-mythic)'; 
                 else if(item.value >= 80000) border = 'var(--rarity-mythic)';
                 else if(item.value >= 50000) border = 'var(--rarity-legendary)';
                 else if(item.value >= 25000) border = 'var(--rarity-epic)';
@@ -1994,13 +1894,11 @@
             const btnConvert = document.getElementById('btn-inspector-convert');
             const btnEquip = document.getElementById('btn-inspector-equip');
 
-            // Handling Mystery Box opening
             if (itemKey === 'mystery') {
                 btnConvert.disabled = false;
                 btnConvert.innerText = "OPEN MYSTERY BOX";
                 btnConvert.onclick = () => {
-                    myInventory.splice(idx, 1); // remove box
-                    // Grant random reward
+                    myInventory.splice(idx, 1); 
                     const reward = 5000;
                     currentUser.credits += reward;
                     updateAllCredits();
@@ -2066,7 +1964,7 @@
         }
 
         // ==========================================
-        // 10. TRADE HUB LOGIC (SLOT SELECTOR ENGINE)
+        // 11. TRADE HUB LOGIC
         // ==========================================
         let activeTradeSlot = null;
 
@@ -2080,12 +1978,12 @@
             document.getElementById('target-trade-item-name').innerText = itemName;
             tradeOfferSlots = [null, null, null, null, null, null, null, null, null];
             
-            const creditInput = document.querySelector('#counter-offer-modal input[type="text"]'); 
+            const creditInput = document.querySelector('#counter-offer-modal input.num-format'); 
             if (creditInput) creditInput.value = '';
             
             activeTradeSlot = null;
             const trayParent = document.getElementById('counter-offer-inventory').parentElement;
-            if (trayParent) trayParent.style.display = 'none'; // Hide inventory by default
+            if (trayParent) trayParent.style.display = 'none'; 
             
             renderInventory(); 
             renderTradeGrid(); 
@@ -2094,13 +1992,12 @@
 
         window.addToTradeGrid = function(inventoryIdx) {
             if (activeTradeSlot === null) {
-                // Auto-fill next available empty slot
                 activeTradeSlot = tradeOfferSlots.findIndex(s => s === null);
                 if (activeTradeSlot === -1) return showToast("All 9 trade slots are full!");
             }
             
             tradeOfferSlots[activeTradeSlot] = myInventory[inventoryIdx]; 
-            activeTradeSlot = null; // Reset selection
+            activeTradeSlot = null; 
             
             const trayParent = document.getElementById('counter-offer-inventory').parentElement;
             if (trayParent) trayParent.style.display = 'none'; 
@@ -2174,7 +2071,7 @@
         }
 
         // ==========================================
-        // 11. MARIO COIN WIN ANIMATION & OPTIMISTIC BETTING
+        // 12. MARIO COIN WIN ANIMATION & BETTING DISPATCH
         // ==========================================
         function triggerWinAnimation(badgeId, winAmount) {
             const badge = document.getElementById(badgeId);
@@ -2185,13 +2082,11 @@
             badge.classList.add('win');
             badge.innerText = formatNumber(winAmount);
             
-            // Create Mario Coin Element
             const coin = document.createElement('div');
             coin.className = 'mario-coin';
             coin.innerText = '🪙';
             badge.appendChild(coin);
             
-            // Cleanup animation element
             setTimeout(() => {
                 if (coin.parentNode === badge) {
                     badge.removeChild(coin);
@@ -2241,6 +2136,11 @@
                 if (myDiceBets[choice] + amt > 50000) return showToast("Limit is 50k."); 
                 myDiceBets[choice] += amt; 
             } else if (game === 'derby') { 
+                // STRICT 1-BET RULE FOR DERBY
+                let existingBetLane = myDerbyBets.findIndex(amount => amount > 0);
+                if (existingBetLane !== -1 && existingBetLane !== choice) {
+                    return showToast("You can only bet on ONE lane per race!");
+                }
                 if (myDerbyBets[choice] + amt > 50000) return showToast("Limit is 50k."); 
                 myDerbyBets[choice] += amt; 
             } else if (game === 'color') { 
@@ -2251,7 +2151,7 @@
                 myCupsBets[choice] += amt; 
             }
             
-            // OPTIMISTIC UI UPDATE: Deduct immediately before server confirmation
+            // OPTIMISTIC UI UPDATE
             currentUser.credits -= amt;
             updateAllCredits();
             addLedgerEntry(`${game.toUpperCase()} BET`, amt, false, currentUser.credits);
@@ -2283,9 +2183,7 @@
                 const badge = document.getElementById(badgeId); 
                 
                 if (badge) { 
-                    // Reset styling on new bet
-                    badge.classList.remove('win');
-                    badge.classList.remove('lose');
+                    badge.classList.remove('win', 'lose');
                     badge.innerText = formatNumber(data.totalChoiceBet); 
                     if (data.totalChoiceBet > 0) {
                         badge.classList.remove('hidden'); 
@@ -2297,12 +2195,11 @@
         }
 
         // ==========================================
-        // 12. NAVIGATION (JOIN/LEAVE GAMES)
+        // 13. NAVIGATION (JOIN/LEAVE GAMES)
         // ==========================================
         window.joinGame = function(gameId) {
             currentRoomId = gameId; 
             
-            // Hide Hubs explicitly
             document.getElementById('casino-hub-view').classList.add('hidden');
             document.getElementById('exchange-hub-view').classList.add('hidden'); 
             
@@ -2337,7 +2234,6 @@
         window.exitGame = function(game) { 
             let actualGame = game || currentRoomId;
             
-            // Check active bets before leaving
             if (actualGame === 'blackjack' || actualGame === '5seat' || actualGame === '3seat') { 
                 if (mySeatIndex !== -1 && currentGameState && currentGameState.seats[mySeatIndex] && currentGameState.seats[mySeatIndex].hands.some(h => h.bet > 0)) { 
                     return showToast("Active bets restrict leave."); 
@@ -2431,7 +2327,7 @@
         }
 
         // ==========================================
-        // 13. BLACKJACK ENGINE (DOM TARGETED)
+        // 14. BLACKJACK ENGINE (SURGICAL DOM UPDATES)
         // ==========================================
         window.actSitDown = function(idx) { 
             if (socket) socket.emit('join_seat', { roomId: currentRoomId, username: currentUser.username, seatIndex: idx }); 
@@ -2459,6 +2355,8 @@
         window.actEjectSeat = function(idx) { 
             if (socket) socket.emit('leave_seat', { roomId: currentRoomId, username: currentUser.username, seatIndex: idx }); 
         }
+        
+        // Actions trigger the server, which will immediately respond with the new state
         window.actHit = function(idx) { 
             if (socket) socket.emit('player_action_hit', { roomId: currentRoomId, username: currentUser.username, seatIndex: idx }); 
         }
@@ -2476,25 +2374,13 @@
 
         if (socket) {
             socket.on('game_state_update', (state) => {
-                // Determine if a round just finished to play correct audio
                 if (currentGameState && currentGameState.status === 'dealerTurn' && state.status === 'resolving') { 
                     if (mySeatIndex !== -1 && state.seats[mySeatIndex]) { 
-                        let totalWinAmt = 0;
-                        state.seats[mySeatIndex].hands.forEach(h => {
-                            if (h.result === 'win') totalWinAmt += (h.bet * 2);
-                            else if (h.result === 'win-bj') totalWinAmt += (h.bet * 2.5);
-                            else if (h.result === 'push') totalWinAmt += h.bet;
-                        });
-                        
                         let hasWin = state.seats[mySeatIndex].hands.some(h => h.result === 'win' || h.result === 'win-bj'); 
                         let hasLose = state.seats[mySeatIndex].hands.some(h => h.result === 'lose' || h.result === 'bust'); 
                         
-                        if (hasWin) { 
-                            playSfx('win'); 
-                            addLedgerEntry('BLACKJACK WIN', totalWinAmt, true, currentUser.credits + totalWinAmt); 
-                        } else if (hasLose) {
-                            playSfx('lose'); 
-                        }
+                        if (hasWin) playSfx('win'); 
+                        else if (hasLose) playSfx('lose'); 
                     } 
                 }
                 
@@ -2510,23 +2396,16 @@
         }
 
         function calculateValue(cards) { 
-            let val = 0; 
-            let aces = 0; 
-            cards.forEach(c => { 
-                val += c.weight; 
-                if (c.value === 'A') aces++; 
-            }); 
-            while (val > 21 && aces > 0) { 
-                val -= 10; 
-                aces--; 
-            } 
+            let val = 0; let aces = 0; 
+            cards.forEach(c => { val += c.weight; if (c.value === 'A') aces++; }); 
+            while (val > 21 && aces > 0) { val -= 10; aces--; } 
             return val; 
         }
 
         function renderTable(state) {
             if (!state) return; 
             
-            // Fix Blackjack freezing on PROCESSING...
+            // 1. STATUS & TIMERS
             if (state.status === 'betting') {
                 setStatus('bj', 'BETTING');
                 setTimer('bj', state.betTimeLeft, "BETS CLOSING");
@@ -2534,24 +2413,42 @@
                 setStatus('bj', 'RESULTS');
                 setTimer('bj', state.nextRoundTimeLeft, "NEXT ROUND");
             } else if (state.status === 'playing' || state.status === 'dealerTurn') {
-                setStatus('bj', 'ACTION REQUIRED');
-                setTimer('bj', 0); // Clear timer explicitly so buttons show
+                if (state.status === 'playing') setTimer('bj', state.turnTimeLeft, "TURN TIMER");
+                else setTimer('bj', 0);
+                
+                // Show action indicator
+                if (state.activeSeatIndex !== -1 && state.seats[state.activeSeatIndex]) {
+                    const activeName = state.seats[state.activeSeatIndex].username;
+                    setStatus('bj', `${activeName.toUpperCase()}'S TURN`);
+                } else if (state.status === 'dealerTurn') {
+                    setStatus('bj', "DEALER'S TURN");
+                }
             } else {
                 setStatus('bj', state.status.toUpperCase());
                 setTimer('bj', 0);
             }
 
-            // Target Dealer Cards exactly
-            const dCards = document.getElementById('bj-dealer-cards'); 
+            // 2. SURGICAL DEALER CARDS UPDATE
+            const dCardsWrapper = document.getElementById('bj-dealer-cards'); 
             const dBadge = document.getElementById('bj-dealer-val');
-            let dealerHtml = ''; 
             
-            state.dealerCards.forEach(c => { 
-                dealerHtml += formatCardHTML(c, c.hidden); 
-            });
-            
-            if (dCards && dCards.innerHTML !== dealerHtml) {
-                dCards.innerHTML = dealerHtml;
+            if (dCardsWrapper) {
+                let currentCount = dCardsWrapper.children.length;
+                let targetCount = state.dealerCards.length;
+                
+                // If cards were cleared (new round), wipe the container
+                if (targetCount === 0) dCardsWrapper.innerHTML = '';
+                else if (targetCount > currentCount) {
+                    // Append only new cards
+                    for (let c = currentCount; c < targetCount; c++) {
+                        dCardsWrapper.insertAdjacentHTML('beforeend', formatCardHTML(state.dealerCards[c], state.dealerCards[c].hidden));
+                    }
+                } else if (targetCount === currentCount && targetCount > 0) {
+                    // Handle revealing the hidden hole card
+                    if (!state.dealerCards[1].hidden && dCardsWrapper.children[1] && dCardsWrapper.children[1].classList.contains('hidden-card')) {
+                        dCardsWrapper.children[1].outerHTML = formatCardHTML(state.dealerCards[1], false);
+                    }
+                }
             }
             
             const visibleDealerCards = state.dealerCards.filter(c => !c.hidden);
@@ -2564,16 +2461,13 @@
                 if (dBadge) dBadge.classList.add('hidden'); 
             }
 
+            // 3. SURGICAL SEATS UPDATE
             const seatsArea = document.getElementById('bj-seats-area'); 
-            let seatsHtml = '';
             
             if (currentUser) { 
                 const mySeatData = state.seats.find(s => s && s.username.toLowerCase() === currentUser.username.toLowerCase()); 
-                if (mySeatData) { 
-                    mySeatIndex = state.seats.indexOf(mySeatData);
-                } else { 
-                    mySeatIndex = -1; 
-                } 
+                if (mySeatData) mySeatIndex = state.seats.indexOf(mySeatData);
+                else mySeatIndex = -1; 
             }
 
             let hasCrown = myInventory.includes('crown');
@@ -2583,114 +2477,187 @@
                 let isMySeat = currentUser && seatData && seatData.username.toLowerCase() === currentUser.username.toLowerCase(); 
                 let hasSeatAnywhere = state.seats.some(s => s && s.username.toLowerCase() === currentUser.username.toLowerCase());
                 
-                let seatClass = 'seat'; 
-                if (seatData && state.activeSeatIndex === index) {
-                    seatClass += ' active-turn'; 
+                // Get or Create Seat Container
+                let seatContainer = document.getElementById(`seat-${index}`);
+                if (!seatContainer) {
+                    // This should only happen once on initial load
+                    seatsArea.insertAdjacentHTML('beforeend', `<div class="seat" id="seat-${index}"></div>`);
+                    seatContainer = document.getElementById(`seat-${index}`);
                 }
+                
+                // Manage Active Turn Highlighting
+                if (seatData && state.activeSeatIndex === index) seatContainer.classList.add('active-turn');
+                else seatContainer.classList.remove('active-turn');
 
-                seatsHtml += `<div class="${seatClass}" id="seat-${index}">`;
+                let seatsHtml = ''; // We will build the *contents* of the seat here and inject it
                 
                 if (!seatData) {
                     if (state.status === 'waiting' || state.status === 'betting') {
                         let sitBtn = !hasSeatAnywhere ? `<button class="btn btn-green small" onclick="actSitDown(${index})">SIT DOWN</button>` : '';
-                        seatsHtml += `
-                            <div style="height:110px; display:flex; flex-direction:column; justify-content:center; align-items:center; border: 2px dashed rgba(255,255,255,0.2); width:100%; border-radius:6px; margin-bottom:5px;">
-                                ${sitBtn}
-                            </div>
-                        `;
+                        seatsHtml = `<div class="seat-empty-box">${sitBtn}</div>`;
+                    } else {
+                        seatsHtml = ``; // Empty during play
                     }
+                    if (seatContainer.innerHTML !== seatsHtml) seatContainer.innerHTML = seatsHtml;
                 } else {
-                    seatsHtml += `<div class="hands-wrapper">`;
+                    // SEAT IS OCCUPIED
+                    let isRebuildRequired = false;
                     
-                    // Render hands (If split, it loops twice and creates two separate sets of cards and pills)
+                    // We must rebuild if the basic structure doesn't exist yet
+                    if (!document.getElementById(`hands-wrapper-${index}`)) isRebuildRequired = true;
+                    
+                    if (isRebuildRequired) {
+                        // FULL REBUILD (Happens once when player sits down)
+                        seatsHtml += `<div class="hands-wrapper" id="hands-wrapper-${index}">`;
+                        seatData.hands.forEach((hand, hIdx) => {
+                            seatsHtml += `<div class="hand-container" id="hand-container-${index}-${hIdx}">`;
+                            seatsHtml += `<div style="display:flex; flex-direction:row;" id="hand-cards-${index}-${hIdx}"></div>`;
+                            seatsHtml += `<div class="hand-score hidden" id="hand-score-${index}-${hIdx}">0</div>`;
+                            seatsHtml += `<div class="bj-bet-line hidden" id="hand-bet-${index}-${hIdx}">0</div>`;
+                            seatsHtml += `</div>`; 
+                        });
+                        seatsHtml += `</div>`;
+                        
+                        let nameplateColor = isMySeat ? 'var(--green)' : '#f8fafc';
+                        if (isMySeat && hasCrown) nameplateColor = 'var(--gold)';
+                        seatsHtml += `<div class="nameplate" style="color:${nameplateColor};">${seatData.username}</div>`;
+                        
+                        // Controls Area Wrapper
+                        seatsHtml += `<div id="controls-area-${index}" style="width:100%;"></div>`;
+                        
+                        // Action Result Indicator (Bust/Blackjack)
+                        seatsHtml += `<div class="bj-action-res" id="action-res-${index}"></div>`;
+                        
+                        seatContainer.innerHTML = seatsHtml;
+                    }
+                    
+                    // SURGICAL HAND & CARD UPDATE
+                    // If player splits, a new hand container needs to be dynamically added if missing
+                    const handsWrapper = document.getElementById(`hands-wrapper-${index}`);
+                    if (handsWrapper && handsWrapper.children.length < seatData.hands.length) {
+                        let hIdx = seatData.hands.length - 1;
+                        handsWrapper.insertAdjacentHTML('beforeend', `
+                            <div class="hand-container" id="hand-container-${index}-${hIdx}">
+                                <div style="display:flex; flex-direction:row;" id="hand-cards-${index}-${hIdx}"></div>
+                                <div class="hand-score hidden" id="hand-score-${index}-${hIdx}">0</div>
+                                <div class="bj-bet-line hidden" id="hand-bet-${index}-${hIdx}">0</div>
+                            </div>
+                        `);
+                    }
+
                     seatData.hands.forEach((hand, hIdx) => {
-                        seatsHtml += `<div class="hand-container">`;
-                        
-                        // Cards
-                        let cardsHtml = `<div style="display:flex; flex-direction:row;">`;
-                        hand.cards.forEach(c => { 
-                            cardsHtml += formatCardHTML(c, false); 
-                        }); 
-                        cardsHtml += `</div>`;
-                        seatsHtml += cardsHtml;
-                        
-                        // Score Bubble
-                        if (hand.cards.length > 0) {
-                            seatsHtml += `<div class="hand-score">${hand.value || calculateValue(hand.cards)}</div>`;
-                        }
-                        
-                        // INDIVIDUAL HAND BET PILL (REMOVED [] and COIN per request)
-                        let handBet = hand.bet > 0 ? hand.bet : 0; 
-                        if (handBet > 0 || state.status === 'resolving') { 
-                            let betClass = 'bj-bet-line';
-                            if(state.status === 'resolving') {
-                                if(hand.result === 'win' || hand.result === 'win-bj') {
-                                    betClass += ' win';
-                                } else if(hand.result === 'lose' || hand.status === 'bust') {
-                                    handBet = 0;
+                        // 1. Update Cards Surgically
+                        let cardContainer = document.getElementById(`hand-cards-${index}-${hIdx}`);
+                        if (cardContainer) {
+                            let currCount = cardContainer.children.length;
+                            if (hand.cards.length === 0) cardContainer.innerHTML = '';
+                            else if (hand.cards.length > currCount) {
+                                for(let c = currCount; c < hand.cards.length; c++) {
+                                    cardContainer.insertAdjacentHTML('beforeend', formatCardHTML(hand.cards[c], false));
                                 }
                             }
-                            seatsHtml += `<div class="${betClass}">${formatNumber(handBet)}</div>`; 
                         }
 
-                        seatsHtml += `</div>`; // End hand-container
-                    });
-                    seatsHtml += `</div>`; // End hands-wrapper
-                    
-                    let nameplateColor = isMySeat ? 'var(--green)' : '#f8fafc';
-                    if (isMySeat && hasCrown) nameplateColor = 'var(--gold)';
-                    
-                    seatsHtml += `<div class="nameplate" style="color:${nameplateColor};">${seatData.username}</div>`;
-
-                    if (isMySeat && (state.status === 'betting' || state.status === 'waiting')) {
-                        if (seatData.hands[0].bet === 0) {
-                            let startBet = window.lastBetAmount || 0; 
-                            let opts = [100, 1000, 5000, 20000, 50000]; 
-                            if (!opts.includes(startBet) && startBet !== 0) startBet = 1000;
-                            let optHTML = opts.map(val => `<option value="${val}" ${val === startBet ? 'selected' : ''}>${formatNumber(val)}</option>`).join('');
-                            
-                            seatsHtml += `
-                                <div style="display:flex; flex-direction:column; gap:4px; width:100%; margin-top:5px;">
-                                    <select id="inseat-bet-${index}" style="padding:2px; font-size:18px;">${optHTML}</select>
-                                    <div style="display:flex; gap:4px; width:100%;">
-                                        <button class="btn btn-green small" style="flex:1;" onclick="actPlaceBetDropdown(${index})">BET</button>
-                                        <button class="btn btn-red small" style="flex:1;" onclick="actEjectSeat(${index})">LEAVE</button>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    } else if (isMySeat && state.status === 'waiting') { 
-                        seatsHtml += `<button class="btn btn-red small" style="width:100%; margin-top:5px;" onclick="actEjectSeat(${index})">STAND UP</button>`; 
-                    }
-
-                    if (isMySeat && state.status === 'playing' && state.activeSeatIndex === index) {
-                        const cHand = seatData.hands[seatData.currentHand];
-                        if (cHand && cHand.status === 'waiting') {
-                            seatsHtml += `
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; width:100%; margin-top:5px;">
-                                    <button class="btn btn-green small" onclick="actHit(${index})">HIT</button>
-                                    <button class="btn btn-gold small" onclick="actStand(${index})">STAND</button>
-                            `;
-                            
-                            if (cHand.cards.length === 2 && seatData.credits >= cHand.bet) { 
-                                seatsHtml += `<button class="btn btn-blue small" onclick="actDouble(${index})">2X</button>`; 
-                                if (cHand.cards[0].weight === cHand.cards[1].weight && seatData.hands.length < 2) { 
-                                    seatsHtml += `<button class="btn small" style="background:var(--purple); border-color:#d8b4fe;" onclick="actSplit(${index})">SPLIT</button>`; 
-                                } 
+                        // 2. Update Score
+                        let scoreUI = document.getElementById(`hand-score-${index}-${hIdx}`);
+                        if (scoreUI) {
+                            if (hand.cards.length > 0) {
+                                scoreUI.innerText = hand.value || calculateValue(hand.cards);
+                                scoreUI.classList.remove('hidden');
+                            } else {
+                                scoreUI.classList.add('hidden');
                             }
-                            seatsHtml += `</div>`;
+                        }
+
+                        // 3. Update Bet Pill & Results
+                        let betUI = document.getElementById(`hand-bet-${index}-${hIdx}`);
+                        if (betUI) {
+                            if (hand.bet > 0 || state.status === 'resolving') {
+                                betUI.classList.remove('hidden', 'win', 'lose');
+                                
+                                let displayBet = hand.bet;
+                                if (state.status === 'resolving') {
+                                    if (hand.result === 'win' || hand.result === 'win-bj') betUI.classList.add('win');
+                                    else if (hand.result === 'lose' || hand.result === 'bust') {
+                                        betUI.classList.add('lose');
+                                        displayBet = 0;
+                                    }
+                                }
+                                betUI.innerText = formatNumber(displayBet);
+                            } else {
+                                betUI.classList.add('hidden');
+                            }
+                        }
+                        
+                        // 4. Action Flash Text (Bust / Blackjack)
+                        let actionResUI = document.getElementById(`action-res-${index}`);
+                        if (actionResUI && (hand.status === 'bust' || hand.status === 'blackjack')) {
+                            // Only trigger animation once by checking text
+                            const text = hand.status.toUpperCase() + "!";
+                            if (actionResUI.innerText !== text) {
+                                actionResUI.innerText = text;
+                                actionResUI.style.color = hand.status === 'bust' ? 'var(--red)' : 'var(--gold)';
+                                actionResUI.classList.remove('show');
+                                void actionResUI.offsetWidth; // Force reflow
+                                actionResUI.classList.add('show');
+                            }
+                        }
+                    });
+
+                    // SURGICAL CONTROLS UPDATE
+                    let controlsArea = document.getElementById(`controls-area-${index}`);
+                    if (controlsArea) {
+                        let controlsHtml = '';
+                        if (isMySeat && (state.status === 'betting' || state.status === 'waiting')) {
+                            if (seatData.hands[0].bet === 0) {
+                                let startBet = window.lastBetAmount || 0; 
+                                let opts = [100, 1000, 5000, 20000, 50000]; 
+                                if (!opts.includes(startBet) && startBet !== 0) startBet = 1000;
+                                let optHTML = opts.map(val => `<option value="${val}" ${val === startBet ? 'selected' : ''}>${formatNumber(val)}</option>`).join('');
+                                
+                                controlsHtml = `
+                                    <div style="display:flex; flex-direction:column; gap:4px; width:100%; margin-top:5px;">
+                                        <select id="inseat-bet-${index}" style="padding:2px; font-size:18px;">${optHTML}</select>
+                                        <div style="display:flex; gap:4px; width:100%;">
+                                            <button class="btn btn-green small" style="flex:1;" onclick="actPlaceBetDropdown(${index})">BET</button>
+                                            <button class="btn btn-red small" style="flex:1;" onclick="actEjectSeat(${index})">LEAVE</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        } else if (isMySeat && state.status === 'waiting') { 
+                            controlsHtml = `<button class="btn btn-red small" style="width:100%; margin-top:5px;" onclick="actEjectSeat(${index})">STAND UP</button>`; 
+                        }
+
+                        if (isMySeat && state.status === 'playing' && state.activeSeatIndex === index) {
+                            const cHand = seatData.hands[seatData.currentHand];
+                            if (cHand && cHand.status === 'waiting') {
+                                controlsHtml = `
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; width:100%; margin-top:5px;">
+                                        <button class="btn btn-green small" onclick="actHit(${index})">HIT</button>
+                                        <button class="btn btn-gold small" onclick="actStand(${index})">STAND</button>
+                                `;
+                                
+                                if (cHand.cards.length === 2 && seatData.credits >= cHand.bet) { 
+                                    controlsHtml += `<button class="btn btn-blue small" onclick="actDouble(${index})">2X</button>`; 
+                                    if (cHand.cards[0].weight === cHand.cards[1].weight && seatData.hands.length < 2) { 
+                                        controlsHtml += `<button class="btn small" style="background:var(--purple); border-color:#d8b4fe;" onclick="actSplit(${index})">SPLIT</button>`; 
+                                    } 
+                                }
+                                controlsHtml += `</div>`;
+                            }
+                        }
+                        
+                        if (controlsArea.innerHTML !== controlsHtml) {
+                            controlsArea.innerHTML = controlsHtml;
                         }
                     }
                 }
-                seatsHtml += `</div>`;
-            }
-            if (seatsArea && seatsArea.innerHTML !== seatsHtml) {
-                seatsArea.innerHTML = seatsHtml; 
             }
         }
 
         // ==========================================
-        // 14. BACCARAT ENGINE
+        // 15. BACCARAT ENGINE
         // ==========================================
         if (socket) {
             socket.on('baccarat_state_update', (data) => {
@@ -2727,56 +2694,61 @@
                 else if (data.status === 'resolving') {
                     pScoreUI.style.display = 'block'; 
                     bScoreUI.style.display = 'block'; 
-                    let pScore = 0, bScore = 0;
                     
+                    // Modulo 10 Counting
+                    let pScore = (getBaccaratWeight(data.pCards[0])) % 10;
+                    let bScore = (getBaccaratWeight(data.bCards[0])) % 10;
+
+                    // Faster, precise flip timings
                     setTimeout(() => { 
-                        pCardsUI.insertAdjacentHTML('beforeend', formatCardHTML(data.pCards[0], false)); 
-                        pScore = (pScore + getBaccaratWeight(data.pCards[0])) % 10; 
+                        pCardsUI.insertAdjacentHTML('beforeend', `<div class="flip-reveal">${formatCardHTML(data.pCards[0], false)}</div>`); 
                         pScoreUI.innerText = pScore; 
                         playSfx('deal'); 
                     }, 500);
+                    
                     setTimeout(() => { 
-                        bCardsUI.insertAdjacentHTML('beforeend', formatCardHTML(data.bCards[0], false)); 
-                        bScore = (bScore + getBaccaratWeight(data.bCards[0])) % 10; 
+                        bCardsUI.insertAdjacentHTML('beforeend', `<div class="flip-reveal">${formatCardHTML(data.bCards[0], false)}</div>`); 
                         bScoreUI.innerText = bScore; 
                         playSfx('deal'); 
-                    }, 1500);
+                    }, 1000);
+                    
                     setTimeout(() => { 
-                        pCardsUI.insertAdjacentHTML('beforeend', formatCardHTML(data.pCards[1], false)); 
+                        pCardsUI.insertAdjacentHTML('beforeend', `<div class="flip-reveal">${formatCardHTML(data.pCards[1], false)}</div>`); 
                         pScore = (pScore + getBaccaratWeight(data.pCards[1])) % 10; 
                         pScoreUI.innerText = pScore; 
                         playSfx('deal'); 
-                    }, 2500);
+                    }, 1500);
+                    
                     setTimeout(() => { 
-                        bCardsUI.insertAdjacentHTML('beforeend', formatCardHTML(data.bCards[1], false)); 
+                        bCardsUI.insertAdjacentHTML('beforeend', `<div class="flip-reveal">${formatCardHTML(data.bCards[1], false)}</div>`); 
                         bScore = (bScore + getBaccaratWeight(data.bCards[1])) % 10; 
                         bScoreUI.innerText = bScore; 
                         playSfx('deal'); 
-                    }, 3500);
+                    }, 2000);
 
-                    let delay = 4500;
+                    let delay = 3000;
                     if (data.thirdCardTarget) {
                         if (data.thirdCardTarget === 'player' || data.thirdCardTarget === 'both') {
                             setTimeout(() => { setStatus('bac', "PLAYER DRAWS 3RD CARD"); }, delay); 
-                            delay += 1000;
+                            delay += 500;
                             setTimeout(() => { 
-                                pCardsUI.insertAdjacentHTML('beforeend', formatCardHTML(data.pCards[2], false)); 
+                                pCardsUI.insertAdjacentHTML('beforeend', `<div class="flip-reveal">${formatCardHTML(data.pCards[2], false)}</div>`); 
                                 pScore = (pScore + getBaccaratWeight(data.pCards[2])) % 10; 
                                 pScoreUI.innerText = pScore; 
                                 playSfx('deal'); 
                             }, delay); 
-                            delay += 1500;
+                            delay += 1000;
                         }
                         if (data.thirdCardTarget === 'banker' || data.thirdCardTarget === 'both') {
-                            let bDelay = data.thirdCardTarget === 'both' ? 4000 : 2500;
-                            setTimeout(() => { setStatus('bac', "BANKER DRAWS 3RD CARD"); }, delay + (data.thirdCardTarget === 'both'? 2500 : 0)); 
+                            setTimeout(() => { setStatus('bac', "BANKER DRAWS 3RD CARD"); }, delay); 
+                            delay += 500;
                             setTimeout(() => { 
-                                bCardsUI.insertAdjacentHTML('beforeend', formatCardHTML(data.bCards[2], false)); 
+                                bCardsUI.insertAdjacentHTML('beforeend', `<div class="flip-reveal">${formatCardHTML(data.bCards[2], false)}</div>`); 
                                 bScore = (bScore + getBaccaratWeight(data.bCards[2])) % 10; 
                                 bScoreUI.innerText = bScore; 
                                 playSfx('deal'); 
-                            }, delay + (data.thirdCardTarget === 'both'? 3500 : 1000)); 
-                            delay += bDelay;
+                            }, delay); 
+                            delay += 1000;
                         }
                     }
 
@@ -2792,7 +2764,6 @@
                                 playSfx('win'); 
                                 addLedgerEntry('BACCARAT WIN', totalWin, true, currentUser.credits + totalWin);
                                 
-                                // Mario Coin Animation Trigger
                                 myWins.forEach(w => {
                                     triggerWinAnimation(`badge-baccarat-${w.choice}`, w.amount);
                                 });
@@ -2800,7 +2771,6 @@
                             else if (data.winner === 'tie' && (myBaccaratBets.player > 0 || myBaccaratBets.banker > 0)) { 
                                 setStatus('bac', `PUSH!`); 
                                 playSfx('win'); 
-                                // Refund UI
                                 ['player', 'banker'].forEach(c => {
                                     if(myBaccaratBets[c] > 0) triggerWinAnimation(`badge-baccarat-${c}`, myBaccaratBets[c]);
                                 });
@@ -2840,13 +2810,14 @@
                 } 
                 else if (data.status === 'resolving') {
                     setTimeout(() => { 
-                        dCardUI.insertAdjacentHTML('beforeend', formatCardHTML(data.dragonCard, false)); 
+                        dCardUI.insertAdjacentHTML('beforeend', `<div class="flip-reveal">${formatCardHTML(data.dragonCard, false)}</div>`); 
                         playSfx('deal'); 
                     }, 500);
                     setTimeout(() => { 
-                        tCardUI.insertAdjacentHTML('beforeend', formatCardHTML(data.tigerCard, false)); 
+                        tCardUI.insertAdjacentHTML('beforeend', `<div class="flip-reveal">${formatCardHTML(data.tigerCard, false)}</div>`); 
                         playSfx('deal'); 
                     }, 1500);
+                    
                     setTimeout(() => {
                         setStatus('dvt', data.winner === 'tie' ? "TIE!" : `${data.winner.toUpperCase()} WINS!`);
                         let totalBet = Object.values(myDvtBets).reduce((a,b)=>a+b, 0);
@@ -2865,7 +2836,7 @@
                                 setStatus('dvt', `PUSH (HALF WIN)`); 
                                 playSfx('win'); 
                                 ['dragon', 'tiger'].forEach(c => {
-                                    if(myDvtBets[c] > 0) triggerWinAnimation(`badge-dvt-${c}`, myDvtBets[c]/2); // Half refund approx
+                                    if(myDvtBets[c] > 0) triggerWinAnimation(`badge-dvt-${c}`, myDvtBets[c]/2); 
                                 });
                             } else { 
                                 setStatus('dvt', "HOUSE WINS", true); 
@@ -2873,14 +2844,6 @@
                                 ['dragon', 'tiger', 'tie'].forEach(c => {
                                     if(myDvtBets[c] > 0) triggerLoseAnimation(`badge-dvt-${c}`);
                                 });
-                                
-                                if (myInventory.includes('amulet')) {
-                                    let refund = Math.floor(totalBet * 0.05);
-                                    currentUser.credits += refund; 
-                                    updateAllCredits();
-                                    addLedgerEntry('DRAGON AMULET REFUND', refund, true, currentUser.credits);
-                                    showToast(`Amulet refunded ${formatNumber(refund)} CR!`, 'success');
-                                }
                             }
                         }
                     }, 2500);
@@ -2888,7 +2851,7 @@
             });
 
             // ==========================================
-            // 15. ARCADE ENGINES (DICE, DERBY, COLOR, CUPS)
+            // 16. ARCADE ENGINES (DICE, DERBY, COLOR, CUPS)
             // ==========================================
             socket.on('dice_state_update', (data) => {
                 if (currentRoomId !== 'dice') return;
@@ -3012,9 +2975,13 @@
             socket.on('color_state_update', (data) => {
                 if (currentRoomId !== 'color') return;
                 
+                const dies = [document.getElementById('col-d1'), document.getElementById('col-d2'), document.getElementById('col-d3')];
+
                 if (data.status === 'betting') { 
                     setStatus('color', "PLACE YOUR BETS"); 
                     myColorBets = { red: 0, blue: 0, yellow: 0, green: 0, pink: 0, white: 0 };
+                    
+                    dies.forEach(d => { if(d) d.classList.remove('rolling'); });
                     
                     ['red', 'blue', 'yellow', 'green', 'pink', 'white'].forEach(c => {
                         const b = document.getElementById(`badge-color-${c}`);
@@ -3025,8 +2992,11 @@
                 else if (data.status === 'rolling') { 
                     setTimer('color', 0); 
                     setStatus('color', "ROLLING..."); 
+                    dies.forEach(d => { if(d) d.classList.add('rolling'); });
                 }
                 else if (data.status === 'resolving') {
+                    dies.forEach(d => { if(d) d.classList.remove('rolling'); });
+                    
                     document.getElementById('col-d1').className = `color-die c-${data.dice[0]}`; 
                     document.getElementById('col-d2').className = `color-die c-${data.dice[1]}`; 
                     document.getElementById('col-d3').className = `color-die c-${data.dice[2]}`; 
@@ -3037,12 +3007,6 @@
                         let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
                         if (myWins.length > 0) { 
                             let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
-                            if (myInventory.includes('orb')) {
-                                let bonus = Math.floor(totalWin * 0.05);
-                                totalWin += bonus; 
-                                currentUser.credits += bonus; 
-                                showToast(`Orb activated! +${formatNumber(bonus)} CR Bonus!`, 'success');
-                            }
                             setStatus('color', `YOU WON ${formatNumber(totalWin)}!`); 
                             playSfx('win');
                             addLedgerEntry('PERYA COLOR WIN', totalWin, true, currentUser.credits + totalWin);
@@ -3065,7 +3029,11 @@
                 if (data.status === 'shuffling') { 
                     setStatus('cups', "SHUFFLING..."); 
                     myCupsBets = [0,0,0]; 
-                    document.querySelectorAll('.cup-wrapper').forEach(w => w.classList.remove('reveal')); 
+                    
+                    document.querySelectorAll('.cup-wrapper').forEach(w => {
+                        w.classList.remove('reveal');
+                        w.classList.add('shuffling');
+                    }); 
                     
                     for(let i=0; i<3; i++) {
                         const b = document.getElementById(`badge-cups-${i}`);
@@ -3074,6 +3042,7 @@
                 }
                 else if (data.status === 'betting') { 
                     setStatus('cups', "FIND THE BALL"); 
+                    document.querySelectorAll('.cup-wrapper').forEach(w => w.classList.remove('shuffling'));
                     setTimer('cups', data.betEndTime - Date.now(), "BETS CLOSING"); 
                 }
                 else if (data.status === 'resolving') {
@@ -3145,21 +3114,6 @@
                     }
                 }
                 
-                const matchVisual = document.getElementById('pvp-visual');
-                if (state.status === 'flipping' || state.status === 'spinning') { 
-                    matchVisual.innerText = '⚅'; 
-                } else if (state.status === 'resolving' || state.status === 'finished') { 
-                    matchVisual.innerText = state.result ? state.result.charAt(0) : '?'; 
-                    if(state.status === 'finished') { 
-                        if(mySeatData && mySeatData.score >= state.format) {
-                            playSfx('win'); 
-                        } else if (mySeatData) {
-                            playSfx('lose'); 
-                        }
-                    } 
-                } else { 
-                    matchVisual.innerText = '?'; 
-                }
             });
         }
 
@@ -3176,7 +3130,7 @@
         };
 
         // ==========================================
-        // 16. ANTI-CHEAT & SCALING
+        // 17. ANTI-CHEAT & SCALING
         // ==========================================
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', function(e) { 
