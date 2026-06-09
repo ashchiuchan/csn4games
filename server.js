@@ -8,7 +8,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' }, maxHttpBufferSize: 5e6 });
 
-// --- LOGGING & CORS MIDDLEWARE ---
+// ==========================================
+// 1. MIDDLEWARE & API CONFIG
+// ==========================================
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -20,62 +22,98 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.static(__dirname));
 
-// --- API HEALTH CHECK ---
 app.get('/api/health', (req, res) => {
     res.json({ status: 'Online', db_state: mongoose.connection.readyState });
 });
 
-// --- MONGODB CONNECTION ---
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/casinoroyale', {
+// ==========================================
+// 2. MONGODB CONNECTION & SCHEMAS
+// ==========================================
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/stickntrade', {
     serverSelectionTimeoutMS: 5000 
 }).then(async () => {
     console.log('MongoDB Connected Successfully');
     try {
         const adminConfig = await SystemConfig.findOne({ configName: 'admin_password' });
         if (!adminConfig) await new SystemConfig({ configName: 'admin_password', configValue: 'admin123' }).save();
-        const modConfig = await SystemConfig.findOne({ configName: 'mod_password' });
-        if (!modConfig) await new SystemConfig({ configName: 'mod_password', configValue: 'mod123' }).save();
         console.log('SYSTEM LOG: Security Credentials Initialized.');
-    } catch(e) { console.error("DB Error:", e); }
+    } catch(e) { 
+        console.error("DB Error:", e); 
+    }
 }).catch(err => console.error('MongoDB connection error (Check Railway Variables):', err.message));
 
-// --- DATABASE SCHEMAS ---
-const SystemConfig = mongoose.model('SystemConfig', new mongoose.Schema({ configName: { type: String, unique: true }, configValue: { type: String } }));
+const SystemConfig = mongoose.model('SystemConfig', new mongoose.Schema({ 
+    configName: { type: String, unique: true }, 
+    configValue: { type: String } 
+}));
+
 const User = mongoose.model('User', new mongoose.Schema({
-    username: { type: String, required: true, unique: true }, password: { type: String, required: true },
-    credits: { type: Number, default: 0 }, status: { type: String, default: 'active' }, nameColor: { type: String, default: '#f8fafc' }, 
-    ipAddress: String, tosAccepted: Boolean, lastRewardClaim: { type: Date, default: null }, createdAt: { type: Date, default: Date.now },
-    inventory: { type: [String], default: ['Starter Token', 'Retro Badge'] }
+    username: { type: String, required: true, unique: true }, 
+    password: { type: String, required: true },
+    credits: { type: Number, default: 0 }, 
+    status: { type: String, default: 'active' }, 
+    nameColor: { type: String, default: '#f8fafc' }, 
+    ipAddress: String, 
+    tosAccepted: Boolean, 
+    lastRewardClaim: { type: Date, default: null }, 
+    createdAt: { type: Date, default: Date.now },
+    inventory: { type: [String], default: ['token', 'cap'] }
 }));
 
 const Transaction = mongoose.model('Transaction', new mongoose.Schema({
-    username: String, type: String, amount: Number, status: { type: String, default: 'completed' }, date: { type: Date, default: Date.now }
-}));
-
-const GiftCode = mongoose.model('GiftCode', new mongoose.Schema({ 
-    code: { type: String, unique: true }, amount: Number, usesLeft: Number,
-    batchName: String, claimedBy: { type: String, default: null }, claimDate: { type: Date, default: null }
+    username: String, 
+    type: String, 
+    amount: Number, 
+    status: { type: String, default: 'completed' }, 
+    date: { type: Date, default: Date.now }
 }));
 
 const Ticket = mongoose.model('Ticket', new mongoose.Schema({
-    username: String, target: String, type: String, subject: String,
+    username: String, 
+    target: String, 
+    type: String, 
+    subject: String,
     messages: [{ sender: String, text: String, date: { type: Date, default: Date.now } }],
-    status: { type: String, default: 'open' }, unreadPlayer: { type: Boolean, default: true },
-    unreadAdmin: { type: Boolean, default: false }, readBy: { type: [String], default: [] }, updatedAt: { type: Date, default: Date.now }
+    status: { type: String, default: 'open' }, 
+    unreadPlayer: { type: Boolean, default: true },
+    unreadAdmin: { type: Boolean, default: false }, 
+    readBy: { type: [String], default: [] }, 
+    updatedAt: { type: Date, default: Date.now }
 }));
 
 const GameRound = mongoose.model('GameRound', new mongoose.Schema({
-    game: String, roundId: String, timestamp: { type: Date, default: Date.now },
-    result: mongoose.Schema.Types.Mixed, players: [{ username: String, choice: String, bet: Number, win: Number }]
+    game: String, 
+    roundId: String, 
+    timestamp: { type: Date, default: Date.now },
+    result: mongoose.Schema.Types.Mixed, 
+    players: [{ username: String, choice: String, bet: Number, win: Number }]
 }));
 
-// --- GAME LOGIC GLOBALS ---
-const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']; const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-const rooms = { '3seat': createRoom(3), '5seat': createRoom(5) };
+// ==========================================
+// 3. GAME STATE GLOBALS
+// ==========================================
+const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']; 
+const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
 function createRoom(numSeats) {
-    return { seats: Array(numSeats).fill(null), dealerCards: [], deck: [], status: 'waiting', activeSeatIndex: -1, betEndTime: 0, nextRoundTime: 0, turnEndTime: 0, lobby: [], betTimerInterval: null, nextRoundInterval: null, turnTimerInterval: null, dealerInterval: null };
+    return { 
+        seats: Array(numSeats).fill(null), 
+        dealerCards: [], 
+        deck: [], 
+        status: 'waiting', 
+        activeSeatIndex: -1, 
+        betEndTime: 0, 
+        nextRoundTime: 0, 
+        turnEndTime: 0, 
+        lobby: [], 
+        betTimerInterval: null, 
+        nextRoundInterval: null, 
+        turnTimerInterval: null, 
+        dealerInterval: null 
+    };
 }
+
+const rooms = { '3seat': createRoom(3), '5seat': createRoom(5) };
 
 function getGameTitle(roomId) {
     if (roomId === '5seat') return 'CLASSIC BLACKJACK';
@@ -86,12 +124,12 @@ function getGameTitle(roomId) {
 const diceGame = { status: 'betting', betEndTime: Date.now() + 15000, dice: [1, 1], bets: [], history: [] };
 const derbyGame = { status: 'betting', betEndTime: Date.now() + 15000, distances: [0,0,0,0,0,0], speeds: [0,0,0,0,0,0], bets: [], history: [], laneProfiles: [] };
 const DERBY_PROFILES = [ { m: 2, s: 1.5 }, { m: 3, s: 1.2 }, { m: 3, s: 1.2 }, { m: 5, s: 0.9 }, { m: 7, s: 0.7 }, { m: 10, s: 0.4 } ];
-function shuffleDerby() { derbyGame.laneProfiles = [...DERBY_PROFILES].sort(() => Math.random() - 0.5); } shuffleDerby(); 
+function shuffleDerby() { derbyGame.laneProfiles = [...DERBY_PROFILES].sort(() => Math.random() - 0.5); } 
+shuffleDerby(); 
 
 const PERYA_COLORS = ['red', 'blue', 'yellow', 'green', 'pink', 'white'];
 const colorGame = { status: 'betting', betEndTime: Date.now() + 15000, dice: ['red', 'blue', 'yellow'], bets: [], history: [] };
 const cupsGame = { status: 'shuffling', stateEndTime: Date.now() + 3000, betEndTime: 0, winningCup: 0, bets: [], history: [] };
-const crashGame = { status: 'betting', betEndTime: Date.now() + 10000, multiplier: 1.00, crashPoint: 1.00, bets: [], history: [] };
 const baccaratGame = { status: 'betting', betEndTime: Date.now() + 15000, pCards: [], bCards: [], pVal: 0, bVal: 0, winner: '', bets: [], history: [] };
 const dvtGame = { status: 'betting', betEndTime: Date.now() + 12000, dragonCard: null, tigerCard: null, winner: '', bets: [], history: [] };
 
@@ -102,29 +140,62 @@ let liveTradeOffers = [];
 let activeTradeSessions = {};
 
 const socketUserMap = {}; 
-let diceLobby = []; let derbyLobby = []; let colorLobby = []; let pvpLobby = []; let cupsLobby = []; let crashLobby = []; let baccaratLobby = []; let dvtLobby = []; let slotsLobby = [];
-let strictHouseEdge = false; let gameLocks = { blackjack: false, dice: false, derby: false, color: false, cups: false, crash: false, baccarat: false, dvt: false, slots: false };
+let diceLobby = []; let derbyLobby = []; let colorLobby = []; let pvpLobby = []; let cupsLobby = []; let baccaratLobby = []; let dvtLobby = []; let slotsLobby = [];
+let strictHouseEdge = false; 
+let gameLocks = { blackjack: false, dice: false, derby: false, color: false, cups: false, baccarat: false, dvt: false, slots: false };
 
-function getPHTTime() { try { return new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Manila' }); } catch(e) { return new Date().toLocaleTimeString(); } }
-function adminLog(action) { io.to('admin_room').emit('admin_log', `▶ [${getPHTTime()}] ${action}`); }
+function getPHTTime() { 
+    try { return new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Manila' }); } 
+    catch(e) { return new Date().toLocaleTimeString(); } 
+}
+
+function adminLog(action) { 
+    io.to('admin_room').emit('admin_log', `▶ [${getPHTTime()}] ${action}`); 
+}
 
 async function sendSystemMail(username, subject, text) {
-    const t = new Ticket({ username, target: 'specific', type: 'message', subject, messages: [{ sender: 'SYSTEM', text }], unreadPlayer: true, unreadAdmin: false });
-    await t.save(); io.emit('new_mail', { username });
+    const t = new Ticket({ 
+        username, target: 'specific', type: 'message', subject, 
+        messages: [{ sender: 'SYSTEM ADMIN', text }], 
+        unreadPlayer: true, unreadAdmin: false 
+    });
+    await t.save(); 
+    io.emit('new_mail', { username });
 }
 
 function broadcastGlobalCounts() {
     io.emit('global_lobby_counts', {
-        '5seat': rooms['5seat'].lobby.length, '3seat': rooms['3seat'].lobby.length, 'derby': derbyLobby.length,
-        'cups': cupsLobby.length, 'dice': diceLobby.length, 'color': colorLobby.length, 'pvp': pvpLobby.length, 
-        'crash': crashLobby.length, 'baccarat': baccaratLobby.length, 'dvt': dvtLobby.length, 'slots': slotsLobby.length
+        '5seat': rooms['5seat'].lobby.length, 
+        '3seat': rooms['3seat'].lobby.length, 
+        'derby': derbyLobby.length,
+        'cups': cupsLobby.length, 
+        'dice': diceLobby.length, 
+        'color': colorLobby.length, 
+        'pvp': pvpLobby.length, 
+        'baccarat': baccaratLobby.length, 
+        'dvt': dvtLobby.length, 
+        'slots': slotsLobby.length
     });
 }
 
-function getNewDeck() { let deck = []; for (let i = 0; i < 6; i++) { for (let s of suits) { for (let v of values) { deck.push({ suit: s, value: v, weight: ['J','Q','K'].includes(v) ? 10 : (v==='A'?11:parseInt(v)) }); } } } return deck.sort(() => Math.random() - 0.5); }
+function getNewDeck() { 
+    let deck = []; 
+    for (let i = 0; i < 6; i++) { 
+        for (let s of suits) { 
+            for (let v of values) { 
+                deck.push({ 
+                    suit: s, 
+                    value: v, 
+                    weight: ['J','Q','K'].includes(v) ? 10 : (v === 'A' ? 11 : parseInt(v)) 
+                }); 
+            } 
+        } 
+    } 
+    return deck.sort(() => Math.random() - 0.5); 
+}
+
 const getBaccaratWeight = c => c.value === 'A' ? 1 : (['J','Q','K','10'].includes(c.value) ? 0 : parseInt(c.value));
 
-// Special DVT Weighting (A=1, K=13)
 const getDvtWeight = c => {
     if(c.value === 'A') return 1;
     if(c.value === 'J') return 11;
@@ -133,7 +204,286 @@ const getDvtWeight = c => {
     return parseInt(c.value);
 };
 
-// --- GAME & MARKET LOOPS ---
+
+// ==========================================
+// 4. REST APIs (LOGIN & BANK)
+// ==========================================
+app.post('/api/login', async (req, res) => {
+    try {
+        if (mongoose.connection.readyState !== 1) { 
+            return res.status(500).json({ error: 'DATABASE DISCONNECTED. Check MONGODB_URI.' }); 
+        }
+        
+        const { username, password } = req.body;
+        if (!username || !password) return res.status(400).json({error: "Missing credentials"});
+
+        let user = await User.findOne({ username: new RegExp('^' + username + '$', 'i') });
+
+        // Auto-Create User if they don't exist (Easier Testing)
+        if (!user) {
+            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+            user = new User({ 
+                username: username, 
+                password: password, 
+                ipAddress: ip, 
+                tosAccepted: true, 
+                status: 'active',
+                credits: 500000, // Starting Credits 
+                inventory: ['token', 'cap'] 
+            });
+            await user.save();
+            adminLog(`AUTO-CREATED missing account: ${username}`);
+        } else if (user.password !== password) {
+            return res.status(401).json({ error: 'Invalid password.' });
+        }
+
+        if (user.status === 'banned') return res.status(401).json({ error: 'Account banned.' });
+        
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; 
+        user.ipAddress = ip; 
+        await user.save();
+        adminLog(`${user.username} logged in.`);
+        
+        res.json({ 
+            username: user.username, 
+            credits: user.credits, 
+            status: user.status 
+        });
+    } catch(e) { 
+        console.error("Login Error:", e);
+        res.status(500).json({ error: 'Server error during login.' }); 
+    }
+});
+
+app.post('/api/bank/request', async (req, res) => {
+    try {
+        const { username, type, amount } = req.body; 
+        let txType = type === 'deposit' ? 'BANK DEPOSIT' : 'BANK WITHDRAWAL'; 
+        let currentCredits = undefined;
+        
+        if (amount <= 0 || amount > 100000) return res.status(400).json({ error: 'Invalid Limit. Max is 100,000.' });
+
+        if (type === 'withdrawal') {
+            const user = await User.findOneAndUpdate(
+                { username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, 
+                { $inc: { credits: -amount } }, 
+                { new: true }
+            );
+            if (!user) return res.status(400).json({ error: 'Insufficient funds.' }); 
+            currentCredits = user.credits;
+        } else if (type === 'deposit') {
+            const user = await User.findOneAndUpdate(
+                { username: new RegExp('^' + username + '$', 'i') }, 
+                { $inc: { credits: amount } }, 
+                { new: true }
+            );
+            if (!user) return res.status(400).json({ error: 'User not found.' }); 
+            currentCredits = user.credits;
+        }
+        
+        await new Transaction({ username, type: txType, amount, status: 'completed' }).save(); 
+        res.json({ success: true, newCredits: currentCredits });
+    } catch(e) { 
+        res.status(500).json({ error: 'Server Error' }); 
+    }
+});
+
+
+// ==========================================
+// 5. BLACKJACK CORE GAME LOOP
+// ==========================================
+function calculateValue(cards) { 
+    let val = 0; let aces = 0; 
+    cards.forEach(c => { val += c.weight; if (c.value === 'A') aces++; }); 
+    while (val > 21 && aces > 0) { val -= 10; aces--; } 
+    return val; 
+}
+
+function startGame(roomId) {
+    try {
+        let room = rooms[roomId]; if (!room) return; 
+        
+        room.status = 'playing'; 
+        room.deck = getNewDeck(); 
+        room.dealerCards = []; 
+        room.seats = room.seats.map(s => (s && s.hands[0].bet === 0) ? null : s);
+        
+        for (let i = 0; i < 2; i++) { 
+            room.seats.forEach(seat => { if (seat) seat.hands[0].cards.push(room.deck.pop()); }); 
+            room.dealerCards.push(room.deck.pop()); 
+        }
+        
+        room.seats.forEach(seat => { 
+            if (seat) { 
+                seat.hands[0].value = calculateValue(seat.hands[0].cards); 
+                if (seat.hands[0].value === 21) seat.hands[0].status = 'blackjack'; 
+            }
+        });
+        
+        let dealerInitialValue = calculateValue(room.dealerCards); 
+        if (dealerInitialValue === 21) { 
+            room.dealerCards[1].hidden = false; 
+            resolveBets(roomId, 21); 
+            return; 
+        }
+        
+        room.activeSeatIndex = room.seats.findIndex(s => s && s.hands[0].status === 'waiting');
+        if (room.activeSeatIndex === -1) { 
+            processDealerTurn(roomId); 
+        } else { 
+            room.turnEndTime = Date.now() + 15000; 
+            startTurnTimer(roomId); 
+            emitGameState(roomId); 
+        }
+    } catch(e) {}
+}
+
+function moveToNextTurn(roomId) {
+    try {
+        let room = rooms[roomId]; if (!room) return; 
+        clearInterval(room.turnTimerInterval);  
+        const seat = room.seats[room.activeSeatIndex];
+        
+        if (seat && seat.currentHand < seat.hands.length - 1) { 
+            seat.currentHand++; 
+            if (seat.hands[seat.currentHand].status !== 'waiting') return moveToNextTurn(roomId); 
+            room.turnEndTime = Date.now() + 15000; 
+            startTurnTimer(roomId); 
+            emitGameState(roomId); 
+            return; 
+        }
+        
+        let nextIndex = room.activeSeatIndex + 1; 
+        while (nextIndex < room.seats.length) { 
+            if (room.seats[nextIndex] && room.seats[nextIndex].hands[0].status === 'waiting') break; 
+            nextIndex++; 
+        }
+        
+        if (nextIndex >= room.seats.length) { 
+            processDealerTurn(roomId); 
+        } else { 
+            room.activeSeatIndex = nextIndex; 
+            room.turnEndTime = Date.now() + 15000; 
+            startTurnTimer(roomId); 
+            emitGameState(roomId); 
+        }
+    } catch(e) {}
+}
+
+async function processDealerTurn(roomId) {
+    try {
+        let room = rooms[roomId]; if (!room) return; 
+        room.status = 'dealerTurn'; 
+        room.activeSeatIndex = -1; 
+        clearInterval(room.turnTimerInterval);
+        
+        if(room.dealerCards.length > 1) room.dealerCards[1].hidden = false; 
+        emitGameState(roomId);
+        
+        setTimeout(() => {
+            let dealerValue = calculateValue(room.dealerCards); 
+            if (dealerValue >= 17) { resolveBets(roomId, dealerValue); return; }
+            room.dealerInterval = setInterval(() => { 
+                if (dealerValue < 17) { 
+                    room.dealerCards.push(room.deck.pop()); 
+                    dealerValue = calculateValue(room.dealerCards); 
+                    emitGameState(roomId); 
+                } else { 
+                    clearInterval(room.dealerInterval); 
+                    resolveBets(roomId, dealerValue); 
+                } 
+            }, 1000);
+        }, 1500); 
+    } catch(e) {}
+}
+
+async function resolveBets(roomId, dealerValue) {
+    try {
+        let room = rooms[roomId]; if (!room) return; 
+        room.status = 'resolving'; 
+        room.nextRoundTime = Date.now() + 7000; 
+        
+        for (const seat of room.seats) {
+            if (seat) {
+                for (const hand of seat.hands) {
+                    if (hand.bet > 0) {
+                        let payout = 0;
+                        if (hand.status === 'blackjack' && dealerValue !== 21) { payout = hand.bet * 2.5; hand.result = 'win-bj'; } 
+                        else if (hand.status !== 'bust' && (dealerValue > 21 || hand.value > dealerValue)) { payout = hand.bet * 2; hand.result = 'win'; } 
+                        else if (hand.status !== 'bust' && hand.value === dealerValue) { payout = hand.bet; hand.result = 'push'; } 
+                        else if (hand.status === 'bust') { hand.result = 'bust'; } 
+                        else { hand.result = 'lose'; }
+                        
+                        if (payout > 0) { 
+                            seat.credits += payout; 
+                            try {
+                                const updatedUser = await User.findOneAndUpdate(
+                                    { username: new RegExp('^' + seat.username + '$', 'i') }, 
+                                    { $inc: { credits: payout } }, 
+                                    { new: true }
+                                ); 
+                                if(updatedUser) { 
+                                    await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId) + " WIN", amount: payout }).save(); 
+                                    io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); 
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                }
+            }
+        }
+        
+        emitGameState(roomId); 
+        clearInterval(room.nextRoundInterval);
+        room.nextRoundInterval = setInterval(() => {
+            if (Date.now() >= room.nextRoundTime) {
+                clearInterval(room.nextRoundInterval); 
+                room.dealerCards = [];
+                room.seats.forEach(seat => { 
+                    if(seat) { 
+                        seat.hands = [{ cards: [], bet: 0, status: 'waiting', value: 0 }]; 
+                        seat.currentHand = 0; 
+                        seat.kickAt = Date.now() + 15000; 
+                    } 
+                });
+                const anyoneSeated = room.seats.some(s => s !== null); 
+                room.status = anyoneSeated ? 'betting' : 'waiting'; 
+                emitGameState(roomId);
+            }
+        }, 1000);
+    } catch(e) {}
+}
+
+function emitGameState(roomId) {
+    let room = rooms[roomId]; if (!room) return;
+    const { betTimerInterval, nextRoundInterval, turnTimerInterval, dealerInterval, ...serializableRoom } = room;
+    let safeState = JSON.parse(JSON.stringify(serializableRoom)); const now = Date.now();
+    
+    safeState.seats.forEach(s => { if (s && s.kickAt) s.kickTimeLeft = Math.max(0, s.kickAt - now); });
+    if (safeState.betEndTime) safeState.betTimeLeft = Math.max(0, safeState.betEndTime - now);
+    if (safeState.nextRoundTime) safeState.nextRoundTimeLeft = Math.max(0, safeState.nextRoundTime - now);
+    if (safeState.turnEndTime) safeState.turnTimeLeft = Math.max(0, safeState.turnEndTime - now);
+    
+    if (safeState.status === 'playing' && safeState.dealerCards.length > 1) safeState.dealerCards[1] = { hidden: true };
+    io.to(roomId).emit('game_state_update', safeState);
+}
+
+function startTurnTimer(roomId) {
+    let room = rooms[roomId]; clearInterval(room.turnTimerInterval);
+    room.turnTimerInterval = setInterval(() => { 
+        if (Date.now() >= room.turnEndTime) { 
+            clearInterval(room.turnTimerInterval); 
+            let seat = room.seats[room.activeSeatIndex]; 
+            if (seat && seat.hands[seat.currentHand]) seat.hands[seat.currentHand].status = 'stand'; 
+            moveToNextTurn(roomId); 
+        } 
+    }, 500);
+}
+
+
+// ==========================================
+// 6. GLOBAL AUTOMATED INTERVALS
+// ==========================================
 setInterval(() => {
     const now = Date.now();
     
@@ -152,18 +502,17 @@ setInterval(() => {
             if (auc.highestBidder) {
                 User.updateOne({username: new RegExp('^' + auc.highestBidder + '$', 'i')}, {$push: {inventory: auc.item}}).exec();
                 User.updateOne({username: new RegExp('^' + auc.seller + '$', 'i')}, {$inc: {credits: auc.currentBid}}).exec();
-                sendSystemMail(auc.highestBidder, 'AUCTION WON', `You won the auction for ${auc.item} for ${auc.currentBid} CR. It has been added to your inventory.`);
-                sendSystemMail(auc.seller, 'ITEM SOLD', `Your ${auc.item} successfully sold to ${auc.highestBidder} for ${auc.currentBid} CR.`);
+                sendSystemMail(auc.highestBidder, 'AUCTION WON', `You won the auction for ${auc.item} for ${auc.currentBid} CR.`);
             } else {
                 User.updateOne({username: new RegExp('^' + auc.seller + '$', 'i')}, {$push: {inventory: auc.item}}).exec();
-                sendSystemMail(auc.seller, 'AUCTION EXPIRED', `No one bid on your ${auc.item}. It has been returned to your inventory.`);
+                sendSystemMail(auc.seller, 'AUCTION EXPIRED', `No one bid on your ${auc.item}. Returned to inventory.`);
             }
             io.emit('market_update', activeAuctions);
         }
     }
 }, 1000);
 
-// CORE GAME LOOPS
+// ARCADE LOOPS
 setInterval(() => {
     const now = Date.now();
     
@@ -189,9 +538,9 @@ setInterval(() => {
                 let wonAmount = 0; 
                 if (b.choice === dvtGame.winner) { 
                     if(b.choice === 'dragon' || b.choice === 'tiger') wonAmount = b.amount * 2; 
-                    else if (b.choice === 'tie') wonAmount = b.amount * 9; // 8:1 payout returns 9x total
+                    else if (b.choice === 'tie') wonAmount = b.amount * 9; 
                 } else if (dvtGame.winner === 'tie' && (b.choice === 'dragon' || b.choice === 'tiger')) {
-                    wonAmount = b.amount / 2; // Half bet returned on tie
+                    wonAmount = b.amount / 2; 
                 }
                 
                 roundRecord.players.push({ username: b.username, choice: b.choice, bet: b.amount, win: wonAmount });
@@ -256,7 +605,6 @@ setInterval(() => {
         setTimeout(async () => {
             let totalUnder = 0; let totalOver = 0; diceGame.bets.forEach(b => { if(b.choice==='under') totalUnder+=b.amount; if(b.choice==='over') totalOver+=b.amount; });
             let d1 = Math.floor(Math.random() * 6) + 1; let d2 = Math.floor(Math.random() * 6) + 1;
-            if (strictHouseEdge && (totalUnder > 0 || totalOver > 0)) { if (totalUnder > totalOver && (d1+d2) < 7) { d1=4; d2=4; } else if (totalOver > totalUnder && (d1+d2) > 7) { d1=2; d2=2; } }
             diceGame.dice = [d1, d2]; const total = d1 + d2;
             diceGame.status = 'resolving'; diceGame.history.unshift(diceGame.dice); if(diceGame.history.length > 20) diceGame.history.pop();
             let winners = []; let roundRecord = new GameRound({ game: 'dice', roundId: Math.random().toString(36).substring(2, 8).toUpperCase(), result: total, players: [] });
@@ -373,154 +721,12 @@ setInterval(() => {
         })();
     }
 
-    // --- 8-BIT CRASH LOOP ---
-    if (crashGame.status === 'betting' && now >= crashGame.betEndTime) {
-        crashGame.status = 'flying'; 
-        crashGame.multiplier = 1.00;
-        
-        const E = 0.99;
-        const rand = Math.random();
-        crashGame.crashPoint = Math.min(1000.00, Math.max(1.00, E / rand));
-        if(strictHouseEdge && crashGame.bets.length > 0 && Math.random() < 0.2) { crashGame.crashPoint = 1.00; } 
-        
-        io.to('arcade_crash').emit('crash_state_update', { status: crashGame.status, multiplier: crashGame.multiplier });
-        
-        let flyInterval = setInterval(async () => {
-            crashGame.multiplier += 0.01 * (crashGame.multiplier * 0.5); 
-            
-            if (crashGame.multiplier >= crashGame.crashPoint) {
-                clearInterval(flyInterval);
-                crashGame.status = 'crashed';
-                crashGame.multiplier = crashGame.crashPoint;
-                
-                crashGame.history.unshift(parseFloat(crashGame.multiplier.toFixed(2))); 
-                if(crashGame.history.length > 20) crashGame.history.pop();
-
-                let roundRecord = new GameRound({ game: 'crash', roundId: Math.random().toString(36).substring(2, 8).toUpperCase(), result: crashGame.multiplier, players: [] });
-                crashGame.bets.forEach(b => {
-                    roundRecord.players.push({ username: b.username, choice: 'Bet', bet: b.amount, win: b.cashedOut ? b.winAmount : 0 });
-                });
-                await roundRecord.save();
-
-                io.to('arcade_crash').emit('crash_state_update', { status: crashGame.status, multiplier: parseFloat(crashGame.multiplier.toFixed(2)), history: crashGame.history });
-                
-                setTimeout(() => {
-                    crashGame.bets = [];
-                    crashGame.status = 'betting';
-                    crashGame.betEndTime = Date.now() + 10000;
-                    io.to('arcade_crash').emit('crash_state_update', { status: crashGame.status, betEndTime: crashGame.betEndTime, history: crashGame.history });
-                }, 4000);
-            } else {
-                io.to('arcade_crash').emit('crash_tick', { multiplier: parseFloat(crashGame.multiplier.toFixed(2)) });
-            }
-        }, 100);
-    }
-
 }, 1000);
 
-function emitGameState(roomId) {
-    let room = rooms[roomId]; if (!room) return;
-    const { betTimerInterval, nextRoundInterval, turnTimerInterval, dealerInterval, ...serializableRoom } = room;
-    let safeState = JSON.parse(JSON.stringify(serializableRoom)); const now = Date.now();
-    safeState.seats.forEach(s => { if (s && s.kickAt) s.kickTimeLeft = Math.max(0, s.kickAt - now); });
-    if (safeState.betEndTime) safeState.betTimeLeft = Math.max(0, safeState.betEndTime - now);
-    if (safeState.nextRoundTime) safeState.nextRoundTimeLeft = Math.max(0, safeState.nextRoundTime - now);
-    if (safeState.turnEndTime) safeState.turnTimeLeft = Math.max(0, safeState.turnEndTime - now);
-    if (safeState.status === 'playing' && safeState.dealerCards.length > 1) safeState.dealerCards[1] = { hidden: true };
-    io.to(roomId).emit('game_state_update', safeState);
-}
 
-function startTurnTimer(roomId) {
-    let room = rooms[roomId]; clearInterval(room.turnTimerInterval);
-    room.turnTimerInterval = setInterval(() => { if (Date.now() >= room.turnEndTime) { clearInterval(room.turnTimerInterval); let seat = room.seats[room.activeSeatIndex]; if (seat && seat.hands[seat.currentHand]) seat.hands[seat.currentHand].status = 'stand'; moveToNextTurn(roomId); } }, 500);
-}
-
-// --- PLAYER APIs ---
-app.post('/api/signup', async (req, res) => { 
-    try { 
-        if (mongoose.connection.readyState !== 1) { return res.status(500).json({ error: 'DATABASE DISCONNECTED. Check MONGODB_URI.' }); }
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const existing = await User.findOne({ username: new RegExp('^' + req.body.username + '$', 'i') }); if(existing) return res.status(400).json({ error: 'Username taken.' });
-        await new User({ username: req.body.username, password: req.body.password, ipAddress: ip, tosAccepted: true, status: 'pending', inventory: ['Starter Token', 'Retro Badge'] }).save(); 
-        adminLog(`New account requested: ${req.body.username}`); res.status(201).json({ message: 'Account requested successfully.' }); 
-    } catch (err) { res.status(400).json({ error: 'Username taken.' }); } 
-});
-
-app.post('/api/login', async (req, res) => {
-    try {
-        if (mongoose.connection.readyState !== 1) { return res.status(500).json({ error: 'DATABASE DISCONNECTED. Check MONGODB_URI.' }); }
-        
-        const { username, password } = req.body;
-        if (!username || !password) return res.status(400).json({error: "Missing credentials"});
-
-        if (username.toLowerCase() === 'dev') { 
-            adminLog(`DEV MODE bypass triggered.`); 
-            return res.json({ username: 'DevAdmin', credits: 5000000, status: 'active', createdAt: new Date(), cooldownSeconds: 0 }); 
-        }
-
-        let user = await User.findOne({ username: new RegExp('^' + username + '$', 'i') });
-
-        if (!user) {
-            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-            user = new User({ 
-                username: username, 
-                password: password, 
-                ipAddress: ip, 
-                tosAccepted: true, 
-                status: 'active',
-                credits: 500000,  
-                inventory: ['Starter Token', 'Retro Badge'] 
-            });
-            await user.save();
-            adminLog(`AUTO-CREATED missing account: ${username}`);
-        } else if (user.password !== password) {
-            return res.status(401).json({ error: 'Invalid password.' });
-        }
-
-        if (user.status === 'pending') { user.status = 'active'; await user.save(); }
-        if (user.status === 'banned') return res.status(401).json({ error: 'Account banned by administration.' });
-        
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; user.ipAddress = ip; await user.save();
-        adminLog(`${user.username} logged in.`);
-        
-        const now = new Date(); const lastClaim = user.lastRewardClaim ? new Date(user.lastRewardClaim) : new Date(0); 
-        const msLeft = new Date(lastClaim.getTime() + 24 * 60 * 60 * 1000).getTime() - now.getTime();
-        res.json({ username: user.username, credits: user.credits, status: user.status, createdAt: user.createdAt, cooldownSeconds: msLeft > 0 ? Math.floor(msLeft / 1000) : 0 });
-    } catch(e) { 
-        console.error("Login Error:", e);
-        res.status(500).json({ error: 'Server error during login.' }); 
-    }
-});
-
-app.post('/api/bank/request', async (req, res) => {
-    try {
-        const { username, type, amount } = req.body; let txType = type === 'deposit' ? 'BANK DEPOSIT' : 'BANK WITHDRAWAL'; let currentCredits = undefined;
-        if (type === 'deposit') { if (amount < 10000 || amount > 100000) return res.status(400).json({ error: 'Limits: 10k - 100k.' }); } 
-        else if (type === 'withdrawal') {
-            if (amount < 50000 || amount > 100000) return res.status(400).json({ error: 'Limits: 50k - 100k.' });
-            const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) return res.status(400).json({ error: 'Insufficient funds.' }); currentCredits = user.credits;
-        }
-        await new Transaction({ username, type: txType, amount, status: 'pending' }).save(); res.json({ success: true, newCredits: currentCredits });
-    } catch(e) { res.status(500).json({ error: 'Server Error' }); }
-});
-
-app.post('/api/bank/giftcode', async (req, res) => {
-    try {
-        const { username, code } = req.body; 
-        const gc = await GiftCode.findOneAndUpdate({ code, usesLeft: { $gt: 0 } }, { $set: { usesLeft: 0, claimedBy: username, claimDate: new Date() } });
-        if (!gc) return res.status(400).json({ error: 'Invalid or expired code.' });
-        await User.updateOne({ username: new RegExp('^' + username + '$', 'i') }, { $inc: { credits: gc.amount } }); 
-        await new Transaction({ username, type: 'GIFT CODE', amount: gc.amount, status: 'completed' }).save();
-        res.json({ success: true, amount: gc.amount });
-    } catch(e) { res.status(500).json({ error: 'Server Error' }); }
-});
-
-app.get('/api/profile/ledger/:username', async (req, res) => { 
-    try { const txs = await Transaction.find({ username: new RegExp('^' + req.params.username + '$', 'i') }).sort({ date: -1 }).limit(50); res.json(txs); } catch(e) { res.status(500).json({ error: 'Server Error' }); }
-});
-
-// --- SOCKET SYSTEM ---
+// ==========================================
+// 7. SOCKET.IO EVENT LISTENERS
+// ==========================================
 io.on('connection', (socket) => {
     
     // --- ADMIN SOCKETS ---
@@ -536,44 +742,8 @@ io.on('connection', (socket) => {
         } catch(e){}
     });
 
-    socket.on('admin_notify', async ({ target, username, type, subject, message }) => {
-        try {
-            let actualTarget = target === 'specific_online' || target === 'specific_all' ? username : target;
-            let actualUser = actualTarget === 'all' || actualTarget === 'active' ? 'GLOBAL' : actualTarget;
-            const t = new Ticket({ username: actualUser, target: actualTarget, type, subject, messages: [{ sender: 'ADMIN', text: message }], unreadPlayer: true, unreadAdmin: false });
-            await t.save(); io.emit('system_notification', { target: actualTarget, type }); adminLog(`SENT ${type.toUpperCase()} to ${actualTarget.toUpperCase()}`);
-        } catch(e){}
-    });
-
     socket.on('req_admin_inbox', async () => {
         try { const tickets = await Ticket.find({}).sort({ updatedAt: -1 }); socket.emit('admin_inbox_data', tickets); } catch(e){}
-    });
-
-    socket.on('admin_read_ticket', async ({ id }) => { try { await Ticket.findByIdAndUpdate(id, { unreadAdmin: false }); } catch(e){} });
-
-    socket.on('admin_reply', async ({ id, text }) => {
-        try {
-            const t = await Ticket.findById(id);
-            if(t && t.status === 'open') {
-                t.messages.push({ sender: 'ADMIN', text }); t.unreadPlayer = true; t.updatedAt = Date.now(); await t.save();
-                const tickets = await Ticket.find({}).sort({ updatedAt: -1 }); io.to('admin_room').emit('admin_inbox_data', tickets); io.emit('new_mail', { username: t.username, target: t.target });
-            }
-        } catch(e){}
-    });
-
-    socket.on('admin_close_ticket', async ({ id }) => {
-        try {
-            await Ticket.findByIdAndUpdate(id, { status: 'closed' });
-            const tickets = await Ticket.find({}).sort({ updatedAt: -1 }); io.to('admin_room').emit('admin_inbox_data', tickets);
-        } catch(e){}
-    });
-
-    socket.on('voice_message', (data) => {
-        try {
-            if (data.room && data.room !== 'global') { 
-                socket.to(data.room).emit('voice_broadcast', { username: socketUserMap[socket.id]?.username || 'Unknown', audio: data.audio }); 
-            }
-        } catch(e){}
     });
 
     // P2P TRADING SYSTEM
@@ -792,7 +962,7 @@ io.on('connection', (socket) => {
             socket.join('arcade_' + game); socketUserMap[socket.id] = { username: user.username, arcadeGame: game, roomId: 'arcade_' + game };
             let lobby; 
             if(game === 'dice') lobby = diceLobby; else if(game === 'color') lobby = colorLobby; else if(game === 'derby') lobby = derbyLobby; 
-            else if(game === 'pvp') lobby = pvpLobby; else if(game === 'cups') lobby = cupsLobby; else if(game === 'crash') lobby = crashLobby; 
+            else if(game === 'pvp') lobby = pvpLobby; else if(game === 'cups') lobby = cupsLobby; 
             else if(game === 'baccarat') lobby = baccaratLobby; else if(game === 'dvt') lobby = dvtLobby; else if(game === 'slots') lobby = slotsLobby;
             
             if (lobby && !lobby.find(p => p.username === user.username)) lobby.push({ username: user.username, color: user.nameColor });
@@ -813,13 +983,6 @@ io.on('connection', (socket) => {
             else if(game === 'baccarat') { baccaratLobby = baccaratLobby.filter(p => !searchUser.test(p.username)); lobby = baccaratLobby; }
             else if(game === 'dvt') { dvtLobby = dvtLobby.filter(p => !searchUser.test(p.username)); lobby = dvtLobby; }
             else if(game === 'slots') { slotsLobby = slotsLobby.filter(p => !searchUser.test(p.username)); lobby = slotsLobby; }
-            else if(game === 'crash') { crashLobby = crashLobby.filter(p => !searchUser.test(p.username)); lobby = crashLobby; 
-                let existingBet = crashGame.bets.find(b => b.username.toLowerCase() === username.toLowerCase());
-                if (existingBet && !existingBet.cashedOut && crashGame.status === 'flying') {
-                    existingBet.cashedOut = true; existingBet.winAmount = existingBet.amount * crashGame.multiplier;
-                    User.updateOne({ username: new RegExp('^' + username + '$', 'i') }, { $inc: { credits: existingBet.winAmount } }).exec();
-                }
-            }
             else if(game === 'pvp') { 
                 pvpLobby = pvpLobby.filter(p => !searchUser.test(p.username)); lobby = pvpLobby; 
                 const seatIdx = pvpDuel.seats.findIndex(s => s && s.username.toLowerCase() === username.toLowerCase());
@@ -835,9 +998,9 @@ io.on('connection', (socket) => {
         try {
             if(roomId && username && message) {
                 if (roomId === 'global') {
-                    io.emit('receive_chat', { roomId, username, message }); // Broadcast to ALL
+                    io.emit('receive_chat', { roomId, username, message });
                 }
-                else if (['dice', 'derby', 'color', 'pvp', 'cups', 'crash', 'baccarat', 'dvt', 'slots'].includes(roomId)) {
+                else if (['dice', 'derby', 'color', 'pvp', 'cups', 'baccarat', 'dvt', 'slots'].includes(roomId)) {
                     io.to('arcade_' + roomId).emit('receive_chat', { roomId, username, message });
                 }
                 else {
@@ -857,7 +1020,6 @@ io.on('connection', (socket) => {
             else if (game === 'derby') targetGame = derbyGame;
             else if (game === 'color') targetGame = colorGame;
             else if (game === 'cups') targetGame = cupsGame;
-            else if (game === 'crash') targetGame = crashGame;
             else if (game === 'baccarat') targetGame = baccaratGame;
             else if (game === 'dvt') targetGame = dvtGame;
             else return;
@@ -881,13 +1043,8 @@ io.on('connection', (socket) => {
                 await new Transaction({ username: user.username, type: `${game.toUpperCase()} UNDO`, amount: removedBet.amount }).save();
                 io.emit('credit_update', { username: user.username, credits: user.credits });
                 
-                let remainingBetAmt = 0;
-                if(game !== 'crash') {
-                    remainingBetAmt = targetGame.bets.filter(b => b.username.toLowerCase() === username.toLowerCase() && b.choice === removedBet.choice).reduce((sum, b) => sum + b.amount, 0);
-                    socket.emit('arcade_bet_placed', { game, choice: removedBet.choice, totalChoiceBet: remainingBetAmt });
-                } else {
-                    socket.emit('arcade_error', 'Bet undone successfully!');
-                }
+                let remainingBetAmt = targetGame.bets.filter(b => b.username.toLowerCase() === username.toLowerCase() && b.choice === removedBet.choice).reduce((sum, b) => sum + b.amount, 0);
+                socket.emit('arcade_bet_placed', { game, choice: removedBet.choice, totalChoiceBet: remainingBetAmt });
             }
         } catch(e) {}
     });
@@ -914,48 +1071,6 @@ io.on('connection', (socket) => {
             if (existingBetObj) existingBetObj.amount += amount; else dvtGame.bets.push({ username: user.username, choice, amount }); 
             io.emit('credit_update', { username: user.username, credits: user.credits }); 
             socket.emit('arcade_bet_placed', { game: 'dvt', credits: user.credits, choice, totalChoiceBet: existingBetAmt + amount });
-        } catch(e) {}
-    });
-
-    // SLOTS (SINGLE PLAYER SOCKET)
-    const slotSymbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣'];
-    socket.on('spin_slots', async ({ username, betAmount }) => {
-        try {
-            if(gameLocks.slots) return socket.emit('arcade_error', 'Game is currently offline.');
-            if(betAmount < 100 || betAmount > 50000) return socket.emit('arcade_error', 'Invalid bet amount.');
-            
-            const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: betAmount } }, { $inc: { credits: -betAmount } }, { new: true });
-            if (!user) {
-                socket.emit('arcade_error', 'Spin failed: Insufficient DB funds or user not found.');
-                return; 
-            }
-            
-            let r1 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
-            let r2 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
-            let r3 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
-            
-            // House Edge override
-            if (strictHouseEdge && Math.random() < 0.3) {
-                r3 = '🍒'; // Break a potential match
-            }
-
-            let payout = 0;
-            if (r1 === r2 && r2 === r3) {
-                if (r1 === '7️⃣') payout = betAmount * 50;
-                else if (r1 === '💎') payout = betAmount * 25;
-                else payout = betAmount * 10;
-            } else if (r1 === r2 || r2 === r3 || r1 === r3) {
-                payout = betAmount * 2;
-            }
-
-            if (payout > 0) {
-                user.credits += payout;
-                await user.save();
-                await new Transaction({ username: user.username, type: 'SLOTS WIN', amount: payout }).save();
-                io.emit('credit_update', { username: user.username, credits: user.credits });
-            }
-
-            socket.emit('slots_result', { reels: [r1, r2, r3], winAmount: payout });
         } catch(e) {}
     });
 
@@ -1069,46 +1184,6 @@ io.on('connection', (socket) => {
             if (existingBetObj) existingBetObj.amount += amount; else cupsGame.bets.push({ username: user.username, choice, amount }); 
             io.emit('credit_update', { username: user.username, credits: user.credits }); 
             socket.emit('arcade_bet_placed', { game: 'cups', credits: user.credits, choice, totalChoiceBet: existingBetAmt + amount });
-        } catch(e) {}
-    });
-
-    // --- CRASH LOGIC ---
-    socket.on('get_crash_state', () => { try { socket.emit('crash_state_update', { status: crashGame.status, betEndTime: crashGame.betEndTime, multiplier: parseFloat(crashGame.multiplier.toFixed(2)), history: crashGame.history }); } catch(e){} });
-    socket.on('place_crash_bet', async ({ username, amount }) => {
-        try {
-            if(gameLocks.crash) return socket.emit('arcade_error', 'Game is currently offline.');
-            if(crashGame.status !== 'betting') return socket.emit('arcade_error', 'Bets are closed! Wait for next launch.');
-            let existingBet = crashGame.bets.find(b => b.username.toLowerCase() === username.toLowerCase());
-            if(existingBet) return socket.emit('arcade_error', 'You already placed a bet this round.');
-
-            const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
-            if (!user) {
-                socket.emit('arcade_error', 'Bet failed: Insufficient DB funds or user not found.');
-                return; 
-            }
-            
-            await new Transaction({ username: user.username, type: 'CRASH BET', amount: -amount }).save();
-            crashGame.bets.push({ username: user.username, amount, cashedOut: false, winAmount: 0 });
-            io.emit('credit_update', { username: user.username, credits: user.credits });
-            socket.emit('crash_bet_placed', { amount });
-        } catch (e) {}
-    });
-
-    socket.on('crash_cashout', async ({ username }) => {
-        try {
-            if(crashGame.status !== 'flying') return;
-            let bet = crashGame.bets.find(b => b.username.toLowerCase() === username.toLowerCase());
-            if(!bet || bet.cashedOut) return;
-
-            bet.cashedOut = true;
-            bet.winAmount = bet.amount * crashGame.multiplier;
-            
-            const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i') }, { $inc: { credits: bet.winAmount } }, { new: true });
-            if(user) {
-                await new Transaction({ username: user.username, type: 'CRASH WIN', amount: bet.winAmount }).save();
-                io.emit('credit_update', { username: user.username, credits: user.credits });
-                socket.emit('crash_cashout_success', { winAmount: bet.winAmount, multiplier: crashGame.multiplier });
-            }
         } catch(e) {}
     });
 
@@ -1236,8 +1311,14 @@ io.on('connection', (socket) => {
     // --- BLACKJACK ROOMS ---
     socket.on('enter_room', async ({ username, roomId }) => {
         try {
-            if (!rooms[roomId]) return; socket.join(roomId); const user = await User.findOne({ username: new RegExp('^' + username + '$', 'i') }); 
-            if (user) { socketUserMap[socket.id] = { username: user.username, roomId }; if(!rooms[roomId].lobby.find(p => p.username === user.username)) { rooms[roomId].lobby.push({ username: user.username, color: user.nameColor }); } }
+            if (!rooms[roomId]) return; socket.join(roomId); 
+            const user = await User.findOne({ username: new RegExp('^' + username + '$', 'i') }); 
+            if (user) { 
+                socketUserMap[socket.id] = { username: user.username, roomId }; 
+                if(!rooms[roomId].lobby.find(p => p.username === user.username)) { 
+                    rooms[roomId].lobby.push({ username: user.username, color: user.nameColor }); 
+                } 
+            }
             emitGameState(roomId);
             broadcastGlobalCounts();
         } catch(e) {}
@@ -1245,9 +1326,18 @@ io.on('connection', (socket) => {
 
     socket.on('leave_room', ({ username, roomId }) => {
         try {
-            let room = rooms[roomId]; if (!room) return; socket.leave(roomId); room.lobby = room.lobby.filter(p => p.username.toLowerCase() !== username.toLowerCase());
+            let room = rooms[roomId]; if (!room) return; 
+            socket.leave(roomId); 
+            room.lobby = room.lobby.filter(p => p.username.toLowerCase() !== username.toLowerCase());
+            
             const seatIndex = room.seats.findIndex(s => s && s.username.toLowerCase() === username.toLowerCase());
-            if (seatIndex !== -1) { room.seats[seatIndex] = null; if (room.seats.every(s => s === null)) { room.status = 'waiting'; clearInterval(room.betTimerInterval); } }
+            if (seatIndex !== -1) { 
+                room.seats[seatIndex] = null; 
+                if (room.seats.every(s => s === null)) { 
+                    room.status = 'waiting'; 
+                    clearInterval(room.betTimerInterval); 
+                } 
+            }
             if(socketUserMap[socket.id]) delete socketUserMap[socket.id]; 
             emitGameState(roomId);
             broadcastGlobalCounts();
@@ -1256,251 +1346,212 @@ io.on('connection', (socket) => {
 
     socket.on('join_seat', async ({ roomId, username, seatIndex }) => {
         try {
-            let room = rooms[roomId]; if (!room || room.seats.some(s => s && s.username.toLowerCase() === username.toLowerCase()) || seatIndex < 0 || seatIndex >= room.seats.length || room.seats[seatIndex]) return;
-            const user = await User.findOne({ username: new RegExp('^' + username + '$', 'i') }); if (!user) return;
-            room.seats[seatIndex] = { username: user.username, color: user.nameColor, socketId: socket.id, credits: user.credits, hands: [{ cards: [], bet: 0, status: 'waiting', value: 0 }], currentHand: 0, kickAt: Date.now() + 7000 };
-            if (room.status === 'waiting') room.status = 'betting'; emitGameState(roomId);
+            let room = rooms[roomId]; 
+            if (!room || room.seats.some(s => s && s.username.toLowerCase() === username.toLowerCase()) || seatIndex < 0 || seatIndex >= room.seats.length || room.seats[seatIndex]) return;
+            const user = await User.findOne({ username: new RegExp('^' + username + '$', 'i') }); 
+            if (!user) return;
+            
+            room.seats[seatIndex] = { 
+                username: user.username, 
+                color: user.nameColor, 
+                socketId: socket.id, 
+                credits: user.credits, 
+                hands: [{ cards: [], bet: 0, status: 'waiting', value: 0 }], 
+                currentHand: 0, 
+                kickAt: Date.now() + 15000 
+            };
+            
+            if (room.status === 'waiting') room.status = 'betting'; 
+            emitGameState(roomId);
         } catch(e) {}
     });
 
     socket.on('leave_seat', ({ roomId, username, seatIndex }) => {
         try {
             let room = rooms[roomId]; if (!room) return;
-            if (room.seats[seatIndex] && room.seats[seatIndex].username.toLowerCase() === username.toLowerCase()) { room.seats[seatIndex] = null; if (room.seats.every(s => s === null)) { room.status = 'waiting'; clearInterval(room.betTimerInterval); } emitGameState(roomId); }
+            if (room.seats[seatIndex] && room.seats[seatIndex].username.toLowerCase() === username.toLowerCase()) { 
+                room.seats[seatIndex] = null; 
+                if (room.seats.every(s => s === null)) { 
+                    room.status = 'waiting'; 
+                    clearInterval(room.betTimerInterval); 
+                } 
+                emitGameState(roomId); 
+            }
         } catch(e){}
     });
 
     socket.on('place_bet', async ({ roomId, username, seatIndex, betAmount }) => {
         try {
             if(gameLocks[roomId]) return socket.emit('arcade_error', 'Table is currently offline.');
-            let room = rooms[roomId]; if (!room) return; const seat = room.seats[seatIndex]; if (!seat || seat.username.toLowerCase() !== username.toLowerCase() || room.status !== 'betting') return;
+            let room = rooms[roomId]; if (!room) return; 
+            const seat = room.seats[seatIndex]; 
+            if (!seat || seat.username.toLowerCase() !== username.toLowerCase() || room.status !== 'betting') return;
+            
             if (betAmount >= 100 && betAmount <= 50000) {
                 const updatedUser = await User.findOneAndUpdate({ username: new RegExp('^' + seat.username + '$', 'i'), credits: { $gte: betAmount } }, { $inc: { credits: -betAmount } }, { new: true });
                 if (!updatedUser) {
                     socket.emit('arcade_error', 'Bet failed: User not found or insufficient DB funds.');
                     return; 
                 }
-                seat.credits = updatedUser.credits; seat.hands[0].bet = betAmount; seat.kickAt = null; 
+                
+                seat.credits = updatedUser.credits; 
+                seat.hands[0].bet = betAmount; 
+                seat.kickAt = null; 
+                
                 await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId), amount: -betAmount }).save();
                 io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); 
-                room.betEndTime = Date.now() + 15000; clearInterval(room.betTimerInterval);
-                if (room.seats.every(s => s !== null && s.hands[0].bet > 0)) { clearInterval(room.betTimerInterval); startGame(roomId); } 
-                else { room.betTimerInterval = setInterval(() => { if (Date.now() >= room.betEndTime) { clearInterval(room.betTimerInterval); startGame(roomId); } }, 1000); emitGameState(roomId); }
+                
+                room.betEndTime = Date.now() + 15000; 
+                clearInterval(room.betTimerInterval);
+                
+                if (room.seats.every(s => s !== null && s.hands[0].bet > 0)) { 
+                    clearInterval(room.betTimerInterval); 
+                    startGame(roomId); 
+                } else { 
+                    room.betTimerInterval = setInterval(() => { 
+                        if (Date.now() >= room.betEndTime) { 
+                            clearInterval(room.betTimerInterval); 
+                            startGame(roomId); 
+                        } 
+                    }, 1000); 
+                    emitGameState(roomId); 
+                }
             }
         } catch(e) {}
     });
 
-    socket.on('player_action_hit', ({ roomId, username, seatIndex }) => { try { let room = rooms[roomId]; if (!room || room.status !== 'playing' || room.activeSeatIndex !== seatIndex) return; const seat = room.seats[seatIndex]; const hand = seat.hands[seat.currentHand]; if (seat.username.toLowerCase() !== username.toLowerCase() || hand.status !== 'waiting') return; hand.cards.push(room.deck.pop()); hand.value = calculateValue(hand.cards); if (hand.value > 21) { hand.status = 'bust'; hand.result = 'bust'; moveToNextTurn(roomId); } else if (hand.value === 21) { hand.status = 'stand'; moveToNextTurn(roomId); } else { room.turnEndTime = Date.now() + 15000; startTurnTimer(roomId); emitGameState(roomId); } } catch(e){} });
-    socket.on('player_action_stand', ({ roomId, username, seatIndex }) => { try { let room = rooms[roomId]; if (!room || room.status !== 'playing' || room.activeSeatIndex !== seatIndex) return; const seat = room.seats[seatIndex]; const hand = seat.hands[seat.currentHand]; if (seat.username.toLowerCase() !== username.toLowerCase() || hand.status !== 'waiting') return; hand.status = 'stand'; moveToNextTurn(roomId); } catch(e){} });
-    socket.on('player_action_double', async ({ roomId, username, seatIndex }) => { try { let room = rooms[roomId]; if (!room || room.status !== 'playing' || room.activeSeatIndex !== seatIndex) return; const seat = room.seats[seatIndex]; const hand = seat.hands[seat.currentHand]; if (seat.username.toLowerCase() !== username.toLowerCase() || hand.status !== 'waiting' || hand.cards.length !== 2) return; const updatedUser = await User.findOneAndUpdate({ username: new RegExp('^' + seat.username + '$', 'i'), credits: { $gte: hand.bet } }, { $inc: { credits: -hand.bet } }, { new: true }); if (!updatedUser) return; seat.credits = updatedUser.credits; await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId), amount: -hand.bet }).save(); io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); hand.bet *= 2; hand.cards.push(room.deck.pop()); hand.value = calculateValue(hand.cards); if (hand.value > 21) { hand.status = 'bust'; hand.result = 'bust'; } else { hand.status = 'stand'; } moveToNextTurn(roomId); } catch(e){} });
-    socket.on('player_action_split', async ({ roomId, username, seatIndex }) => { try { let room = rooms[roomId]; if (!room || room.status !== 'playing' || room.activeSeatIndex !== seatIndex) return; const seat = room.seats[seatIndex]; if (seat.username.toLowerCase() !== username.toLowerCase() || seat.hands.length >= 2) return; const hand = seat.hands[seat.currentHand]; if (hand.status !== 'waiting' || hand.cards.length !== 2) return; if (hand.cards[0].weight === hand.cards[1].weight) { const updatedUser = await User.findOneAndUpdate({ username: new RegExp('^' + seat.username + '$', 'i'), credits: { $gte: hand.bet } }, { $inc: { credits: -hand.bet } }, { new: true }); if (!updatedUser) return; seat.credits = updatedUser.credits; await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId), amount: -hand.bet }).save(); io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); const splitCard = hand.cards.pop(); const newHand = { cards: [splitCard], bet: hand.bet, status: 'waiting', value: 0 }; hand.cards.push(room.deck.pop()); newHand.cards.push(room.deck.pop()); hand.value = calculateValue(hand.cards); newHand.value = calculateValue(newHand.cards); if(hand.value === 21) hand.status = 'stand'; if(newHand.value === 21) newHand.status = 'stand'; seat.hands.push(newHand); if(hand.status === 'stand') moveToNextTurn(roomId); else { room.turnEndTime = Date.now() + 15000; startTurnTimer(roomId); emitGameState(roomId); } } } catch(e){} });
+    socket.on('player_action_hit', ({ roomId, username, seatIndex }) => { 
+        try { 
+            let room = rooms[roomId]; 
+            if (!room || room.status !== 'playing' || room.activeSeatIndex !== seatIndex) return; 
+            
+            const seat = room.seats[seatIndex]; 
+            const hand = seat.hands[seat.currentHand]; 
+            if (seat.username.toLowerCase() !== username.toLowerCase() || hand.status !== 'waiting') return; 
+            
+            hand.cards.push(room.deck.pop()); 
+            hand.value = calculateValue(hand.cards); 
+            
+            if (hand.value > 21) { 
+                hand.status = 'bust'; 
+                hand.result = 'bust'; 
+                moveToNextTurn(roomId); 
+            } else if (hand.value === 21) { 
+                hand.status = 'stand'; 
+                moveToNextTurn(roomId); 
+            } else { 
+                room.turnEndTime = Date.now() + 15000; 
+                startTurnTimer(roomId); 
+                emitGameState(roomId); 
+            } 
+        } catch(e){} 
+    });
+    
+    socket.on('player_action_stand', ({ roomId, username, seatIndex }) => { 
+        try { 
+            let room = rooms[roomId]; 
+            if (!room || room.status !== 'playing' || room.activeSeatIndex !== seatIndex) return; 
+            
+            const seat = room.seats[seatIndex]; 
+            const hand = seat.hands[seat.currentHand]; 
+            if (seat.username.toLowerCase() !== username.toLowerCase() || hand.status !== 'waiting') return; 
+            
+            hand.status = 'stand'; 
+            moveToNextTurn(roomId); 
+        } catch(e){} 
+    });
+    
+    socket.on('player_action_double', async ({ roomId, username, seatIndex }) => { 
+        try { 
+            let room = rooms[roomId]; 
+            if (!room || room.status !== 'playing' || room.activeSeatIndex !== seatIndex) return; 
+            
+            const seat = room.seats[seatIndex]; 
+            const hand = seat.hands[seat.currentHand]; 
+            if (seat.username.toLowerCase() !== username.toLowerCase() || hand.status !== 'waiting' || hand.cards.length !== 2) return; 
+            
+            const updatedUser = await User.findOneAndUpdate(
+                { username: new RegExp('^' + seat.username + '$', 'i'), credits: { $gte: hand.bet } }, 
+                { $inc: { credits: -hand.bet } }, 
+                { new: true }
+            ); 
+            
+            if (!updatedUser) {
+                socket.emit('arcade_error', 'Insufficient credits to double.');
+                return;
+            }
+            
+            seat.credits = updatedUser.credits; 
+            await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId) + ' DOUBLE', amount: -hand.bet }).save(); 
+            io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); 
+            
+            hand.bet *= 2; 
+            hand.cards.push(room.deck.pop()); 
+            hand.value = calculateValue(hand.cards); 
+            
+            if (hand.value > 21) { 
+                hand.status = 'bust'; 
+                hand.result = 'bust'; 
+            } else { 
+                hand.status = 'stand'; 
+            } 
+            moveToNextTurn(roomId); 
+        } catch(e){} 
+    });
+    
+    socket.on('player_action_split', async ({ roomId, username, seatIndex }) => { 
+        try { 
+            let room = rooms[roomId]; 
+            if (!room || room.status !== 'playing' || room.activeSeatIndex !== seatIndex) return; 
+            
+            const seat = room.seats[seatIndex]; 
+            if (seat.username.toLowerCase() !== username.toLowerCase() || seat.hands.length >= 2) return; 
+            
+            const hand = seat.hands[seat.currentHand]; 
+            if (hand.status !== 'waiting' || hand.cards.length !== 2) return; 
+            
+            if (hand.cards[0].weight === hand.cards[1].weight) { 
+                const updatedUser = await User.findOneAndUpdate(
+                    { username: new RegExp('^' + seat.username + '$', 'i'), credits: { $gte: hand.bet } }, 
+                    { $inc: { credits: -hand.bet } }, 
+                    { new: true }
+                ); 
+                
+                if (!updatedUser) {
+                    socket.emit('arcade_error', 'Insufficient credits to split.');
+                    return;
+                }
+                
+                seat.credits = updatedUser.credits; 
+                await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId) + ' SPLIT', amount: -hand.bet }).save(); 
+                io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); 
+                
+                const splitCard = hand.cards.pop(); 
+                const newHand = { cards: [splitCard], bet: hand.bet, status: 'waiting', value: 0 }; 
+                
+                hand.cards.push(room.deck.pop()); 
+                newHand.cards.push(room.deck.pop()); 
+                
+                hand.value = calculateValue(hand.cards); 
+                newHand.value = calculateValue(newHand.cards); 
+                
+                if(hand.value === 21) hand.status = 'stand'; 
+                if(newHand.value === 21) newHand.status = 'stand'; 
+                
+                seat.hands.push(newHand); 
+                
+                if(hand.status === 'stand') {
+                    moveToNextTurn(roomId); 
+                } else { 
+                    room.turnEndTime = Date.now() + 15000; 
+                    startTurnTimer(roomId); 
+                    emitGameState(roomId); 
+                } 
+            } 
+        } catch(e){} 
+    });
 
 });
-
-// --- PVP ENGINE LOGIC ---
-async function handlePvpLeave(seatIndex) {
-    try {
-        const seat = pvpDuel.seats[seatIndex]; 
-        if(!seat) return;
-        const wasActive = ['readying', 'flipping', 'spinning', 'waiting_picks', 'resolving'].includes(pvpDuel.status);
-        const betToRefund = pvpDuel.betAmount;
-        const otherIndex = seatIndex === 0 ? 1 : 0; 
-        const otherSeat = pvpDuel.seats[otherIndex];
-        pvpDuel.status = 'waiting';
-        pvpDuel.seats[seatIndex] = null;
-        
-        if(wasActive && betToRefund > 0) {
-            Promise.all([ refundPvpSeat(seat.username, betToRefund), otherSeat ? refundPvpSeat(otherSeat.username, betToRefund) : Promise.resolve() ]).then(() => {});
-        }
-        
-        if(pvpDuel.seats[0] === null && pvpDuel.seats[1] === null) {
-            pvpDuel = { seats: [null, null], status: 'waiting', type: 'coin', format: 1, betAmount: 0, slices: 4, hostIndex: -1, result: null, winSliceIndex: 0, message: 'WAITING FOR PLAYERS', timerInterval: null };
-        } else {
-            pvpDuel.hostIndex = pvpDuel.seats[0] !== null ? 0 : 1; pvpDuel.message = 'CHALLENGER ABANDONED.'; 
-            if(pvpDuel.seats[pvpDuel.hostIndex]) { pvpDuel.seats[pvpDuel.hostIndex].ready = false; pvpDuel.seats[pvpDuel.hostIndex].score = 0; if (pvpDuel.type === 'wheel') { pvpDuel.seats[pvpDuel.hostIndex].choice = pvpDuel.seats[pvpDuel.hostIndex].username; } }
-        }
-        io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel);
-    } catch(e){}
-}
-
-async function refundPvpSeat(username, amount) {
-    const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i') }, { $inc: { credits: amount } }, { new: true });
-    if(user) { await new Transaction({ username: user.username, type: 'PVP REFUND', amount: amount }).save(); io.emit('credit_update', { username: user.username, credits: user.credits }); }
-}
-
-function resolveRPS() {
-    try {
-        if(!pvpDuel.seats[0] || !pvpDuel.seats[1]) return;
-        let p1 = pvpDuel.seats[0].rpsChoice; let p2 = pvpDuel.seats[1].rpsChoice; let roundWinnerIndex = -1;
-        
-        if(p1 === p2) { pvpDuel.message = "TIE!"; pvpDuel.result = `BOTH CHOSE ${p1.toUpperCase()}`; }
-        else if((p1==='rock'&&p2==='scissors')||(p1==='paper'&&p2==='rock')||(p1==='scissors'&&p2==='paper')){ roundWinnerIndex = 0; }
-        else { roundWinnerIndex = 1; }
-        
-        if(roundWinnerIndex !== -1) { 
-            pvpDuel.seats[roundWinnerIndex].score++; 
-            pvpDuel.message = `${pvpDuel.seats[roundWinnerIndex].username.toUpperCase()} SCORES!`; 
-        }
-        
-        pvpDuel.result = `${pvpDuel.seats[0].rpsChoice.toUpperCase()} VS ${pvpDuel.seats[1].rpsChoice.toUpperCase()}`;
-        io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel);
-        
-        let matchWinner = null; 
-        if(pvpDuel.seats[0].score >= pvpDuel.format) matchWinner = 0; 
-        if(pvpDuel.seats[1].score >= pvpDuel.format) matchWinner = 1;
-        
-        setTimeout(async () => {
-            if (pvpDuel.status === 'waiting' || !pvpDuel.seats[0] || !pvpDuel.seats[1]) return;
-            if(matchWinner !== null) { 
-                finishPvpMatch(matchWinner); 
-            } else { 
-                pvpDuel.status = 'waiting_picks'; 
-                pvpDuel.message = 'MAKE YOUR SELECTION!'; 
-                pvpDuel.seats[0].rpsChoice = ''; 
-                pvpDuel.seats[1].rpsChoice = ''; 
-                io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel); 
-            }
-        }, 3000);
-    } catch(e){}
-}
-
-function runPvpSequence() {
-    try {
-        pvpDuel.timer = 3; const actionVerb = pvpDuel.type === 'wheel' ? 'SPINNING' : 'FLIPPING'; pvpDuel.message = `${actionVerb} IN 3...`; io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel);
-        let countdown = setInterval(() => {
-            if (pvpDuel.status === 'waiting' || !pvpDuel.seats[0] || !pvpDuel.seats[1]) { clearInterval(countdown); return; }
-            pvpDuel.timer--;
-            if(pvpDuel.timer > 0) { pvpDuel.message = `${actionVerb} IN ${pvpDuel.timer}...`; io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel); } 
-            else {
-                clearInterval(countdown); pvpDuel.message = `${actionVerb}...`; io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel);
-                setTimeout(async () => {
-                    if (pvpDuel.status === 'waiting' || !pvpDuel.seats[0] || !pvpDuel.seats[1]) return;
-                    let res; 
-                    if(pvpDuel.type === 'coin') { 
-                        res = Math.random() < 0.5 ? 'heads' : 'tails'; 
-                    } else if (pvpDuel.type === 'wheel') { 
-                        pvpDuel.winSliceIndex = Math.floor(Math.random() * pvpDuel.slices); 
-                        res = pvpDuel.winSliceIndex % 2 === 0 ? pvpDuel.seats[0].username : pvpDuel.seats[1].username; 
-                    } else if (pvpDuel.type === 'deathroll') {
-                        pvpDuel.winSliceIndex = -1; // Not used
-                        let p1Roll = Math.floor(Math.random() * 100) + 1;
-                        let p2Roll = Math.floor(Math.random() * 100) + 1;
-                        while(p1Roll === p2Roll) p2Roll = Math.floor(Math.random() * 100) + 1; // force win
-                        res = p1Roll > p2Roll ? pvpDuel.seats[0].username : pvpDuel.seats[1].username;
-                        pvpDuel.result = `${p1Roll} - ${p2Roll}`;
-                    }
-
-                    if(pvpDuel.type !== 'deathroll') pvpDuel.result = res; 
-                    
-                    pvpDuel.status = 'resolving';
-                    let roundWinnerIndex = -1; 
-                    
-                    if(pvpDuel.type === 'deathroll') {
-                        if(res === pvpDuel.seats[0].username) roundWinnerIndex = 0;
-                        if(res === pvpDuel.seats[1].username) roundWinnerIndex = 1;
-                    } else {
-                        if(pvpDuel.seats[0]?.choice === res) roundWinnerIndex = 0; 
-                        if(pvpDuel.seats[1]?.choice === res) roundWinnerIndex = 1;
-                    }
-
-                    if(roundWinnerIndex !== -1 && pvpDuel.seats[roundWinnerIndex]) { pvpDuel.seats[roundWinnerIndex].score++; pvpDuel.message = `${pvpDuel.seats[roundWinnerIndex].username.toUpperCase()} SCORES!`; }
-                    io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel);
-                    
-                    let matchWinner = null; if(pvpDuel.seats[0] && pvpDuel.seats[0].score >= pvpDuel.format) matchWinner = 0; if(pvpDuel.seats[1] && pvpDuel.seats[1].score >= pvpDuel.format) matchWinner = 1;
-                    setTimeout(async () => {
-                        if (pvpDuel.status === 'waiting' || !pvpDuel.seats[0] || !pvpDuel.seats[1]) return;
-                        if(matchWinner !== null) { finishPvpMatch(matchWinner); } 
-                        else { pvpDuel.status = pvpDuel.type === 'wheel' ? 'spinning' : 'flipping'; pvpDuel.result = null; runPvpSequence(); }
-                    }, 3000);
-                }, 2000);
-            }
-        }, 1000);
-    } catch(e){}
-}
-
-async function finishPvpMatch(matchWinner) {
-    try {
-        pvpDuel.status = 'finished'; const winner = pvpDuel.seats[matchWinner]; pvpDuel.message = `${winner.username.toUpperCase()} WINS THE MATCH!`;
-        if(pvpDuel.betAmount > 0) { 
-            const winAmount = pvpDuel.betAmount * 2; 
-            try { 
-                const updatedUser = await User.findOneAndUpdate({ username: new RegExp('^' + winner.username + '$', 'i') }, { $inc: { credits: winAmount } }, {new: true}); 
-                if(updatedUser) { 
-                    await new Transaction({ username: updatedUser.username, type: 'PVP ARENA WIN', amount: winAmount }).save(); 
-                    io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); 
-                } 
-            } catch(e){} 
-        }
-        io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel);
-        setTimeout(() => { if(pvpDuel.status === 'finished') { pvpDuel = { seats: [null, null], status: 'waiting', type: 'coin', format: 1, betAmount: 0, slices: 4, hostIndex: -1, result: null, winSliceIndex: 0, message: 'WAITING FOR PLAYERS', timerInterval: null }; io.to('arcade_pvp').emit('pvp_duel_state_update', pvpDuel); } }, 3000);
-    } catch(e){}
-}
-
-function startGame(roomId) {
-    try {
-        let room = rooms[roomId]; if (!room) return; room.status = 'playing'; room.deck = getNewDeck(); room.dealerCards = []; room.seats = room.seats.map(s => (s && s.hands[0].bet === 0) ? null : s);
-        for (let i = 0; i < 2; i++) { room.seats.forEach(seat => { if (seat) seat.hands[0].cards.push(room.deck.pop()); }); room.dealerCards.push(room.deck.pop()); }
-        room.seats.forEach(seat => { if (seat) { seat.hands[0].value = calculateValue(seat.hands[0].cards); if(seat.hands[0].value === 21) { seat.hands[0].status = 'blackjack'; } }});
-        let dealerInitialValue = calculateValue(room.dealerCards); if (dealerInitialValue === 21) { room.dealerCards[1].hidden = false; resolveBets(roomId, 21); return; }
-        room.activeSeatIndex = room.seats.findIndex(s => s && s.hands[0].status === 'waiting');
-        if (room.activeSeatIndex === -1) { processDealerTurn(roomId); } else { room.turnEndTime = Date.now() + 15000; startTurnTimer(roomId); emitGameState(roomId); }
-    } catch(e){}
-}
-
-function moveToNextTurn(roomId) {
-    try {
-        let room = rooms[roomId]; if (!room) return; clearInterval(room.turnTimerInterval);  const seat = room.seats[room.activeSeatIndex];
-        if (seat && seat.currentHand < seat.hands.length - 1) { seat.currentHand++; if (seat.hands[seat.currentHand].status !== 'waiting') return moveToNextTurn(roomId); room.turnEndTime = Date.now() + 15000; startTurnTimer(roomId); emitGameState(roomId); return; }
-        let nextIndex = room.activeSeatIndex + 1; while (nextIndex < room.seats.length) { if (room.seats[nextIndex] && room.seats[nextIndex].hands[0].status === 'waiting') break; nextIndex++; }
-        if (nextIndex >= room.seats.length) { processDealerTurn(roomId); } else { room.activeSeatIndex = nextIndex; room.turnEndTime = Date.now() + 15000; startTurnTimer(roomId); emitGameState(roomId); }
-    } catch(e){}
-}
-
-async function processDealerTurn(roomId) {
-    try {
-        let room = rooms[roomId]; if (!room) return; room.status = 'dealerTurn'; room.activeSeatIndex = -1; clearInterval(room.turnTimerInterval);
-        if(room.dealerCards.length > 1) room.dealerCards[1].hidden = false; emitGameState(roomId);
-        setTimeout(() => {
-            let dealerValue = calculateValue(room.dealerCards); if (dealerValue >= 17) { resolveBets(roomId, dealerValue); return; }
-            room.dealerInterval = setInterval(() => { if (dealerValue < 17) { room.dealerCards.push(room.deck.pop()); dealerValue = calculateValue(room.dealerCards); emitGameState(roomId); } else { clearInterval(room.dealerInterval); resolveBets(roomId, dealerValue); } }, 1000);
-        }, 1500); 
-    } catch(e){}
-}
-
-async function resolveBets(roomId, dealerValue) {
-    try {
-        let room = rooms[roomId]; if (!room) return; room.status = 'resolving'; room.nextRoundTime = Date.now() + 7000; 
-        for (const seat of room.seats) {
-            if (seat) {
-                for (const hand of seat.hands) {
-                    if (hand.bet > 0) {
-                        let payout = 0;
-                        if (hand.status === 'blackjack' && dealerValue !== 21) { payout = hand.bet * 2.5; hand.result = 'win-bj'; } 
-                        else if (hand.status !== 'bust' && (dealerValue > 21 || hand.value > dealerValue)) { payout = hand.bet * 2; hand.result = 'win'; } 
-                        else if (hand.status !== 'bust' && hand.value === dealerValue) { payout = hand.bet; hand.result = 'push'; } 
-                        else if (hand.status === 'bust') { hand.result = 'bust'; } 
-                        else { hand.result = 'lose'; }
-                        if (payout > 0) { 
-                            seat.credits += payout; 
-                            try {
-                                const updatedUser = await User.findOneAndUpdate({ username: new RegExp('^' + seat.username + '$', 'i') }, { $inc: { credits: payout } }, {new: true}); 
-                                if(updatedUser) { await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId)+" WIN", amount: payout }).save(); io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); }
-                            } catch(e){}
-                        }
-                    }
-                }
-            }
-        }
-        emitGameState(roomId); clearInterval(room.nextRoundInterval);
-        room.nextRoundInterval = setInterval(() => {
-            if (Date.now() >= room.nextRoundTime) {
-                clearInterval(room.nextRoundInterval); room.dealerCards = [];
-                room.seats.forEach(seat => { if(seat) { seat.hands = [{ cards: [], bet: 0, status: 'waiting', value: 0 }]; seat.currentHand = 0; seat.kickAt = Date.now() + 7000; } });
-                const anyoneSeated = room.seats.some(s => s !== null); room.status = anyoneSeated ? 'betting' : 'waiting'; emitGameState(roomId);
-            }
-        }, 1000);
-    } catch(e){}
-}
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => console.log(`Casino Server Live on port ${PORT}`));
