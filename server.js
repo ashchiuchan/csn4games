@@ -488,9 +488,11 @@ setInterval(() => {
     // --- BACCARAT ---
     if (baccaratGame.status === 'betting' && now >= baccaratGame.betEndTime) {
         baccaratGame.status = 'drawing'; io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, timeLeft: 0 });
+        
         setTimeout(async () => {
             let deck = getNewDeck(); baccaratGame.pCards = [deck.pop(), deck.pop()]; baccaratGame.bCards = [deck.pop(), deck.pop()];
-            baccaratGame.pVal = (getBaccaratWeight(baccaratGame.pCards[0]) + getBaccaratWeight(baccaratGame.pCards[1])) % 10; baccaratGame.bVal = (getBaccaratWeight(baccaratGame.bCards[0]) + getBaccaratWeight(baccaratGame.bCards[1])) % 10;
+            baccaratGame.pVal = (getBaccaratWeight(baccaratGame.pCards[0]) + getBaccaratWeight(baccaratGame.pCards[1])) % 10; 
+            baccaratGame.bVal = (getBaccaratWeight(baccaratGame.bCards[0]) + getBaccaratWeight(baccaratGame.bCards[1])) % 10;
             
             let thirdCardTarget = null;
             if (baccaratGame.pVal < 8 && baccaratGame.bVal < 8) {
@@ -520,9 +522,10 @@ setInterval(() => {
             }
             await roundRecord.save();
             
-            let timeToResolve = thirdCardTarget ? 11000 : 9000;
             io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, pCards: baccaratGame.pCards, bCards: baccaratGame.bCards, pVal: baccaratGame.pVal, bVal: baccaratGame.bVal, winner: baccaratGame.winner, winners, bets: baccaratGame.bets, history: baccaratGame.history, thirdCardTarget });
-            setTimeout(() => { baccaratGame.bets = []; baccaratGame.status = 'betting'; baccaratGame.betEndTime = Date.now() + 15000; io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, betEndTime: baccaratGame.betEndTime, history: baccaratGame.history }); }, timeToResolve);
+            
+            // STRICT 14-SECOND DELAY SO ANIMATIONS CAN FINISH
+            setTimeout(() => { baccaratGame.bets = []; baccaratGame.status = 'betting'; baccaratGame.betEndTime = Date.now() + 15000; io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, betEndTime: baccaratGame.betEndTime, history: baccaratGame.history }); }, 14000);
         }, 1000); 
     }
 
