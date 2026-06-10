@@ -31,27 +31,15 @@ app.get('/api/health', (req, res) => {
 // ==========================================
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/stickntrade', {
     serverSelectionTimeoutMS: 5000 
-}).then(async () => {
+}).then(() => {
     console.log('MongoDB Connected Successfully');
-    try {
-        const adminConfig = await SystemConfig.findOne({ configName: 'admin_password' });
-        if (!adminConfig) await new SystemConfig({ configName: 'admin_password', configValue: 'admin123' }).save();
-        console.log('SYSTEM LOG: Security Credentials Initialized.');
-    } catch(e) { 
-        console.error("DB Error:", e); 
-    }
-}).catch(err => console.error('MongoDB connection error (Check Railway Variables):', err.message));
-
-const SystemConfig = mongoose.model('SystemConfig', new mongoose.Schema({ 
-    configName: { type: String, unique: true }, 
-    configValue: { type: String } 
-}));
+}).catch(err => console.error('MongoDB connection error:', err.message));
 
 const User = mongoose.model('User', new mongoose.Schema({
     username: { type: String, required: true, unique: true }, 
     password: { type: String, required: true },
     credits: { type: Number, default: 0 }, 
-    status: { type: String, default: 'active' }, 
+    status: { type: String, default: 'pending' }, // Default to pending for approval
     nameColor: { type: String, default: '#f8fafc' }, 
     ipAddress: String, 
     tosAccepted: Boolean, 
@@ -97,35 +85,21 @@ const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'
 
 function createRoom(numSeats) {
     return { 
-        seats: Array(numSeats).fill(null), 
-        dealerCards: [], 
-        deck: [], 
-        status: 'waiting', 
-        activeSeatIndex: -1, 
-        betEndTime: 0, 
-        nextRoundTime: 0, 
-        turnEndTime: 0, 
-        lobby: [], 
-        betTimerInterval: null, 
-        nextRoundInterval: null, 
-        turnTimerInterval: null, 
-        dealerInterval: null 
+        seats: Array(numSeats).fill(null), dealerCards: [], deck: [], 
+        status: 'waiting', activeSeatIndex: -1, betEndTime: 0, nextRoundTime: 0, turnEndTime: 0, 
+        lobby: [], betTimerInterval: null, nextRoundInterval: null, turnTimerInterval: null, dealerInterval: null 
     };
 }
 
 const rooms = { '3seat': createRoom(3), '5seat': createRoom(5) };
 
-function getGameTitle(roomId) {
-    if (roomId === '5seat') return 'CLASSIC BLACKJACK';
-    if (roomId === '3seat') return 'VIP BLACKJACK';
-    return 'BLACKJACK';
-}
+function getGameTitle(roomId) { return roomId === '5seat' ? 'CLASSIC BLACKJACK' : 'VIP BLACKJACK'; }
 
 const diceGame = { status: 'betting', betEndTime: Date.now() + 15000, dice: [1, 1], bets: [], history: [] };
-const derbyGame = { status: 'betting', betEndTime: Date.now() + 15000, distances: [0,0,0,0,0,0], speeds: [0,0,0,0,0,0], bets: [], history: [], laneProfiles: [] };
-const DERBY_PROFILES = [ { m: 2, s: 1.5 }, { m: 3, s: 1.2 }, { m: 3, s: 1.2 }, { m: 5, s: 0.9 }, { m: 7, s: 0.7 }, { m: 10, s: 0.4 } ];
-function shuffleDerby() { derbyGame.laneProfiles = [...DERBY_PROFILES].sort(() => Math.random() - 0.5); } 
-shuffleDerby(); 
+
+// Derby Engine - 4 Lanes, exactly 12s race, 2.5x fixed odds
+const derbyGame = { status: 'betting', betEndTime: Date.now() + 15000, distances: [0,0,0,0], speeds: [0,0,0,0], bets: [], history: [] };
+const DERBY_ODDS = 2.5; 
 
 const PERYA_COLORS = ['red', 'blue', 'yellow', 'green', 'pink', 'white'];
 const colorGame = { status: 'betting', betEndTime: Date.now() + 15000, dice: ['red', 'blue', 'yellow'], bets: [], history: [] };
@@ -135,46 +109,25 @@ const dvtGame = { status: 'betting', betEndTime: Date.now() + 12000, dragonCard:
 
 let pvpDuel = { seats: [null, null], status: 'waiting', type: 'coin', format: 1, betAmount: 0, slices: 4, hostIndex: -1, result: null, winSliceIndex: 0, message: 'WAITING FOR PLAYERS', timerInterval: null };
 
-let activeAuctions = []; 
-let liveTradeOffers = []; 
-let activeTradeSessions = {};
-
+let activeAuctions = []; let liveTradeOffers = []; let activeTradeSessions = {};
 const socketUserMap = {}; 
 let diceLobby = []; let derbyLobby = []; let colorLobby = []; let pvpLobby = []; let cupsLobby = []; let baccaratLobby = []; let dvtLobby = []; let slotsLobby = [];
 let strictHouseEdge = false; 
 let gameLocks = { blackjack: false, dice: false, derby: false, color: false, cups: false, baccarat: false, dvt: false, slots: false };
 
-function getPHTTime() { 
-    try { return new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Manila' }); } 
-    catch(e) { return new Date().toLocaleTimeString(); } 
-}
-
-function adminLog(action) { 
-    io.to('admin_room').emit('admin_log', `▶ [${getPHTTime()}] ${action}`); 
-}
+function getPHTTime() { try { return new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Manila' }); } catch(e) { return new Date().toLocaleTimeString(); } }
+function adminLog(action) { io.to('admin_room').emit('admin_log', `▶ [${getPHTTime()}] ${action}`); }
 
 async function sendSystemMail(username, subject, text) {
-    const t = new Ticket({ 
-        username, target: 'specific', type: 'message', subject, 
-        messages: [{ sender: 'SYSTEM ADMIN', text }], 
-        unreadPlayer: true, unreadAdmin: false 
-    });
-    await t.save(); 
-    io.emit('new_mail', { username });
+    const t = new Ticket({ username, target: 'specific', type: 'message', subject, messages: [{ sender: 'SYSTEM ADMIN', text }], unreadPlayer: true, unreadAdmin: false });
+    await t.save(); io.emit('new_mail', { username });
 }
 
 function broadcastGlobalCounts() {
     io.emit('global_lobby_counts', {
-        '5seat': rooms['5seat'].lobby.length, 
-        '3seat': rooms['3seat'].lobby.length, 
-        'derby': derbyLobby.length,
-        'cups': cupsLobby.length, 
-        'dice': diceLobby.length, 
-        'color': colorLobby.length, 
-        'pvp': pvpLobby.length, 
-        'baccarat': baccaratLobby.length, 
-        'dvt': dvtLobby.length, 
-        'slots': slotsLobby.length
+        '5seat': rooms['5seat'].lobby.length, '3seat': rooms['3seat'].lobby.length, 'derby': derbyLobby.length,
+        'cups': cupsLobby.length, 'dice': diceLobby.length, 'color': colorLobby.length, 'pvp': pvpLobby.length, 
+        'baccarat': baccaratLobby.length, 'dvt': dvtLobby.length, 'slots': slotsLobby.length
     });
 }
 
@@ -183,11 +136,7 @@ function getNewDeck() {
     for (let i = 0; i < 6; i++) { 
         for (let s of suits) { 
             for (let v of values) { 
-                deck.push({ 
-                    suit: s, 
-                    value: v, 
-                    weight: ['J','Q','K'].includes(v) ? 10 : (v === 'A' ? 11 : parseInt(v)) 
-                }); 
+                deck.push({ suit: s, value: v, weight: ['J','Q','K'].includes(v) ? 10 : (v === 'A' ? 11 : parseInt(v)) }); 
             } 
         } 
     } 
@@ -195,99 +144,73 @@ function getNewDeck() {
 }
 
 const getBaccaratWeight = c => c.value === 'A' ? 1 : (['J','Q','K','10'].includes(c.value) ? 0 : parseInt(c.value));
-
-const getDvtWeight = c => {
-    if(c.value === 'A') return 1;
-    if(c.value === 'J') return 11;
-    if(c.value === 'Q') return 12;
-    if(c.value === 'K') return 13;
-    return parseInt(c.value);
-};
-
+const getDvtWeight = c => { if(c.value === 'A') return 1; if(c.value === 'J') return 11; if(c.value === 'Q') return 12; if(c.value === 'K') return 13; return parseInt(c.value); };
 
 // ==========================================
-// 4. REST APIs (LOGIN & BANK)
+// 4. REST APIs (LOGIN, SIGNUP & ADMIN)
 // ==========================================
+app.post('/api/signup', async (req, res) => { 
+    try { 
+        if (mongoose.connection.readyState !== 1) return res.status(500).json({ error: 'DATABASE DISCONNECTED.' }); 
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        
+        const existing = await User.findOne({ username: new RegExp('^' + req.body.username + '$', 'i') }); 
+        if(existing) return res.status(400).json({ error: 'Username already taken.' });
+        
+        await new User({ username: req.body.username, password: req.body.password, ipAddress: ip, tosAccepted: true, status: 'pending', inventory: ['token', 'cap'] }).save(); 
+        
+        adminLog(`New account requested: ${req.body.username}`); 
+        res.status(201).json({ message: 'Account requested successfully.' }); 
+    } catch (err) { res.status(400).json({ error: 'Database error.' }); } 
+});
+
 app.post('/api/login', async (req, res) => {
     try {
-        if (mongoose.connection.readyState !== 1) { 
-            return res.status(500).json({ error: 'DATABASE DISCONNECTED. Check MONGODB_URI.' }); 
-        }
-        
+        if (mongoose.connection.readyState !== 1) return res.status(500).json({ error: 'DATABASE DISCONNECTED.' }); 
         const { username, password } = req.body;
         if (!username || !password) return res.status(400).json({error: "Missing credentials"});
 
         let user = await User.findOne({ username: new RegExp('^' + username + '$', 'i') });
 
-        // Auto-Create User if they don't exist (Easier Testing)
-        if (!user) {
-            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-            user = new User({ 
-                username: username, 
-                password: password, 
-                ipAddress: ip, 
-                tosAccepted: true, 
-                status: 'active',
-                credits: 500000, // Starting Credits 
-                inventory: ['token', 'cap'] 
-            });
-            await user.save();
-            adminLog(`AUTO-CREATED missing account: ${username}`);
-        } else if (user.password !== password) {
-            return res.status(401).json({ error: 'Invalid password.' });
-        }
-
+        if (!user) return res.status(401).json({ error: 'Account not found. Please sign up.' });
+        if (user.password !== password) return res.status(401).json({ error: 'Invalid password.' });
+        
+        if (user.status === 'pending') return res.status(401).json({ error: 'Account pending Admin approval.' });
         if (user.status === 'banned') return res.status(401).json({ error: 'Account banned.' });
         
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; 
-        user.ipAddress = ip; 
-        await user.save();
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; user.ipAddress = ip; await user.save();
         adminLog(`${user.username} logged in.`);
-        
-        res.json({ 
-            username: user.username, 
-            credits: user.credits, 
-            status: user.status 
-        });
-    } catch(e) { 
-        console.error("Login Error:", e);
-        res.status(500).json({ error: 'Server error during login.' }); 
-    }
+        res.json({ username: user.username, credits: user.credits, status: user.status });
+    } catch(e) { res.status(500).json({ error: 'Server error during login.' }); }
+});
+
+// Basic Admin Password Verification Endpoint (For admin.html)
+app.post('/api/admin/login', (req, res) => {
+    const { password } = req.body;
+    const sysAdminPw = process.env.ADMIN_PASSWORD || 'admin123';
+    const sysModPw = process.env.MOD_PASSWORD || 'mod123';
+
+    if (password === sysAdminPw) return res.json({ success: true, role: 'admin' });
+    if (password === sysModPw) return res.json({ success: true, role: 'mod' });
+    
+    return res.status(401).json({ error: 'Unauthorized.' });
 });
 
 app.post('/api/bank/request', async (req, res) => {
     try {
-        const { username, type, amount } = req.body; 
-        let txType = type === 'deposit' ? 'BANK DEPOSIT' : 'BANK WITHDRAWAL'; 
-        let currentCredits = undefined;
-        
+        const { username, type, amount } = req.body; let txType = type === 'deposit' ? 'BANK DEPOSIT' : 'BANK WITHDRAWAL'; let currentCredits = undefined;
         if (amount <= 0 || amount > 100000) return res.status(400).json({ error: 'Invalid Limit. Max is 100,000.' });
 
         if (type === 'withdrawal') {
-            const user = await User.findOneAndUpdate(
-                { username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, 
-                { $inc: { credits: -amount } }, 
-                { new: true }
-            );
-            if (!user) return res.status(400).json({ error: 'Insufficient funds.' }); 
-            currentCredits = user.credits;
+            const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
+            if (!user) return res.status(400).json({ error: 'Insufficient funds.' }); currentCredits = user.credits;
         } else if (type === 'deposit') {
-            const user = await User.findOneAndUpdate(
-                { username: new RegExp('^' + username + '$', 'i') }, 
-                { $inc: { credits: amount } }, 
-                { new: true }
-            );
-            if (!user) return res.status(400).json({ error: 'User not found.' }); 
-            currentCredits = user.credits;
+            const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i') }, { $inc: { credits: amount } }, { new: true });
+            if (!user) return res.status(400).json({ error: 'User not found.' }); currentCredits = user.credits;
         }
-        
-        await new Transaction({ username, type: txType, amount, status: 'completed' }).save(); 
-        res.json({ success: true, newCredits: currentCredits });
-    } catch(e) { 
-        res.status(500).json({ error: 'Server Error' }); 
-    }
+        await new Transaction({ username, type: txType, amount, status: 'completed' }).save(); res.json({ success: true, newCredits: currentCredits });
+    } catch(e) { res.status(500).json({ error: 'Server Error' }); }
 });
-
 
 // ==========================================
 // 5. BLACKJACK CORE GAME LOOP
@@ -303,9 +226,7 @@ function startGame(roomId) {
     try {
         let room = rooms[roomId]; if (!room) return; 
         
-        room.status = 'playing'; 
-        room.deck = getNewDeck(); 
-        room.dealerCards = []; 
+        room.status = 'playing'; room.deck = getNewDeck(); room.dealerCards = []; 
         room.seats = room.seats.map(s => (s && s.hands[0].bet === 0) ? null : s);
         
         for (let i = 0; i < 2; i++) { 
@@ -322,35 +243,24 @@ function startGame(roomId) {
         
         let dealerInitialValue = calculateValue(room.dealerCards); 
         if (dealerInitialValue === 21) { 
-            room.dealerCards[1].hidden = false; 
-            resolveBets(roomId, 21); 
-            return; 
+            room.dealerCards[1].hidden = false; resolveBets(roomId, 21); return; 
         }
         
         room.activeSeatIndex = room.seats.findIndex(s => s && s.hands[0].status === 'waiting');
-        if (room.activeSeatIndex === -1) { 
-            processDealerTurn(roomId); 
-        } else { 
-            room.turnEndTime = Date.now() + 15000; 
-            startTurnTimer(roomId); 
-            emitGameState(roomId); 
-        }
+        if (room.activeSeatIndex === -1) { processDealerTurn(roomId); } 
+        else { room.turnEndTime = Date.now() + 15000; startTurnTimer(roomId); emitGameState(roomId); }
     } catch(e) {}
 }
 
 function moveToNextTurn(roomId) {
     try {
         let room = rooms[roomId]; if (!room) return; 
-        clearInterval(room.turnTimerInterval);  
-        const seat = room.seats[room.activeSeatIndex];
+        clearInterval(room.turnTimerInterval);  const seat = room.seats[room.activeSeatIndex];
         
         if (seat && seat.currentHand < seat.hands.length - 1) { 
             seat.currentHand++; 
             if (seat.hands[seat.currentHand].status !== 'waiting') return moveToNextTurn(roomId); 
-            room.turnEndTime = Date.now() + 15000; 
-            startTurnTimer(roomId); 
-            emitGameState(roomId); 
-            return; 
+            room.turnEndTime = Date.now() + 15000; startTurnTimer(roomId); emitGameState(roomId); return; 
         }
         
         let nextIndex = room.activeSeatIndex + 1; 
@@ -359,49 +269,44 @@ function moveToNextTurn(roomId) {
             nextIndex++; 
         }
         
-        if (nextIndex >= room.seats.length) { 
-            processDealerTurn(roomId); 
-        } else { 
-            room.activeSeatIndex = nextIndex; 
-            room.turnEndTime = Date.now() + 15000; 
-            startTurnTimer(roomId); 
-            emitGameState(roomId); 
-        }
+        if (nextIndex >= room.seats.length) { processDealerTurn(roomId); } 
+        else { room.activeSeatIndex = nextIndex; room.turnEndTime = Date.now() + 15000; startTurnTimer(roomId); emitGameState(roomId); }
     } catch(e) {}
 }
 
 async function processDealerTurn(roomId) {
     try {
         let room = rooms[roomId]; if (!room) return; 
-        room.status = 'dealerTurn'; 
-        room.activeSeatIndex = -1; 
-        clearInterval(room.turnTimerInterval);
+        room.status = 'dealerTurn'; room.activeSeatIndex = -1; clearInterval(room.turnTimerInterval);
         
-        if(room.dealerCards.length > 1) room.dealerCards[1].hidden = false; 
-        emitGameState(roomId);
-        
+        // Paced reveal logic for the dealer
         setTimeout(() => {
-            let dealerValue = calculateValue(room.dealerCards); 
-            if (dealerValue >= 17) { resolveBets(roomId, dealerValue); return; }
-            room.dealerInterval = setInterval(() => { 
-                if (dealerValue < 17) { 
-                    room.dealerCards.push(room.deck.pop()); 
-                    dealerValue = calculateValue(room.dealerCards); 
-                    emitGameState(roomId); 
-                } else { 
-                    clearInterval(room.dealerInterval); 
-                    resolveBets(roomId, dealerValue); 
-                } 
-            }, 1000);
-        }, 1500); 
+            if(room.dealerCards.length > 1) room.dealerCards[1].hidden = false; 
+            emitGameState(roomId);
+            
+            setTimeout(() => {
+                let dealerValue = calculateValue(room.dealerCards); 
+                if (dealerValue >= 17) { resolveBets(roomId, dealerValue); return; }
+                
+                room.dealerInterval = setInterval(() => { 
+                    if (dealerValue < 17) { 
+                        room.dealerCards.push(room.deck.pop()); 
+                        dealerValue = calculateValue(room.dealerCards); 
+                        emitGameState(roomId); 
+                    } else { 
+                        clearInterval(room.dealerInterval); 
+                        resolveBets(roomId, dealerValue); 
+                    } 
+                }, 1000);
+            }, 1000); 
+        }, 1500);
     } catch(e) {}
 }
 
 async function resolveBets(roomId, dealerValue) {
     try {
         let room = rooms[roomId]; if (!room) return; 
-        room.status = 'resolving'; 
-        room.nextRoundTime = Date.now() + 7000; 
+        room.status = 'resolving'; room.nextRoundTime = Date.now() + 7000; 
         
         for (const seat of room.seats) {
             if (seat) {
@@ -417,11 +322,7 @@ async function resolveBets(roomId, dealerValue) {
                         if (payout > 0) { 
                             seat.credits += payout; 
                             try {
-                                const updatedUser = await User.findOneAndUpdate(
-                                    { username: new RegExp('^' + seat.username + '$', 'i') }, 
-                                    { $inc: { credits: payout } }, 
-                                    { new: true }
-                                ); 
+                                const updatedUser = await User.findOneAndUpdate({ username: new RegExp('^' + seat.username + '$', 'i') }, { $inc: { credits: payout } }, { new: true }); 
                                 if(updatedUser) { 
                                     await new Transaction({ username: updatedUser.username, type: getGameTitle(roomId) + " WIN", amount: payout }).save(); 
                                     io.emit('credit_update', { username: updatedUser.username, credits: updatedUser.credits }); 
@@ -433,18 +334,12 @@ async function resolveBets(roomId, dealerValue) {
             }
         }
         
-        emitGameState(roomId); 
-        clearInterval(room.nextRoundInterval);
+        emitGameState(roomId); clearInterval(room.nextRoundInterval);
         room.nextRoundInterval = setInterval(() => {
             if (Date.now() >= room.nextRoundTime) {
-                clearInterval(room.nextRoundInterval); 
-                room.dealerCards = [];
+                clearInterval(room.nextRoundInterval); room.dealerCards = [];
                 room.seats.forEach(seat => { 
-                    if(seat) { 
-                        seat.hands = [{ cards: [], bet: 0, status: 'waiting', value: 0 }]; 
-                        seat.currentHand = 0; 
-                        seat.kickAt = Date.now() + 15000; 
-                    } 
+                    if(seat) { seat.hands = [{ cards: [], bet: 0, status: 'waiting', value: 0 }]; seat.currentHand = 0; seat.kickAt = Date.now() + 15000; } 
                 });
                 const anyoneSeated = room.seats.some(s => s !== null); 
                 room.status = anyoneSeated ? 'betting' : 'waiting'; 
@@ -486,15 +381,12 @@ function startTurnTimer(roomId) {
 // ==========================================
 setInterval(() => {
     const now = Date.now();
-    
-    // Auto-Kick Blackjack Idle Players
     Object.keys(rooms).forEach(roomId => {
         let room = rooms[roomId]; let changed = false;
         room.seats.forEach((seat, i) => { if (seat && seat.kickAt && now >= seat.kickAt) { room.seats[i] = null; changed = true; } });
         if (changed) { if (room.seats.every(s => s === null)) { room.status = 'waiting'; clearInterval(room.betTimerInterval); } emitGameState(roomId); }
     });
 
-    // Auction Cleanup
     for (let i = activeAuctions.length - 1; i >= 0; i--) {
         let auc = activeAuctions[i];
         if (now >= auc.endTime) {
@@ -518,30 +410,19 @@ setInterval(() => {
     
     // --- DRAGON VS TIGER ---
     if (dvtGame.status === 'betting' && now >= dvtGame.betEndTime) {
-        dvtGame.status = 'drawing'; 
-        io.to('arcade_dvt').emit('dvt_state_update', { status: dvtGame.status, timeLeft: 0 });
-        
+        dvtGame.status = 'drawing'; io.to('arcade_dvt').emit('dvt_state_update', { status: dvtGame.status, timeLeft: 0 });
         setTimeout(async () => {
-            let deck = getNewDeck(); 
-            dvtGame.dragonCard = deck.pop(); 
-            dvtGame.tigerCard = deck.pop();
-            
-            let dVal = getDvtWeight(dvtGame.dragonCard);
-            let tVal = getDvtWeight(dvtGame.tigerCard);
-            
-            dvtGame.status = 'resolving'; 
-            dvtGame.winner = dVal > tVal ? 'dragon' : (tVal > dVal ? 'tiger' : 'tie');
+            let deck = getNewDeck(); dvtGame.dragonCard = deck.pop(); dvtGame.tigerCard = deck.pop();
+            let dVal = getDvtWeight(dvtGame.dragonCard); let tVal = getDvtWeight(dvtGame.tigerCard);
+            dvtGame.status = 'resolving'; dvtGame.winner = dVal > tVal ? 'dragon' : (tVal > dVal ? 'tiger' : 'tie');
             dvtGame.history.unshift(dvtGame.winner); if(dvtGame.history.length > 20) dvtGame.history.pop();
             
             let winners = []; let roundRecord = new GameRound({ game: 'dvt', roundId: Math.random().toString(36).substring(2, 8).toUpperCase(), result: dvtGame.winner, players: [] });
             for (let b of dvtGame.bets) {
                 let wonAmount = 0; 
                 if (b.choice === dvtGame.winner) { 
-                    if(b.choice === 'dragon' || b.choice === 'tiger') wonAmount = b.amount * 2; 
-                    else if (b.choice === 'tie') wonAmount = b.amount * 9; 
-                } else if (dvtGame.winner === 'tie' && (b.choice === 'dragon' || b.choice === 'tiger')) {
-                    wonAmount = b.amount / 2; 
-                }
+                    if(b.choice === 'dragon' || b.choice === 'tiger') wonAmount = b.amount * 2; else if (b.choice === 'tie') wonAmount = b.amount * 9; 
+                } else if (dvtGame.winner === 'tie' && (b.choice === 'dragon' || b.choice === 'tiger')) { wonAmount = b.amount / 2; }
                 
                 roundRecord.players.push({ username: b.username, choice: b.choice, bet: b.amount, win: wonAmount });
                 if (wonAmount > 0) {
@@ -552,7 +433,6 @@ setInterval(() => {
             }
             await roundRecord.save();
             io.to('arcade_dvt').emit('dvt_state_update', { status: dvtGame.status, dragonCard: dvtGame.dragonCard, tigerCard: dvtGame.tigerCard, winner: dvtGame.winner, winners, bets: dvtGame.bets, history: dvtGame.history });
-            
             setTimeout(() => { dvtGame.bets = []; dvtGame.status = 'betting'; dvtGame.betEndTime = Date.now() + 12000; io.to('arcade_dvt').emit('dvt_state_update', { status: dvtGame.status, betEndTime: dvtGame.betEndTime, history: dvtGame.history }); }, 6000);
         }, 1000); 
     }
@@ -592,9 +472,9 @@ setInterval(() => {
             }
             await roundRecord.save();
             
+            // Allow time for frontend flips to finish
             let timeToResolve = thirdCardTarget ? 9000 : 7000;
             io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, pCards: baccaratGame.pCards, bCards: baccaratGame.bCards, pVal: baccaratGame.pVal, bVal: baccaratGame.bVal, winner: baccaratGame.winner, winners, bets: baccaratGame.bets, history: baccaratGame.history, thirdCardTarget });
-            
             setTimeout(() => { baccaratGame.bets = []; baccaratGame.status = 'betting'; baccaratGame.betEndTime = Date.now() + 15000; io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, betEndTime: baccaratGame.betEndTime, history: baccaratGame.history }); }, timeToResolve);
         }, 1000); 
     }
@@ -605,6 +485,7 @@ setInterval(() => {
         setTimeout(async () => {
             let totalUnder = 0; let totalOver = 0; diceGame.bets.forEach(b => { if(b.choice==='under') totalUnder+=b.amount; if(b.choice==='over') totalOver+=b.amount; });
             let d1 = Math.floor(Math.random() * 6) + 1; let d2 = Math.floor(Math.random() * 6) + 1;
+            if (strictHouseEdge && (totalUnder > 0 || totalOver > 0)) { if (totalUnder > totalOver && (d1+d2) < 7) { d1=4; d2=4; } else if (totalOver > totalUnder && (d1+d2) > 7) { d1=2; d2=2; } }
             diceGame.dice = [d1, d2]; const total = d1 + d2;
             diceGame.status = 'resolving'; diceGame.history.unshift(diceGame.dice); if(diceGame.history.length > 20) diceGame.history.pop();
             let winners = []; let roundRecord = new GameRound({ game: 'dice', roundId: Math.random().toString(36).substring(2, 8).toUpperCase(), result: total, players: [] });
@@ -626,37 +507,47 @@ setInterval(() => {
         }, 3000); 
     }
 
-    // --- DERBY --- 
+    // --- DERBY (Strict 12s, 4 Lanes, 2.5x Odds) --- 
     if (derbyGame.status === 'betting' && now >= derbyGame.betEndTime) {
-        derbyGame.status = 'racing'; derbyGame.distances = [0,0,0,0,0,0]; derbyGame.speeds = derbyGame.laneProfiles.map(p => p.s);
-        io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, timeLeft: 0, distances: derbyGame.distances, history: derbyGame.history, laneProfiles: derbyGame.laneProfiles });
+        derbyGame.status = 'racing'; 
+        derbyGame.distances = [0,0,0,0]; 
+        io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, timeLeft: 0, distances: derbyGame.distances, history: derbyGame.history });
         
-        let raceTick = 0; let currentSpeeds = [0,0,0,0,0,0];
+        let raceTick = 0; 
+        let currentSpeeds = [0,0,0,0];
+        
         let raceInterval = setInterval(async () => {
-            raceTick++; let finished = false; let laneBets = [0,0,0,0,0,0]; derbyGame.bets.forEach(b => laneBets[b.choice] += b.amount);
-
+            raceTick++; 
+            let finished = false; 
+            
+            // Randomize speeds every 10 ticks (1 sec) to simulate jockeying
             if (raceTick % 10 === 1) { 
-                for(let i=0; i<6; i++) {
-                    let oddsSpeed = derbyGame.laneProfiles[i].s; let mod = (strictHouseEdge && laneBets[i] > 0) ? 0.8 : 1;
-                    if (raceTick < 110) { currentSpeeds[i] = (0.3 + Math.random() * 0.7) * (oddsSpeed * 0.4 + 0.6) * mod; } 
-                    else { let miracle = (oddsSpeed < 1.0 && Math.random() > 0.85) ? (Math.random() * 1.5 + 0.5) : 0; currentSpeeds[i] = (oddsSpeed * mod * 0.7) + miracle + (Math.random() * 0.3); }
+                for(let i=0; i<4; i++) {
+                    currentSpeeds[i] = (Math.random() * 0.7) + 0.45; // Average ~0.8% per tick = 100% in 120 ticks
                 }
             }
             
-            for(let i=0; i<6; i++) { derbyGame.distances[i] += currentSpeeds[i]; if (derbyGame.distances[i] >= 100) { finished = true; } }
+            for(let i=0; i<4; i++) { 
+                derbyGame.distances[i] += currentSpeeds[i]; 
+                if (derbyGame.distances[i] >= 100) { finished = true; } 
+            }
             io.to('arcade_derby').emit('derby_race_tick', { distances: derbyGame.distances });
 
-            if (finished) {
-                clearInterval(raceInterval); derbyGame.status = 'resolving';
+            if (finished || raceTick > 150) { // Failsafe cap at 15s
+                clearInterval(raceInterval); 
+                derbyGame.status = 'resolving';
                 let winnerIndex = 0; let maxDist = -1;
-                for(let i=0; i<6; i++) { if (derbyGame.distances[i] > maxDist) { maxDist = derbyGame.distances[i]; winnerIndex = i; } if (derbyGame.distances[i] > 100) derbyGame.distances[i] = 100; }
+                for(let i=0; i<4; i++) { 
+                    if (derbyGame.distances[i] > maxDist) { maxDist = derbyGame.distances[i]; winnerIndex = i; } 
+                    if (derbyGame.distances[i] > 100) derbyGame.distances[i] = 100; 
+                }
                 io.to('arcade_derby').emit('derby_race_tick', { distances: derbyGame.distances });
 
                 derbyGame.history.unshift(winnerIndex); if(derbyGame.history.length > 20) derbyGame.history.pop();
                 let winners = []; let roundRecord = new GameRound({ game: 'derby', roundId: Math.random().toString(36).substring(2, 8).toUpperCase(), result: winnerIndex, players: [] });
 
                 for (let b of derbyGame.bets) {
-                    let wonAmount = (b.choice === winnerIndex) ? (b.amount * derbyGame.laneProfiles[winnerIndex].m) : 0;
+                    let wonAmount = (b.choice === winnerIndex) ? (b.amount * DERBY_ODDS) : 0;
                     roundRecord.players.push({ username: b.username, choice: b.choice, bet: b.amount, win: wonAmount });
                     if (b.choice === winnerIndex) {
                         try { 
@@ -666,9 +557,9 @@ setInterval(() => {
                     }
                 }
                 await roundRecord.save();
-                io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, winner: winnerIndex, winners, bets: derbyGame.bets, history: derbyGame.history, distances: derbyGame.distances, laneProfiles: derbyGame.laneProfiles });
+                io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, winner: winnerIndex, winners, bets: derbyGame.bets, history: derbyGame.history, distances: derbyGame.distances });
                 
-                setTimeout(() => { derbyGame.bets = []; derbyGame.status = 'betting'; derbyGame.distances = [0,0,0,0,0,0]; shuffleDerby(); derbyGame.betEndTime = Date.now() + 15000; io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, betEndTime: derbyGame.betEndTime, history: derbyGame.history, distances: derbyGame.distances, laneProfiles: derbyGame.laneProfiles }); }, 5000);
+                setTimeout(() => { derbyGame.bets = []; derbyGame.status = 'betting'; derbyGame.distances = [0,0,0,0]; shuffleDerby(); derbyGame.betEndTime = Date.now() + 15000; io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, betEndTime: derbyGame.betEndTime, history: derbyGame.history, distances: derbyGame.distances }); }, 5000);
             }
         }, 100); 
     }
@@ -729,7 +620,6 @@ setInterval(() => {
 // ==========================================
 io.on('connection', (socket) => {
     
-    // --- ADMIN SOCKETS ---
     socket.on('admin_join', () => { socket.join('admin_room'); });
 
     socket.on('admin_action', ({ action, game, room, locked }) => {
@@ -1051,7 +941,6 @@ io.on('connection', (socket) => {
 
     // --- ARCADE BETS ---
     
-    // DRAGON VS TIGER
     socket.on('get_dvt_state', () => { try { socket.emit('dvt_state_update', { status: dvtGame.status, betEndTime: dvtGame.betEndTime, history: dvtGame.history }); } catch(e){} });
     socket.on('place_dvt_bet', async ({ username, choice, amount }) => {
         try {
@@ -1118,13 +1007,21 @@ io.on('connection', (socket) => {
         } catch(e) {}
     });
 
-    socket.on('get_derby_state', () => { try { socket.emit('derby_state_update', { status: derbyGame.status, betEndTime: derbyGame.betEndTime, distances: derbyGame.distances, history: derbyGame.history, laneProfiles: derbyGame.laneProfiles }); } catch(e){} });
+    socket.on('get_derby_state', () => { try { socket.emit('derby_state_update', { status: derbyGame.status, betEndTime: derbyGame.betEndTime, distances: derbyGame.distances, history: derbyGame.history }); } catch(e){} });
     socket.on('place_derby_bet', async ({ username, choice, amount }) => {
         try {
             if(gameLocks.derby) return socket.emit('arcade_error', 'Game is currently offline.');
             if (derbyGame.status !== 'betting') return socket.emit('arcade_error', 'Bets are currently closed!');
             if (amount > 50000) return socket.emit('arcade_error', 'Limit is 50,000 per lane!');
-            let choiceIdx = parseInt(choice); let existingBetAmt = derbyGame.bets.filter(b=>b.username.toLowerCase()===username.toLowerCase() && b.choice===choiceIdx).reduce((sum,b)=>sum+b.amount,0);
+            
+            let choiceIdx = parseInt(choice); 
+            let existingBetLane = derbyGame.bets.find(b => b.username.toLowerCase() === username.toLowerCase());
+            
+            if (existingBetLane && existingBetLane.choice !== choiceIdx) {
+                return socket.emit('arcade_error', 'You can only bet on ONE lane per race!');
+            }
+            
+            let existingBetAmt = existingBetLane ? existingBetLane.amount : 0;
             if(existingBetAmt + amount > 50000) return socket.emit('arcade_error', 'Limit is 50,000 per lane!');
 
             const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i'), credits: { $gte: amount } }, { $inc: { credits: -amount } }, { new: true });
@@ -1133,8 +1030,8 @@ io.on('connection', (socket) => {
                 return; 
             }
             await new Transaction({ username: user.username, type: '8-BIT DERBY', amount: -amount }).save();
-            let existingBetObj = derbyGame.bets.find(b => b.username.toLowerCase() === user.username.toLowerCase() && b.choice === choiceIdx);
-            if (existingBetObj) existingBetObj.amount += amount; else derbyGame.bets.push({ username: user.username, choice: choiceIdx, amount }); 
+            
+            if (existingBetLane) existingBetLane.amount += amount; else derbyGame.bets.push({ username: user.username, choice: choiceIdx, amount }); 
             io.emit('credit_update', { username: user.username, credits: user.credits });
             socket.emit('arcade_bet_placed', { game: 'derby', credits: user.credits, choice: choiceIdx, totalChoiceBet: existingBetAmt + amount });
         } catch(e) {}
