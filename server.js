@@ -39,13 +39,14 @@ const User = mongoose.model('User', new mongoose.Schema({
     username: { type: String, required: true, unique: true }, 
     password: { type: String, required: true },
     credits: { type: Number, default: 0 }, 
-    status: { type: String, default: 'pending' }, // Default to pending for approval
+    status: { type: String, default: 'pending' }, // 'pending', 'active', 'banned'
+    role: { type: String, default: 'player' }, // 'player', 'vip', 'team', 'admin'
     nameColor: { type: String, default: '#f8fafc' }, 
     ipAddress: String, 
     tosAccepted: Boolean, 
     lastRewardClaim: { type: Date, default: null }, 
     createdAt: { type: Date, default: Date.now },
-    inventory: { type: [String], default: ['token', 'cap'] }
+    inventory: { type: [String], default: [] } // Starts empty per request
 }));
 
 const Transaction = mongoose.model('Transaction', new mongoose.Schema({
@@ -97,8 +98,8 @@ function getGameTitle(roomId) { return roomId === '5seat' ? 'CLASSIC BLACKJACK' 
 
 const diceGame = { status: 'betting', betEndTime: Date.now() + 15000, dice: [1, 1], bets: [], history: [] };
 
-// Derby Engine - 4 Lanes, exactly 12s race, 2.5x fixed odds
-const derbyGame = { status: 'betting', betEndTime: Date.now() + 15000, distances: [0,0,0,0], speeds: [0,0,0,0], bets: [], history: [] };
+// Derby Engine - 4 Lanes exactly
+const derbyGame = { status: 'betting', betEndTime: Date.now() + 15000, distances: [0,0,0,0], bets: [], history: [] };
 const DERBY_ODDS = 2.5; 
 
 const PERYA_COLORS = ['red', 'blue', 'yellow', 'green', 'pink', 'white'];
@@ -112,7 +113,7 @@ let pvpDuel = { seats: [null, null], status: 'waiting', type: 'coin', format: 1,
 let activeAuctions = []; let liveTradeOffers = []; let activeTradeSessions = {};
 const socketUserMap = {}; 
 let diceLobby = []; let derbyLobby = []; let colorLobby = []; let pvpLobby = []; let cupsLobby = []; let baccaratLobby = []; let dvtLobby = []; let slotsLobby = [];
-let strictHouseEdge = false; 
+
 let gameLocks = { blackjack: false, dice: false, derby: false, color: false, cups: false, baccarat: false, dvt: false, slots: false };
 
 function getPHTTime() { try { return new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Manila' }); } catch(e) { return new Date().toLocaleTimeString(); } }
@@ -147,7 +148,7 @@ const getBaccaratWeight = c => c.value === 'A' ? 1 : (['J','Q','K','10'].include
 const getDvtWeight = c => { if(c.value === 'A') return 1; if(c.value === 'J') return 11; if(c.value === 'Q') return 12; if(c.value === 'K') return 13; return parseInt(c.value); };
 
 // ==========================================
-// 4. REST APIs (LOGIN, SIGNUP & ADMIN)
+// 4. REST APIs (PLAYER & ADMIN ROUTES)
 // ==========================================
 app.post('/api/signup', async (req, res) => { 
     try { 
@@ -157,7 +158,15 @@ app.post('/api/signup', async (req, res) => {
         const existing = await User.findOne({ username: new RegExp('^' + req.body.username + '$', 'i') }); 
         if(existing) return res.status(400).json({ error: 'Username already taken.' });
         
-        await new User({ username: req.body.username, password: req.body.password, ipAddress: ip, tosAccepted: true, status: 'pending', inventory: ['token', 'cap'] }).save(); 
+        await new User({ 
+            username: req.body.username, 
+            password: req.body.password, 
+            ipAddress: ip, 
+            tosAccepted: true, 
+            status: 'pending', 
+            role: 'player',
+            inventory: [] 
+        }).save(); 
         
         adminLog(`New account requested: ${req.body.username}`); 
         res.status(201).json({ message: 'Account requested successfully.' }); 
@@ -180,11 +189,11 @@ app.post('/api/login', async (req, res) => {
         
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; user.ipAddress = ip; await user.save();
         adminLog(`${user.username} logged in.`);
-        res.json({ username: user.username, credits: user.credits, status: user.status });
+        res.json({ username: user.username, credits: user.credits, status: user.status, inventory: user.inventory, role: user.role });
     } catch(e) { res.status(500).json({ error: 'Server error during login.' }); }
 });
 
-// Basic Admin Password Verification Endpoint (For admin.html)
+// Admin Control Routes
 app.post('/api/admin/login', (req, res) => {
     const { password } = req.body;
     const sysAdminPw = process.env.ADMIN_PASSWORD || 'admin123';
@@ -192,8 +201,52 @@ app.post('/api/admin/login', (req, res) => {
 
     if (password === sysAdminPw) return res.json({ success: true, role: 'admin' });
     if (password === sysModPw) return res.json({ success: true, role: 'mod' });
-    
     return res.status(401).json({ error: 'Unauthorized.' });
+});
+
+app.get('/api/admin/users', async (req, res) => {
+    try {
+        const users = await User.find({}, '-password').sort({ createdAt: -1 });
+        res.json({ success: true, users });
+    } catch(e) { res.status(500).json({ error: 'Database Error' }); }
+});
+
+app.post('/api/admin/create_user', async (req, res) => {
+    try {
+        const { username, password, status, role, credits } = req.body;
+        const existing = await User.findOne({ username: new RegExp('^' + username + '$', 'i') }); 
+        if(existing) return res.status(400).json({ error: 'Username taken.' });
+
+        const newUser = new User({
+            username, password, status: status || 'active', role: role || 'player',
+            credits: credits || 0, inventory: [], tosAccepted: true
+        });
+        await newUser.save();
+        adminLog(`Admin explicitly created user: ${username} [${role}]`);
+        res.json({ success: true, message: 'User created.' });
+    } catch(e) { res.status(500).json({ error: 'Creation failed.' }); }
+});
+
+app.post('/api/admin/update_user', async (req, res) => {
+    try {
+        const { username, status, role, addCredits } = req.body;
+        let updateQuery = {};
+        if (status) updateQuery.status = status;
+        if (role) updateQuery.role = role;
+        
+        const user = await User.findOneAndUpdate({ username: new RegExp('^' + username + '$', 'i') }, { $set: updateQuery }, { new: true });
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+
+        if (addCredits && !isNaN(parseInt(addCredits))) {
+            user.credits += parseInt(addCredits);
+            await user.save();
+            await new Transaction({ username: user.username, type: 'ADMIN CREDIT INJECTION', amount: parseInt(addCredits) }).save();
+            io.emit('credit_update', { username: user.username, credits: user.credits }); 
+        }
+
+        adminLog(`Admin updated user profile: ${username}`);
+        res.json({ success: true });
+    } catch(e) { res.status(500).json({ error: 'Update failed.' }); }
 });
 
 app.post('/api/bank/request', async (req, res) => {
@@ -212,20 +265,13 @@ app.post('/api/bank/request', async (req, res) => {
     } catch(e) { res.status(500).json({ error: 'Server Error' }); }
 });
 
+
 // ==========================================
 // 5. BLACKJACK CORE GAME LOOP
 // ==========================================
-function calculateValue(cards) { 
-    let val = 0; let aces = 0; 
-    cards.forEach(c => { val += c.weight; if (c.value === 'A') aces++; }); 
-    while (val > 21 && aces > 0) { val -= 10; aces--; } 
-    return val; 
-}
-
 function startGame(roomId) {
     try {
         let room = rooms[roomId]; if (!room) return; 
-        
         room.status = 'playing'; room.deck = getNewDeck(); room.dealerCards = []; 
         room.seats = room.seats.map(s => (s && s.hands[0].bet === 0) ? null : s);
         
@@ -381,6 +427,8 @@ function startTurnTimer(roomId) {
 // ==========================================
 setInterval(() => {
     const now = Date.now();
+    
+    // Auto-Kick Blackjack Idle Players
     Object.keys(rooms).forEach(roomId => {
         let room = rooms[roomId]; let changed = false;
         room.seats.forEach((seat, i) => { if (seat && seat.kickAt && now >= seat.kickAt) { room.seats[i] = null; changed = true; } });
@@ -472,8 +520,7 @@ setInterval(() => {
             }
             await roundRecord.save();
             
-            // Allow time for frontend flips to finish
-            let timeToResolve = thirdCardTarget ? 9000 : 7000;
+            let timeToResolve = thirdCardTarget ? 11000 : 9000;
             io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, pCards: baccaratGame.pCards, bCards: baccaratGame.bCards, pVal: baccaratGame.pVal, bVal: baccaratGame.bVal, winner: baccaratGame.winner, winners, bets: baccaratGame.bets, history: baccaratGame.history, thirdCardTarget });
             setTimeout(() => { baccaratGame.bets = []; baccaratGame.status = 'betting'; baccaratGame.betEndTime = Date.now() + 15000; io.to('arcade_baccarat').emit('baccarat_state_update', { status: baccaratGame.status, betEndTime: baccaratGame.betEndTime, history: baccaratGame.history }); }, timeToResolve);
         }, 1000); 
@@ -507,7 +554,7 @@ setInterval(() => {
         }, 3000); 
     }
 
-    // --- DERBY (Strict 12s, 4 Lanes, 2.5x Odds) --- 
+    // --- DERBY (Strict 12s, 4 Lanes) --- 
     if (derbyGame.status === 'betting' && now >= derbyGame.betEndTime) {
         derbyGame.status = 'racing'; 
         derbyGame.distances = [0,0,0,0]; 
@@ -520,10 +567,10 @@ setInterval(() => {
             raceTick++; 
             let finished = false; 
             
-            // Randomize speeds every 10 ticks (1 sec) to simulate jockeying
+            // Randomize speeds slightly every 10 ticks (1 sec) to simulate jockeying
             if (raceTick % 10 === 1) { 
                 for(let i=0; i<4; i++) {
-                    currentSpeeds[i] = (Math.random() * 0.7) + 0.45; // Average ~0.8% per tick = 100% in 120 ticks
+                    currentSpeeds[i] = (Math.random() * 0.7) + 0.45; // ~0.83% per tick = 100% in 120 ticks
                 }
             }
             
@@ -533,7 +580,7 @@ setInterval(() => {
             }
             io.to('arcade_derby').emit('derby_race_tick', { distances: derbyGame.distances });
 
-            if (finished || raceTick > 150) { // Failsafe cap at 15s
+            if (finished || raceTick > 150) { // Failsafe cap
                 clearInterval(raceInterval); 
                 derbyGame.status = 'resolving';
                 let winnerIndex = 0; let maxDist = -1;
@@ -559,7 +606,7 @@ setInterval(() => {
                 await roundRecord.save();
                 io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, winner: winnerIndex, winners, bets: derbyGame.bets, history: derbyGame.history, distances: derbyGame.distances });
                 
-                setTimeout(() => { derbyGame.bets = []; derbyGame.status = 'betting'; derbyGame.distances = [0,0,0,0]; shuffleDerby(); derbyGame.betEndTime = Date.now() + 15000; io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, betEndTime: derbyGame.betEndTime, history: derbyGame.history, distances: derbyGame.distances }); }, 5000);
+                setTimeout(() => { derbyGame.bets = []; derbyGame.status = 'betting'; derbyGame.distances = [0,0,0,0]; io.to('arcade_derby').emit('derby_state_update', { status: derbyGame.status, betEndTime: derbyGame.betEndTime, history: derbyGame.history, distances: derbyGame.distances }); }, 5000);
             }
         }, 100); 
     }
