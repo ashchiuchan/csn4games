@@ -35,8 +35,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'VT323', monospace; text-transform: uppercase; user-select: none; }
         body { background-color: #020617; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: var(--text-main); letter-spacing: 1px;}
         
-        .text-black, [style*="color: #000"], [style*="color:#000"] { text-shadow: none !important; color: #0f172a !important; }
-        
         input, select { background: #0f172a; border: 2px solid #334155; color: #fff; padding: 12px; font-size: 26px; outline: none; text-align: center; border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); user-select: auto !important; width: 100%;}
         input[type="text"].num-format { font-size: 32px; font-weight: bold; letter-spacing: 2px; }
         input:focus, select:focus { border-color: var(--blue); }
@@ -74,7 +72,8 @@
         .overlay-menu { background: rgba(2,6,23,0.9); z-index: 300; backdrop-filter: blur(4px); }
         
         .hub-layout { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; z-index: 200; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); padding: 25px; }
-        .hub-content-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; overflow-y: auto;}
+        /* Lowered padding to balance Arcade screen */
+        .hub-content-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; overflow-y: auto; padding-top: 50px;}
 
         .panel { background: var(--panel-bg); border: 3px solid #334155; border-radius: 12px; padding: 40px; width: 600px; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8);}
         .panel-content { display:flex; flex-direction:column; align-items:center; width:100%; }
@@ -85,11 +84,11 @@
         .txt-plain { color: #f8fafc; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
         /* MAIN MENU GRID */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 500px; margin-top: 10px;}
-        .menu-grid .btn { padding: 20px; font-size: 26px; justify-content: space-between; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 600px; margin-top: 10px;}
+        .menu-grid .btn { padding: 20px; font-size: 28px; justify-content: center; text-align: center;}
         .menu-grid .btn.full-width { grid-column: span 2; justify-content: center; }
 
-        /* BOTTOM RIGHT CONTROLS (Main Menu Only) */
+        /* BOTTOM RIGHT CONTROLS */
         .bottom-right-controls { position: absolute; bottom: 25px; right: 25px; display: flex; gap: 15px; z-index: 250; }
         .circle-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(15,23,42,0.95); border: 3px solid #334155; color: #fff; font-size: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: relative; }
         .circle-btn:hover { transform: translateY(-4px); border-color: var(--blue); background: #1e293b; box-shadow: 0 8px 15px rgba(0,0,0,0.6); }
@@ -104,7 +103,7 @@
         .nav-tab { background: #0f172a; border: 2px solid #334155; color: var(--text-muted); font-size: 24px; padding: 10px 40px; cursor: pointer; border-radius: 8px; transition: 0.2s; font-weight:bold; text-align: center;}
         .nav-tab.active { background: var(--blue); color: #020617; border-color: #fff; text-shadow:none;}
 
-        .realm-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 1100px; padding: 10px;}
+        .realm-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 1100px; padding: 10px; margin-bottom: auto;}
         .realm-grid.arena-mode { display: flex; justify-content: center; width: 100%; }
         
         .realm-card { background: #1e293b; border: 2px solid #334155; border-radius: 12px; padding: 25px 15px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; height: 180px; justify-content:space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
@@ -148,7 +147,13 @@
         .bet-tile-title { font-size: 24px; font-weight: bold; line-height: 1; margin-bottom: 5px; color:#f8fafc;}
         .bet-tile-payout { font-size: 18px; color: var(--text-muted); font-weight: bold; }
         
+        .perya-txt { color: #fff !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); -webkit-text-stroke: 0 !important; }
+
+        @keyframes coinPop { 0% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(-30px) scale(1.5); opacity: 1; } 100% { transform: translateY(-40px) scale(1); opacity: 0; } }
         .bet-badge { position: absolute; top: -10px; right: -10px; background: var(--blue); color: #fff; padding: 2px 8px; border: 2px solid #0f172a; font-size: 18px; font-weight: bold; z-index: 10; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); transition: 0.3s;}
+        .bet-badge.win { background: var(--green); border-color: #fff; }
+        .bet-badge.lose { background: var(--red); opacity: 0.8; }
+        .mario-coin { position: absolute; font-size: 24px; color: var(--gold); pointer-events: none; animation: coinPop 0.8s ease-out forwards; z-index: 50;}
 
         /* CARDS & ANIMATIONS */
         .hands-wrapper { display: flex; gap: 8px; justify-content: center; min-height: 110px; align-items: flex-end; width: 100%; position: relative;}
@@ -166,21 +171,24 @@
         
         .flip-reveal { animation: cardFlip 0.4s ease-out forwards; }
 
-        /* PERFECT BLACKJACK ALIGNMENT (Bigger Seats & Centered) */
+        /* PERFECT BLACKJACK ALIGNMENT & SIZING */
         .bj-table { display: flex; justify-content: center; align-items: flex-end; gap: 40px; width: 100%; position: absolute; bottom: 20px; height: 260px;}
         .seat { display: flex; flex-direction: column; align-items: center; width: 180px; transition: 0.3s; justify-content: flex-end; position: relative;}
         
         .nameplate { background: rgba(15,23,42,0.9); border: 2px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 22px; font-weight: bold; width: 100%; text-align: center; margin-top: 5px; color:#f8fafc; box-shadow: 0 4px 6px rgba(0,0,0,0.4);}
         
-        .hand-container { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; margin-bottom: 4px; gap: 4px; min-height: 140px; transition: 0.3s;}
+        /* Inner relative wrapper so Badges align strictly to the cards, ignoring bet pills */
+        .hand-container { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; margin-bottom: 4px; gap: 4px; min-height: 140px; transition: 0.3s;}
+        .card-anchor { display: flex; flex-direction: row; position: relative; justify-content: center; align-items: center; width: 100%; }
         
         /* Centered Score Badge to the left of the cards */
-        .hand-score { position: absolute; top: 50%; transform: translateY(-50%); left: -25px; background: #0f172a; border: 2px solid #e2e8f0; border-radius: 50%; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; z-index: 10; color: #f8fafc; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.3s;}
+        .hand-score { position: absolute; top: 50%; transform: translateY(-50%); left: -15px; background: #0f172a; border: 2px solid #e2e8f0; border-radius: 50%; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; z-index: 10; color: #f8fafc; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.3s;}
         .hand-score.active-glow { box-shadow: 0 0 15px var(--gold); background: var(--gold); color: #000; border-color: #fff; }
         
-        .bj-bet-line { font-size: 24px; color: #fff; font-weight: bold; background: var(--blue); padding: 4px 15px; border-radius: 12px; border: 2px solid #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.5); text-align: center;}
-        .bj-bet-line.win { background: var(--green); }
-        .bj-bet-line.lose { background: var(--red); opacity: 0.8; }
+        /* Small, Black & Gold Bet Pills */
+        .bj-bet-line { font-size: 16px; color: var(--gold); font-weight: normal; background: #000; padding: 2px 12px; border-radius: 12px; border: 1px solid var(--gold); box-shadow: 0 2px 4px rgba(0,0,0,0.5); text-align: center; margin-top: 5px;}
+        .bj-bet-line.win { background: var(--green); color: #fff; border-color: #fff; font-weight: bold;}
+        .bj-bet-line.lose { background: var(--red); color: #fff; border-color: #fff; font-weight: bold;}
         
         /* Stamped Action Result Board */
         @keyframes stampResult { 0% { opacity: 0; transform: translate(-50%, -50%) scale(2); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
@@ -231,10 +239,7 @@
         .modal-col { flex:1; background:#0f172a; border:2px solid #334155; padding:20px; border-radius: 8px; overflow-y:auto; position: relative;}
         .inv-slot { width: 60px; height: 60px; border: 2px solid #475569; display:flex; justify-content:center; align-items:center; background:#1e293b; font-size:32px; cursor:pointer; border-radius: 6px; transition:0.1s;}
         .inv-slot:hover { border-color: #fff; transform: translateY(-2px); background:#334155;}
-        
         .market-item { border:2px solid #475569; background:#1e293b; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
-        
-        /* LEDGER */
         .ledger-entry { border-left: 4px solid #475569; padding: 10px 12px; background: #1e293b; margin-bottom: 8px; border-radius: 4px;}
         .ledger-entry.win { border-color: var(--green); } .ledger-entry.loss { border-color: var(--red); }
         .ledger-running-bal { font-size: 18px; color: var(--gold); background: #0f172a; padding: 2px 8px; border-radius: 4px; display: inline-block; width: max-content;}
@@ -453,7 +458,8 @@
                         <button class="btn btn-red small" onclick="goBack()">CLOSE</button>
                     </div>
                     <div class="mail-split">
-                        <div class="mail-list custom-scroll" id="mail-inbox-list"></div>
+                        <div class="mail-list custom-scroll" id="mail-inbox-list">
+                            </div>
                         <div class="mail-view">
                             <div class="mail-thread custom-scroll" id="mail-thread-view">
                                 <div style="color:var(--text-muted); text-align:center; margin-top:20px;">Select a message to view thread.</div>
@@ -622,7 +628,8 @@
                 <div class="panel" style="width: 600px; border-color:var(--blue);">
                     <h2 style="color: var(--blue); font-size: 36px; margin-bottom: 15px;">CREATE NEW OFFER</h2>
                     <p style="font-size: 22px; color:var(--text-muted); margin-bottom:20px;">Select an item from your inventory to list on the Trade Hub.</p>
-                    <div id="create-offer-inventory" style="display:flex; gap:10px; flex-wrap:wrap; background:#0f172a; padding:15px; border:2px solid #334155; border-radius:8px; margin-bottom:20px; justify-content:center;"></div>
+                    <div id="create-offer-inventory" style="display:flex; gap:10px; flex-wrap:wrap; background:#0f172a; padding:15px; border:2px solid #334155; border-radius:8px; margin-bottom:20px; justify-content:center;">
+                        </div>
                     <button class="btn btn-red" onclick="goBack()">CANCEL</button>
                 </div>
             </div>
@@ -653,7 +660,8 @@
 
                     <div style="width:100%; text-align: left; margin-bottom: 20px;">
                         <h3 style="color:var(--text-main); font-size:22px; margin-bottom:10px;">SELECT FROM INVENTORY:</h3>
-                        <div id="counter-offer-inventory" style="display:flex; gap:10px; flex-wrap:wrap; background:#0f172a; padding:15px; border:2px solid #334155; border-radius:8px; justify-content:flex-start;"></div>
+                        <div id="counter-offer-inventory" style="display:flex; gap:10px; flex-wrap:wrap; background:#0f172a; padding:15px; border:2px solid #334155; border-radius:8px; justify-content:flex-start;">
+                            </div>
                     </div>
 
                     <div style="display:flex; gap:10px; width:100%;">
@@ -724,9 +732,11 @@
                     <div style="text-align:center; position:absolute; top:20px; z-index:10;">
                         <div style="font-size:24px; margin-bottom:5px; color:var(--text-muted); font-weight:bold;">DEALER</div>
                         <div class="hand-container" style="min-height:110px;">
-                            <div id="bj-dealer-cards" class="hands-wrapper"></div>
-                            <div id="bj-dealer-val" class="hand-score hidden">0</div>
-                            <div class="result-board hidden" id="bj-dealer-result"></div>
+                            <div style="display:flex; flex-direction:row; position:relative;" id="bj-dealer-cards-wrapper">
+                                <div class="hand-score hidden" id="bj-dealer-val">0</div>
+                                <div style="display:flex; flex-direction:row;" id="bj-dealer-cards"></div>
+                                <div class="result-board hidden" id="bj-dealer-result"></div>
+                            </div>
                         </div>
                     </div>
                     <div id="bj-seats-area" class="bj-table"></div>
@@ -906,19 +916,19 @@
                     <div class="derby-track">
                         <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--red); font-weight:bold; z-index:5;">RED</div>
-                            <img src="horse.gif" class="horse" id="racer-0" style="background:transparent; box-shadow:none;">
+                            <img src="horse.gif" class="horse" id="racer-0" style="filter: sepia(100%) hue-rotate(320deg) saturate(300%);">
                         </div>
                         <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--blue); font-weight:bold; z-index:5;">BLU</div>
-                            <img src="horse.gif" class="horse" id="racer-1" style="background:transparent; box-shadow:none; filter: hue-rotate(240deg);">
+                            <img src="horse.gif" class="horse" id="racer-1" style="filter: sepia(100%) hue-rotate(200deg) saturate(300%);">
                         </div>
                         <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--green); font-weight:bold; z-index:5;">GRN</div>
-                            <img src="horse.gif" class="horse" id="racer-2" style="background:transparent; box-shadow:none; filter: hue-rotate(120deg);">
+                            <img src="horse.gif" class="horse" id="racer-2" style="filter: sepia(100%) hue-rotate(80deg) saturate(300%);">
                         </div>
                         <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--gold); font-weight:bold; z-index:5;">GLD</div>
-                            <img src="horse.gif" class="horse" id="racer-3" style="background:transparent; box-shadow:none; filter: hue-rotate(60deg);">
+                            <img src="horse.gif" class="horse" id="racer-3" style="filter: sepia(100%) hue-rotate(30deg) saturate(300%);">
                         </div>
                     </div>
                 </div>
@@ -988,27 +998,27 @@
                     <div class="bet-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); max-width:600px;">
                         <div class="bet-tile c-red" onclick="placeBet('color', 'red')">
                             <div class="bet-badge hidden" id="badge-color-red">0</div>
-                            <div class="bet-tile-title">RED</div>
+                            <div class="bet-tile-title perya-txt">RED</div>
                         </div>
                         <div class="bet-tile c-blue" onclick="placeBet('color', 'blue')">
                             <div class="bet-badge hidden" id="badge-color-blue">0</div>
-                            <div class="bet-tile-title">BLUE</div>
+                            <div class="bet-tile-title perya-txt">BLUE</div>
                         </div>
                         <div class="bet-tile c-yellow" onclick="placeBet('color', 'yellow')">
                             <div class="bet-badge hidden" id="badge-color-yellow">0</div>
-                            <div class="bet-tile-title">YELLOW</div>
+                            <div class="bet-tile-title perya-txt">YELLOW</div>
                         </div>
                         <div class="bet-tile c-green" onclick="placeBet('color', 'green')">
                             <div class="bet-badge hidden" id="badge-color-green">0</div>
-                            <div class="bet-tile-title">GREEN</div>
+                            <div class="bet-tile-title perya-txt">GREEN</div>
                         </div>
                         <div class="bet-tile c-pink" onclick="placeBet('color', 'pink')">
                             <div class="bet-badge hidden" id="badge-color-pink">0</div>
-                            <div class="bet-tile-title">PINK</div>
+                            <div class="bet-tile-title perya-txt">PINK</div>
                         </div>
                         <div class="bet-tile c-white" onclick="placeBet('color', 'white')">
                             <div class="bet-badge hidden" id="badge-color-white">0</div>
-                            <div class="bet-tile-title" style="color: #0f172a;">WHITE</div>
+                            <div class="bet-tile-title perya-txt" style="color: #fff;">WHITE</div>
                         </div>
                     </div>
                 </div>
@@ -1027,15 +1037,15 @@
                 <div class="status-bar"><div id="cups-timer" class="timer-display hidden">WAITING</div><div id="cups-res" class="result-display">FIND THE BALL</div></div>
                 <div class="game-surface">
                     <div class="cups-rack">
-                        <div class="cup-wrapper" id="cup-wrap-0">
+                        <div class="cup-wrapper anim-cup-1" id="cup-wrap-0">
                             <div class="cup-ball">🟡</div>
                             <div class="cup-shape"></div>
                         </div>
-                        <div class="cup-wrapper" id="cup-wrap-1">
+                        <div class="cup-wrapper anim-cup-2" id="cup-wrap-1">
                             <div class="cup-ball">🟡</div>
                             <div class="cup-shape"></div>
                         </div>
-                        <div class="cup-wrapper" id="cup-wrap-2">
+                        <div class="cup-wrapper anim-cup-3" id="cup-wrap-2">
                             <div class="cup-ball">🟡</div>
                             <div class="cup-shape"></div>
                         </div>
@@ -1145,7 +1155,7 @@
         let lastBetAction = null;
         let isBetting = false;
         let betThrottleTimeout = null;
-        let pendingBankTx = null; // Holds deposit/withdraw data for confirmation
+        let pendingBankTx = null; // Cache for the confirmation modal
 
         // BET TRACKING POOLS
         window.lastBetAmount = 0; 
@@ -1217,6 +1227,7 @@
             return num ? num.toLocaleString() : '0'; 
         }
 
+        // Auto-Commas for Input Fields
         document.querySelectorAll('.num-format').forEach(input => {
             input.addEventListener('input', function(e) {
                 let value = this.value.replace(/,/g, '').replace(/\D/g, '');
@@ -1228,11 +1239,16 @@
             });
         });
 
+        function getRawNumber(id) {
+            const val = document.getElementById(id).value;
+            return parseInt(val.replace(/,/g, ''), 10) || 0;
+        }
+        
         function showToast(msg, type = 'error') { 
             const c = document.getElementById('toast-container'); 
             if (!c) return; 
             
-            c.innerHTML = ''; 
+            c.innerHTML = ''; // Force clear previous toasts (Anti-Spam)
             
             const t = document.createElement('div'); 
             t.className = `toast toast-${type}`; 
@@ -1248,9 +1264,12 @@
         function showModal(id) { 
             document.querySelectorAll('.overlay-menu').forEach(m => m.classList.add('hidden')); 
             const el = document.getElementById(id); 
+            
             if (el) {
                 el.classList.remove('hidden'); 
-                if (menuHistory[menuHistory.length - 1] !== id) menuHistory.push(id);
+                if (menuHistory[menuHistory.length - 1] !== id) {
+                    menuHistory.push(id);
+                }
             }
         }
         
@@ -1259,8 +1278,11 @@
             
             if (modals.length > 0) {
                 const lastModal = menuHistory.pop();
-                if (lastModal) document.getElementById(lastModal).classList.add('hidden');
-                else modals.forEach(m => m.classList.add('hidden')); 
+                if (lastModal) {
+                    document.getElementById(lastModal).classList.add('hidden');
+                } else {
+                    modals.forEach(m => m.classList.add('hidden')); 
+                }
                 
                 if (menuHistory.length > 0) {
                     const prev = menuHistory[menuHistory.length - 1];
@@ -1271,7 +1293,7 @@
                 document.getElementById('casino-hub-view').classList.add('hidden');
                 document.getElementById('exchange-hub-view').classList.add('hidden');
                 document.getElementById('main-menu-view').classList.remove('hidden');
-                document.getElementById('global-controls').classList.remove('hidden'); 
+                document.getElementById('global-controls').classList.remove('hidden'); // Reveal Main Menu Buttons
             }
         }
 
@@ -1297,6 +1319,7 @@
                 chat.classList.remove('open');
             } else {
                 chat.classList.add('open');
+                // Scroll both to bottom on open
                 const bRoom = document.getElementById('chat-box-room');
                 const bGlobal = document.getElementById('chat-box-global');
                 if(bRoom) bRoom.scrollTop = bRoom.scrollHeight;
@@ -1333,6 +1356,7 @@
                 let nameColor = 'var(--blue)';
                 let nameTag = data.username;
                 
+                // Route message to correct box
                 const boxId = data.roomId === 'global' ? 'chat-box-global' : 'chat-box-room';
                 const box = document.getElementById(boxId);
                 
@@ -1368,14 +1392,14 @@
         // HUB ROUTING
         window.openCasinoHub = function() {
             document.getElementById('main-menu-view').classList.add('hidden');
-            document.getElementById('global-controls').classList.add('hidden'); 
+            document.getElementById('global-controls').classList.add('hidden'); // Hide from Hubs
             document.getElementById('casino-hub-view').classList.remove('hidden');
             switchRealmTab('casino');
         }
 
         window.openMarketHub = function() {
             document.getElementById('main-menu-view').classList.add('hidden');
-            document.getElementById('global-controls').classList.add('hidden'); 
+            document.getElementById('global-controls').classList.add('hidden'); // Hide from Hubs
             document.getElementById('exchange-hub-view').classList.remove('hidden');
         }
 
@@ -1466,6 +1490,7 @@
             activeMailThreadId = id;
             if(socket) socket.emit('read_ticket', { id: mail._id, username: currentUser.username });
             
+            // Re-render local list visually
             mail.unreadPlayer = false;
             if(!mail.readBy) mail.readBy = [];
             mail.readBy.push(currentUser.username);
@@ -1564,7 +1589,7 @@
                     
                     document.getElementById('auth-view').classList.add('hidden'); 
                     document.getElementById('main-menu-view').classList.remove('hidden');
-                    document.getElementById('global-controls').classList.remove('hidden');
+                    document.getElementById('global-controls').classList.remove('hidden'); // Reveal Main Controls
                     
                     if (data.inventory) myInventory = data.inventory;
 
@@ -1784,6 +1809,7 @@
         // ==========================================
         // 10. ECONOMY MENUS & INVENTORY
         // ==========================================
+        
         window.promptBank = function(type) {
             const amtStr = document.getElementById('bank-amt').value; 
             const amt = parseInt(amtStr.replace(/,/g, ''), 10);
@@ -1834,7 +1860,7 @@
         window.openMarket = function() { renderInventory(); showModal('market-modal'); }
         window.openAuction = function() { renderInventory(); showModal('auction-modal'); }
         window.openTradeHub = function() { renderInventory(); showModal('trade-hub-modal'); }
-
+        
         function renderInventory() {
             let html = '';
             let counterHtml = ''; 
@@ -2090,8 +2116,9 @@
         }
 
         // ==========================================
-        // 12. BETTING DISPATCH
+        // 12. BETTING DISPATCH & ANIMATIONS
         // ==========================================
+        
         function applyThrottle() { 
             isBetting = true; 
             clearTimeout(betThrottleTimeout); 
@@ -2140,7 +2167,6 @@
                 myCupsBets[choice] += amt; 
             }
             
-            // OPTIMISTIC UI UPDATE
             currentUser.credits -= amt;
             updateAllCredits();
             addLedgerEntry(`${game.toUpperCase()} BET`, amt, false, currentUser.credits);
@@ -2172,6 +2198,7 @@
                 const badge = document.getElementById(badgeId); 
                 
                 if (badge) { 
+                    badge.classList.remove('win', 'lose');
                     badge.innerText = formatNumber(data.totalChoiceBet); 
                     if (data.totalChoiceBet > 0) {
                         badge.classList.remove('hidden'); 
@@ -2447,7 +2474,6 @@
                 if (dBadge) dBadge.classList.add('hidden'); 
             }
             
-            // Dealer Result Stamping (Blackjack or Bust)
             if (dResult) {
                 if (state.status === 'resolving' && dealerVal > 21) {
                     dResult.innerText = "BUST!";
@@ -2493,6 +2519,7 @@
                 let seatsHtml = ''; 
                 
                 if (!seatData) {
+                    // Empty seats are completely cleared of inner HTML if playing, keeping layout clean
                     if (state.status === 'waiting' || state.status === 'betting') {
                         let sitBtn = !hasSeatAnywhere ? `<button class="btn btn-green small" onclick="actSitDown(${index})">SIT DOWN</button>` : '';
                         seatsHtml = `<div class="seat-empty-box">${sitBtn}</div>`;
@@ -2509,10 +2536,12 @@
                         seatsHtml += `<div class="hands-wrapper" id="hands-wrapper-${index}">`;
                         seatData.hands.forEach((hand, hIdx) => {
                             seatsHtml += `<div class="hand-container" id="hand-container-${index}-${hIdx}">`;
+                            seatsHtml += `<div class="card-anchor">`;
                             seatsHtml += `<div class="hand-score hidden" id="hand-score-${index}-${hIdx}">0</div>`;
                             seatsHtml += `<div style="display:flex; flex-direction:row;" id="hand-cards-${index}-${hIdx}"></div>`;
-                            seatsHtml += `<div class="bj-bet-line hidden" id="hand-bet-${index}-${hIdx}">0</div>`;
                             seatsHtml += `<div class="result-board hidden" id="action-res-${index}-${hIdx}"></div>`;
+                            seatsHtml += `</div>`;
+                            seatsHtml += `<div class="bj-bet-line hidden" id="hand-bet-${index}-${hIdx}">0</div>`;
                             seatsHtml += `</div>`; 
                         });
                         seatsHtml += `</div>`;
@@ -2531,29 +2560,25 @@
                         let hIdx = seatData.hands.length - 1;
                         handsWrapper.insertAdjacentHTML('beforeend', `
                             <div class="hand-container" id="hand-container-${index}-${hIdx}">
-                                <div class="hand-score hidden" id="hand-score-${index}-${hIdx}">0</div>
-                                <div style="display:flex; flex-direction:row;" id="hand-cards-${index}-${hIdx}"></div>
+                                <div class="card-anchor">
+                                    <div class="hand-score hidden" id="hand-score-${index}-${hIdx}">0</div>
+                                    <div style="display:flex; flex-direction:row;" id="hand-cards-${index}-${hIdx}"></div>
+                                    <div class="result-board hidden" id="action-res-${index}-${hIdx}"></div>
+                                </div>
                                 <div class="bj-bet-line hidden" id="hand-bet-${index}-${hIdx}">0</div>
-                                <div class="result-board hidden" id="action-res-${index}-${hIdx}"></div>
                             </div>
                         `);
                     }
 
                     seatData.hands.forEach((hand, hIdx) => {
                         
-                        let scoreUI = document.getElementById(`hand-score-${index}-${hIdx}`);
-                        if (scoreUI) {
-                            if (hand.cards.length > 0) {
-                                scoreUI.innerText = hand.value || calculateValue(hand.cards);
-                                scoreUI.classList.remove('hidden');
-                                // Glowing active state indicator
-                                if (state.activeSeatIndex === index && seatData.currentHand === hIdx && state.status === 'playing') {
-                                    scoreUI.classList.add('active-glow');
-                                } else {
-                                    scoreUI.classList.remove('active-glow');
-                                }
+                        let handContainerEl = document.getElementById(`hand-container-${index}-${hIdx}`);
+                        if (handContainerEl) {
+                            if (state.activeSeatIndex === index && seatData.currentHand === hIdx && state.status === 'playing') {
+                                handContainerEl.style.boxShadow = '0 0 15px var(--gold)';
+                                handContainerEl.style.borderRadius = '8px';
                             } else {
-                                scoreUI.classList.add('hidden');
+                                handContainerEl.style.boxShadow = 'none';
                             }
                         }
 
@@ -2565,6 +2590,21 @@
                                 for(let c = currCount; c < hand.cards.length; c++) {
                                     cardContainer.insertAdjacentHTML('beforeend', formatCardHTML(hand.cards[c], false));
                                 }
+                            }
+                        }
+
+                        let scoreUI = document.getElementById(`hand-score-${index}-${hIdx}`);
+                        if (scoreUI) {
+                            if (hand.cards.length > 0) {
+                                scoreUI.innerText = hand.value || calculateValue(hand.cards);
+                                scoreUI.classList.remove('hidden');
+                                if (state.activeSeatIndex === index && seatData.currentHand === hIdx && state.status === 'playing') {
+                                    scoreUI.classList.add('active-glow');
+                                } else {
+                                    scoreUI.classList.remove('active-glow');
+                                }
+                            } else {
+                                scoreUI.classList.add('hidden');
                             }
                         }
 
@@ -2689,6 +2729,12 @@
                     pScoreUI.style.display = 'none'; 
                     bScoreUI.style.display = 'none';
                     
+                    ['player', 'tie', 'banker'].forEach(choice => {
+                        const badge = document.getElementById(`badge-baccarat-${choice}`);
+                        if(badge) {
+                            badge.classList.add('hidden');
+                        }
+                    });
                     setTimer('bac', data.betEndTime - Date.now(), "BETS CLOSING");
                 } 
                 else if (data.status === 'drawing') { 
@@ -2756,6 +2802,41 @@
 
                     setTimeout(() => {
                         setStatus('bac', data.winner === 'tie' ? "TIE!" : `${data.winner.toUpperCase()} WINS!`);
+                        let totalBet = Object.values(myBaccaratBets).reduce((a,b)=>a+b, 0);
+                        
+                        if (totalBet > 0) {
+                            let myWins = data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase());
+                            if (myWins.length > 0) { 
+                                let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
+                                setStatus('bac', `YOU WON ${formatNumber(totalWin)}!`); 
+                                playSfx('win'); 
+                                addLedgerEntry('BACCARAT WIN', totalWin, true, currentUser.credits + totalWin);
+                                
+                                myWins.forEach(w => {
+                                    const badge = document.getElementById(`badge-baccarat-${w.choice}`);
+                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
+                                });
+                            } 
+                            else if (data.winner === 'tie' && (myBaccaratBets.player > 0 || myBaccaratBets.banker > 0)) { 
+                                setStatus('bac', `PUSH!`); 
+                                playSfx('win'); 
+                                ['player', 'banker'].forEach(c => {
+                                    if(myBaccaratBets[c] > 0) {
+                                        const badge = document.getElementById(`badge-baccarat-${c}`);
+                                        if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(myBaccaratBets[c]); badge.style.background = 'var(--gold)'; }
+                                    }
+                                });
+                            } else { 
+                                setStatus('bac', "HOUSE WINS", true); 
+                                playSfx('lose'); 
+                                ['player', 'banker', 'tie'].forEach(c => {
+                                    if(myBaccaratBets[c] > 0) {
+                                        const badge = document.getElementById(`badge-baccarat-${c}`);
+                                        if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
+                                    }
+                                });
+                            }
+                        }
                     }, delay);
                 }
             });
@@ -2771,6 +2852,11 @@
                     myDvtBets = { dragon: 0, tiger: 0, tie: 0 }; 
                     dCardUI.innerHTML = ''; 
                     tCardUI.innerHTML = '';
+                    
+                    ['dragon', 'tie', 'tiger'].forEach(c => {
+                        const b = document.getElementById(`badge-dvt-${c}`);
+                        if(b) { b.classList.add('hidden'); }
+                    });
                     setTimer('dvt', data.betEndTime - Date.now(), "BETS CLOSING");
                 } 
                 else if (data.status === 'drawing') { 
@@ -2789,6 +2875,41 @@
                     
                     setTimeout(() => {
                         setStatus('dvt', data.winner === 'tie' ? "TIE!" : `${data.winner.toUpperCase()} WINS!`);
+                        let totalBet = Object.values(myDvtBets).reduce((a,b)=>a+b, 0);
+                        
+                        if (totalBet > 0) {
+                            let myWins = data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase());
+                            if (myWins.length > 0) { 
+                                let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
+                                setStatus('dvt', `YOU WON ${formatNumber(totalWin)}!`); 
+                                playSfx('win'); 
+                                addLedgerEntry('DRAGON VS TIGER WIN', totalWin, true, currentUser.credits + totalWin); 
+                                
+                                myWins.forEach(w => {
+                                    const badge = document.getElementById(`badge-dvt-${w.choice}`);
+                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
+                                });
+                            } 
+                            else if (data.winner === 'tie' && (myDvtBets.dragon > 0 || myDvtBets.tiger > 0)) { 
+                                setStatus('dvt', `PUSH (HALF WIN)`); 
+                                playSfx('win'); 
+                                ['dragon', 'tiger'].forEach(c => {
+                                    if(myDvtBets[c] > 0) {
+                                        const badge = document.getElementById(`badge-dvt-${c}`);
+                                        if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(myDvtBets[c]/2); badge.style.background = 'var(--gold)'; }
+                                    }
+                                });
+                            } else { 
+                                setStatus('dvt', "HOUSE WINS", true); 
+                                playSfx('lose'); 
+                                ['dragon', 'tiger', 'tie'].forEach(c => {
+                                    if(myDvtBets[c] > 0) {
+                                        const badge = document.getElementById(`badge-dvt-${c}`);
+                                        if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
+                                    }
+                                });
+                            }
+                        }
                     }, 2500);
                 }
             });
@@ -2809,6 +2930,11 @@
                     d1.classList.remove('shake'); 
                     d2.classList.remove('shake'); 
                     myDiceBets = { under: 0, seven: 0, over: 0 }; 
+                    
+                    ['under', 'seven', 'over'].forEach(c => {
+                        const b = document.getElementById(`badge-dice-${c}`);
+                        if(b) { b.classList.add('hidden'); }
+                    });
                     setTimer('dice', data.betEndTime - Date.now(), "BETS CLOSING");
                 } 
                 else if (data.status === 'rolling') { 
@@ -2828,6 +2954,31 @@
                     d2.innerText = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][data.dice[1]-1]; 
                     
                     setStatus('dice', `RESULT: ${data.total}`);
+                    let totalBet = Object.values(myDiceBets).reduce((a,b)=>a+b, 0);
+                    
+                    if (totalBet > 0) {
+                        let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
+                        if (myWins.length > 0) { 
+                            let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
+                            setStatus('dice', `YOU WON ${formatNumber(totalWin)}!`); 
+                            playSfx('win'); 
+                            addLedgerEntry('HIGH-LOW DICE WIN', totalWin, true, currentUser.credits + totalWin); 
+                            
+                            myWins.forEach(w => {
+                                const badge = document.getElementById(`badge-dice-${w.choice}`);
+                                if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
+                            });
+                        } else { 
+                            setStatus('dice', "HOUSE WINS", true); 
+                            playSfx('lose'); 
+                            ['under', 'seven', 'over'].forEach(c => {
+                                if(myDiceBets[c] > 0) {
+                                    const badge = document.getElementById(`badge-dice-${c}`);
+                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
+                                }
+                            });
+                        }
+                    }
                 }
             });
 
@@ -2844,6 +2995,11 @@
                 if (data.status === 'betting') { 
                     setStatus('derby', "PLACE YOUR BETS"); 
                     myDerbyBets = [0, 0, 0, 0, 0, 0]; 
+                    
+                    for(let i=0; i<6; i++) { 
+                        const badge = document.getElementById(`badge-derby-${i}`); 
+                        if(badge) { badge.classList.add('hidden'); }
+                    } 
                     setTimer('derby', data.betEndTime - Date.now(), "BETS CLOSING");
                 }
                 else if (data.status === 'racing') { 
@@ -2854,6 +3010,31 @@
                 else if (data.status === 'resolving') {
                     const cNames = ['RED', 'BLUE', 'GREEN', 'GOLD']; 
                     setStatus('derby', `${cNames[data.winner]} WINS!`);
+                    
+                    let totalBet = myDerbyBets.reduce((a,b)=>a+b, 0);
+                    if (totalBet > 0) {
+                        let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
+                        if (myWins.length > 0) { 
+                            let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
+                            setStatus('derby', `YOU WON ${formatNumber(totalWin)}!`); 
+                            playSfx('win'); 
+                            addLedgerEntry('8-BIT DERBY WIN', totalWin, true, currentUser.credits + totalWin); 
+                            
+                            myWins.forEach(w => {
+                                const badge = document.getElementById(`badge-derby-${w.choice}`);
+                                if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
+                            });
+                        } else { 
+                            setStatus('derby', "HOUSE WINS", true); 
+                            playSfx('lose'); 
+                            for(let i=0; i<4; i++) {
+                                if(myDerbyBets[i] > 0) {
+                                    const badge = document.getElementById(`badge-derby-${i}`);
+                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
+                                }
+                            }
+                        }
+                    }
                 }
             });
 
@@ -2875,7 +3056,13 @@
                 if (data.status === 'betting') { 
                     setStatus('color', "PLACE YOUR BETS"); 
                     myColorBets = { red: 0, blue: 0, yellow: 0, green: 0, pink: 0, white: 0 };
+                    
                     dies.forEach(d => { if(d) d.classList.remove('rolling'); });
+                    
+                    ['red', 'blue', 'yellow', 'green', 'pink', 'white'].forEach(c => {
+                        const b = document.getElementById(`badge-color-${c}`);
+                        if(b) { b.classList.add('hidden'); }
+                    }); 
                     setTimer('color', data.betEndTime - Date.now(), "BETS CLOSING");
                 }
                 else if (data.status === 'rolling') { 
@@ -2890,6 +3077,37 @@
                     document.getElementById('col-d2').className = `color-die c-${data.dice[1]}`; 
                     document.getElementById('col-d3').className = `color-die c-${data.dice[2]}`; 
                     setStatus('color', "RESULT!");
+                    
+                    let totalBet = Object.values(myColorBets).reduce((a,b)=>a+b, 0);
+                    if (totalBet > 0) {
+                        let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
+                        if (myWins.length > 0) { 
+                            let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
+                            if (myInventory.includes('orb')) {
+                                let bonus = Math.floor(totalWin * 0.05);
+                                totalWin += bonus; 
+                                currentUser.credits += bonus; 
+                                showToast(`Orb activated! +${formatNumber(bonus)} CR Bonus!`, 'success');
+                            }
+                            setStatus('color', `YOU WON ${formatNumber(totalWin)}!`); 
+                            playSfx('win');
+                            addLedgerEntry('PERYA COLOR WIN', totalWin, true, currentUser.credits + totalWin);
+                            
+                            myWins.forEach(w => {
+                                const badge = document.getElementById(`badge-color-${w.choice}`);
+                                if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
+                            });
+                        } else { 
+                            setStatus('color', "HOUSE WINS", true); 
+                            playSfx('lose'); 
+                            ['red', 'blue', 'yellow', 'green', 'pink', 'white'].forEach(c => {
+                                if(myColorBets[c] > 0) {
+                                    const badge = document.getElementById(`badge-color-${c}`);
+                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
+                                }
+                            });
+                        }
+                    }
                 }
             });
 
@@ -2903,11 +3121,23 @@
                     document.querySelectorAll('.cup-wrapper').forEach(w => {
                         w.classList.remove('reveal');
                         w.classList.add('shuffling');
+                        
+                        // Fire actual physical translations based on HTML classes from CSS Part 1
+                        if (w.id === 'cup-wrap-0') w.classList.add('anim-cup-1');
+                        if (w.id === 'cup-wrap-1') w.classList.add('anim-cup-2');
+                        if (w.id === 'cup-wrap-2') w.classList.add('anim-cup-3');
                     }); 
+                    
+                    for(let i=0; i<3; i++) {
+                        const b = document.getElementById(`badge-cups-${i}`);
+                        if(b) { b.classList.add('hidden'); }
+                    }
                 }
                 else if (data.status === 'betting') { 
                     setStatus('cups', "FIND THE BALL"); 
-                    document.querySelectorAll('.cup-wrapper').forEach(w => w.classList.remove('shuffling'));
+                    document.querySelectorAll('.cup-wrapper').forEach(w => {
+                        w.classList.remove('shuffling', 'anim-cup-1', 'anim-cup-2', 'anim-cup-3');
+                    });
                     setTimer('cups', data.betEndTime - Date.now(), "BETS CLOSING"); 
                 }
                 else if (data.status === 'resolving') {
@@ -2916,6 +3146,31 @@
                     if(winCupWrap) winCupWrap.classList.add('reveal');
                     
                     setStatus('cups', `CUP ${data.winningCup + 1} REVEALED!`);
+                    
+                    let totalBet = myCupsBets.reduce((a,b)=>a+b, 0);
+                    if (totalBet > 0) {
+                        let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
+                        if (myWins.length > 0) { 
+                            let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
+                            setStatus('cups', `YOU WON ${formatNumber(totalWin)}!`); 
+                            playSfx('win'); 
+                            addLedgerEntry('STREET HUSTLE WIN', totalWin, true, currentUser.credits + totalWin); 
+                            
+                            myWins.forEach(w => {
+                                const badge = document.getElementById(`badge-cups-${w.choice}`);
+                                if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
+                            });
+                        } else { 
+                            setStatus('cups', "HOUSE WINS", true); 
+                            playSfx('lose'); 
+                            for(let i=0; i<3; i++) {
+                                if(myCupsBets[i] > 0) {
+                                    const badge = document.getElementById(`badge-cups-${i}`);
+                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
+                                }
+                            }
+                        }
+                    }
                 }
             });
 
