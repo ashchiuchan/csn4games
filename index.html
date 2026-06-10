@@ -35,6 +35,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'VT323', monospace; text-transform: uppercase; user-select: none; }
         body { background-color: #020617; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: var(--text-main); letter-spacing: 1px;}
         
+        .text-black, [style*="color: #000"], [style*="color:#000"] { text-shadow: none !important; color: #0f172a !important; }
+        
         input, select { background: #0f172a; border: 2px solid #334155; color: #fff; padding: 12px; font-size: 26px; outline: none; text-align: center; border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); user-select: auto !important; width: 100%;}
         input[type="text"].num-format { font-size: 32px; font-weight: bold; letter-spacing: 2px; }
         input:focus, select:focus { border-color: var(--blue); }
@@ -72,8 +74,7 @@
         .overlay-menu { background: rgba(2,6,23,0.9); z-index: 300; backdrop-filter: blur(4px); }
         
         .hub-layout { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; z-index: 200; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); padding: 25px; }
-        /* Lowered padding to balance Arcade screen */
-        .hub-content-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; overflow-y: auto; padding-top: 50px;}
+        .hub-content-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; overflow-y: auto;}
 
         .panel { background: var(--panel-bg); border: 3px solid #334155; border-radius: 12px; padding: 40px; width: 600px; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8);}
         .panel-content { display:flex; flex-direction:column; align-items:center; width:100%; }
@@ -103,7 +104,7 @@
         .nav-tab { background: #0f172a; border: 2px solid #334155; color: var(--text-muted); font-size: 24px; padding: 10px 40px; cursor: pointer; border-radius: 8px; transition: 0.2s; font-weight:bold; text-align: center;}
         .nav-tab.active { background: var(--blue); color: #020617; border-color: #fff; text-shadow:none;}
 
-        .realm-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 1100px; padding: 10px; margin-bottom: auto;}
+        .realm-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 1100px; padding: 10px; margin-bottom: 50px; }
         .realm-grid.arena-mode { display: flex; justify-content: center; width: 100%; }
         
         .realm-card { background: #1e293b; border: 2px solid #334155; border-radius: 12px; padding: 25px 15px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; height: 180px; justify-content:space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
@@ -149,11 +150,9 @@
         
         .perya-txt { color: #fff !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); -webkit-text-stroke: 0 !important; }
 
-        @keyframes coinPop { 0% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(-30px) scale(1.5); opacity: 1; } 100% { transform: translateY(-40px) scale(1); opacity: 0; } }
         .bet-badge { position: absolute; top: -10px; right: -10px; background: var(--blue); color: #fff; padding: 2px 8px; border: 2px solid #0f172a; font-size: 18px; font-weight: bold; z-index: 10; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); transition: 0.3s;}
         .bet-badge.win { background: var(--green); border-color: #fff; }
         .bet-badge.lose { background: var(--red); opacity: 0.8; }
-        .mario-coin { position: absolute; font-size: 24px; color: var(--gold); pointer-events: none; animation: coinPop 0.8s ease-out forwards; z-index: 50;}
 
         /* CARDS & ANIMATIONS */
         .hands-wrapper { display: flex; gap: 8px; justify-content: center; min-height: 110px; align-items: flex-end; width: 100%; position: relative;}
@@ -169,16 +168,18 @@
         .card-center { font-size: 36px; }
         .card.hidden-card { background: repeating-linear-gradient(45deg, #1e293b, #1e293b 5px, #334155 5px, #334155 10px); color: transparent; border-color: #0f172a; animation:none;}
         
-        .flip-reveal { animation: cardFlip 0.4s ease-out forwards; }
+        .flip-reveal { animation: cardFlip 0.5s ease-out forwards; }
 
-        /* PERFECT BLACKJACK ALIGNMENT & SIZING */
+        /* PERFECT BLACKJACK ALIGNMENT */
         .bj-table { display: flex; justify-content: center; align-items: flex-end; gap: 40px; width: 100%; position: absolute; bottom: 20px; height: 260px;}
         .seat { display: flex; flex-direction: column; align-items: center; width: 180px; transition: 0.3s; justify-content: flex-end; position: relative;}
+        .seat.active-turn { transform: translateY(-15px); }
+        .seat.active-turn .nameplate { border-color: var(--gold); color: var(--gold); }
         
         .nameplate { background: rgba(15,23,42,0.9); border: 2px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 22px; font-weight: bold; width: 100%; text-align: center; margin-top: 5px; color:#f8fafc; box-shadow: 0 4px 6px rgba(0,0,0,0.4);}
         
-        /* Inner relative wrapper so Badges align strictly to the cards, ignoring bet pills */
-        .hand-container { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; margin-bottom: 4px; gap: 4px; min-height: 140px; transition: 0.3s;}
+        /* The Hand Container holds the cards and the bet pill right below it */
+        .hand-container { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; margin-bottom: 4px; gap: 4px; min-height: 140px; transition: 0.2s;}
         .card-anchor { display: flex; flex-direction: row; position: relative; justify-content: center; align-items: center; width: 100%; }
         
         /* Centered Score Badge to the left of the cards */
@@ -190,9 +191,9 @@
         .bj-bet-line.win { background: var(--green); color: #fff; border-color: #fff; font-weight: bold;}
         .bj-bet-line.lose { background: var(--red); color: #fff; border-color: #fff; font-weight: bold;}
         
-        /* Stamped Action Result Board */
-        @keyframes stampResult { 0% { opacity: 0; transform: translate(-50%, -50%) scale(2); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-        .result-board { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15,23,42,0.95); border: 3px solid; padding: 6px 15px; border-radius: 8px; font-weight: bold; font-size: 28px; z-index: 30; pointer-events: none; opacity: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.8); }
+        /* Stamped Action Result Board (Slanted, smaller, fixed over cards) */
+        @keyframes stampResult { 0% { opacity: 0; transform: translate(-50%, -50%) scale(2) rotate(-15deg); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); } }
+        .result-board { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); background: rgba(15,23,42,0.95); border: 2px solid; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 20px; z-index: 30; pointer-events: none; opacity: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
         .result-board.show { animation: stampResult 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
         .seat-empty-box { height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 3px dashed rgba(255,255,255,0.2); width: 100%; border-radius: 8px; margin-bottom: 10px; background: rgba(0,0,0,0.4);}
@@ -249,9 +250,22 @@
         .shake { animation: diceShake 0.3s infinite; }
         
         .dice-display { font-size: 120px; font-family: Arial; display:flex; gap: 20px; text-shadow: 0 4px 10px rgba(0,0,0,0.5);}
-        .derby-track { width: 800px; height: 280px; background: rgba(0,0,0,0.3); border: 2px solid #334155; display: flex; flex-direction: column; position: relative; border-radius:8px; overflow: hidden;} 
+        
+        /* Derby Treadmill Track */
+        @keyframes treadmill { 0% { background-position: 0 0; } 100% { background-position: -80px 0; } }
+        .derby-track { 
+            width: 800px; height: 280px; 
+            background: repeating-linear-gradient(90deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 40px, rgba(0,0,0,0.4) 40px, rgba(0,0,0,0.4) 80px); 
+            background-size: 80px 100%;
+            border: 2px solid #334155; display: flex; flex-direction: column; position: relative; border-radius:8px; overflow: hidden;
+            animation: treadmill 1s linear infinite;
+            animation-play-state: paused;
+        } 
+        .derby-track.running { animation-play-state: running; }
         .derby-lane { flex: 1; border-bottom: 2px dashed #334155; position: relative; display: flex; align-items: center; padding: 0 10px; } 
-        .horse { height: 80%; width: 60px; position: absolute; bottom: 10%; transition: left 0.1s linear; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5)); object-fit: contain;}
+        
+        /* Strong Colorizing Filter for Horse GIF */
+        .horse { height: 80%; width: 60px; position: absolute; bottom: 10%; transition: left 0.1s linear; object-fit: contain; transform: scaleX(-1); }
         
         .color-rack { display: flex; gap: 20px; } 
         @keyframes flashColors { 0% { background: var(--red); } 20% { background: var(--blue); } 40% { background: var(--gold); } 60% { background: var(--green); } 80% { background: var(--pink); } 100% { background: #f8fafc; } }
@@ -340,7 +354,7 @@
                     <div class="menu-grid">
                         <button class="btn btn-blue full-width" onclick="openCasinoHub()"><span>ENTER ARCADE</span> <span>►</span></button>
                         <button class="btn btn-green" onclick="openMarketHub()">THE EXCHANGE</button>
-                        <button class="btn btn-gold" onclick="promptBank()">SYSTEM BANK</button>
+                        <button class="btn btn-gold" onclick="showBank()">SYSTEM BANK</button>
                         <button class="btn" onclick="showProfile()">AGENT DOSSIER</button>
                         <button class="btn btn-red" onclick="promptLogout()">DISCONNECT</button>
                     </div>
@@ -458,8 +472,7 @@
                         <button class="btn btn-red small" onclick="goBack()">CLOSE</button>
                     </div>
                     <div class="mail-split">
-                        <div class="mail-list custom-scroll" id="mail-inbox-list">
-                            </div>
+                        <div class="mail-list custom-scroll" id="mail-inbox-list"></div>
                         <div class="mail-view">
                             <div class="mail-thread custom-scroll" id="mail-thread-view">
                                 <div style="color:var(--text-muted); text-align:center; margin-top:20px;">Select a message to view thread.</div>
@@ -628,8 +641,7 @@
                 <div class="panel" style="width: 600px; border-color:var(--blue);">
                     <h2 style="color: var(--blue); font-size: 36px; margin-bottom: 15px;">CREATE NEW OFFER</h2>
                     <p style="font-size: 22px; color:var(--text-muted); margin-bottom:20px;">Select an item from your inventory to list on the Trade Hub.</p>
-                    <div id="create-offer-inventory" style="display:flex; gap:10px; flex-wrap:wrap; background:#0f172a; padding:15px; border:2px solid #334155; border-radius:8px; margin-bottom:20px; justify-content:center;">
-                        </div>
+                    <div id="create-offer-inventory" style="display:flex; gap:10px; flex-wrap:wrap; background:#0f172a; padding:15px; border:2px solid #334155; border-radius:8px; margin-bottom:20px; justify-content:center;"></div>
                     <button class="btn btn-red" onclick="goBack()">CANCEL</button>
                 </div>
             </div>
@@ -775,10 +787,10 @@
                     <div class="chip-rack">
                         <button class="btn small" style="width:100px;" onclick="actUndoBet('baccarat')">UNDO</button>
                         <div class="chip selected" onclick="selectChip(100)" id="chip-100">100</div>
-                        <div class="chip chip-1k" onclick="selectChip(1000)" id="chip-1000">1K</div>
-                        <div class="chip chip-5k" onclick="selectChip(5000)" id="chip-5000">5K</div>
-                        <div class="chip chip-20k" onclick="selectChip(20000)" id="chip-20000">20K</div>
-                        <div class="chip chip-50k" onclick="selectChip(50000)" id="chip-50000">50K</div>
+                        <div class="chip chip-1k" onclick="selectChip(1000)">1K</div>
+                        <div class="chip chip-5k" onclick="selectChip(5000)">5K</div>
+                        <div class="chip chip-20k" onclick="selectChip(20000)">20K</div>
+                        <div class="chip chip-50k" onclick="selectChip(50000)">50K</div>
                         <button class="btn small" style="width:100px;" onclick="actRebet('baccarat')">REBET</button>
                     </div>
                     <div class="bet-grid">
@@ -916,19 +928,19 @@
                     <div class="derby-track">
                         <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--red); font-weight:bold; z-index:5;">RED</div>
-                            <img src="horse.gif" class="horse" id="racer-0" style="filter: sepia(100%) hue-rotate(320deg) saturate(300%);">
+                            <img src="horse.gif" class="horse" id="racer-0" style="filter: sepia(1) hue-rotate(320deg) saturate(10000%) contrast(200%);">
                         </div>
                         <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--blue); font-weight:bold; z-index:5;">BLU</div>
-                            <img src="horse.gif" class="horse" id="racer-1" style="filter: sepia(100%) hue-rotate(200deg) saturate(300%);">
+                            <img src="horse.gif" class="horse" id="racer-1" style="filter: sepia(1) hue-rotate(200deg) saturate(10000%) contrast(200%);">
                         </div>
                         <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--green); font-weight:bold; z-index:5;">GRN</div>
-                            <img src="horse.gif" class="horse" id="racer-2" style="filter: sepia(100%) hue-rotate(80deg) saturate(300%);">
+                            <img src="horse.gif" class="horse" id="racer-2" style="filter: sepia(1) hue-rotate(80deg) saturate(10000%) contrast(200%);">
                         </div>
                         <div class="derby-lane">
                             <div style="position:absolute; left:10px; color:var(--gold); font-weight:bold; z-index:5;">GLD</div>
-                            <img src="horse.gif" class="horse" id="racer-3" style="filter: sepia(100%) hue-rotate(30deg) saturate(300%);">
+                            <img src="horse.gif" class="horse" id="racer-3" style="filter: sepia(1) hue-rotate(30deg) saturate(10000%) contrast(200%);">
                         </div>
                     </div>
                 </div>
@@ -1037,15 +1049,15 @@
                 <div class="status-bar"><div id="cups-timer" class="timer-display hidden">WAITING</div><div id="cups-res" class="result-display">FIND THE BALL</div></div>
                 <div class="game-surface">
                     <div class="cups-rack">
-                        <div class="cup-wrapper anim-cup-1" id="cup-wrap-0">
+                        <div class="cup-wrapper" id="cup-wrap-0">
                             <div class="cup-ball">🟡</div>
                             <div class="cup-shape"></div>
                         </div>
-                        <div class="cup-wrapper anim-cup-2" id="cup-wrap-1">
+                        <div class="cup-wrapper" id="cup-wrap-1">
                             <div class="cup-ball">🟡</div>
                             <div class="cup-shape"></div>
                         </div>
-                        <div class="cup-wrapper anim-cup-3" id="cup-wrap-2">
+                        <div class="cup-wrapper" id="cup-wrap-2">
                             <div class="cup-ball">🟡</div>
                             <div class="cup-shape"></div>
                         </div>
@@ -1728,6 +1740,7 @@
             }, 1000);
         }
 
+        // ROULETTE ENGINE LOGIC
         let isSpinning = false;
         
         window.spinRoulette = function() {
@@ -1773,7 +1786,7 @@
                     prizeName = "FREE RETRY";
                     showToast("Landed on RETRY! Spin again.", "success");
                     playSfx('win');
-                    return; 
+                    return; // No cooldown
                 } else if (actualDeg >= 180 && actualDeg < 240) {
                     payout = 50000;
                     prizeName = "JACKPOT! 50,000 CR";
@@ -1860,7 +1873,7 @@
         window.openMarket = function() { renderInventory(); showModal('market-modal'); }
         window.openAuction = function() { renderInventory(); showModal('auction-modal'); }
         window.openTradeHub = function() { renderInventory(); showModal('trade-hub-modal'); }
-        
+
         function renderInventory() {
             let html = '';
             let counterHtml = ''; 
@@ -2116,9 +2129,8 @@
         }
 
         // ==========================================
-        // 12. BETTING DISPATCH & ANIMATIONS
+        // 12. BETTING DISPATCH
         // ==========================================
-        
         function applyThrottle() { 
             isBetting = true; 
             clearTimeout(betThrottleTimeout); 
@@ -2167,6 +2179,7 @@
                 myCupsBets[choice] += amt; 
             }
             
+            // OPTIMISTIC UI UPDATE
             currentUser.credits -= amt;
             updateAllCredits();
             addLedgerEntry(`${game.toUpperCase()} BET`, amt, false, currentUser.credits);
@@ -2474,15 +2487,18 @@
                 if (dBadge) dBadge.classList.add('hidden'); 
             }
             
+            // Dealer Result Stamping
             if (dResult) {
                 if (state.status === 'resolving' && dealerVal > 21) {
                     dResult.innerText = "BUST!";
                     dResult.style.color = "var(--red)";
+                    dResult.style.borderColor = "var(--red)";
                     dResult.classList.remove('hidden');
                     dResult.classList.add('show');
                 } else if (state.status === 'resolving' && dealerVal === 21 && state.dealerCards.length === 2) {
                     dResult.innerText = "BLACKJACK!";
                     dResult.style.color = "var(--gold)";
+                    dResult.style.borderColor = "var(--gold)";
                     dResult.classList.remove('hidden');
                     dResult.classList.add('show');
                 } else {
@@ -2519,7 +2535,6 @@
                 let seatsHtml = ''; 
                 
                 if (!seatData) {
-                    // Empty seats are completely cleared of inner HTML if playing, keeping layout clean
                     if (state.status === 'waiting' || state.status === 'betting') {
                         let sitBtn = !hasSeatAnywhere ? `<button class="btn btn-green small" onclick="actSitDown(${index})">SIT DOWN</button>` : '';
                         seatsHtml = `<div class="seat-empty-box">${sitBtn}</div>`;
@@ -2571,20 +2586,10 @@
                     }
 
                     seatData.hands.forEach((hand, hIdx) => {
-                        
-                        let handContainerEl = document.getElementById(`hand-container-${index}-${hIdx}`);
-                        if (handContainerEl) {
-                            if (state.activeSeatIndex === index && seatData.currentHand === hIdx && state.status === 'playing') {
-                                handContainerEl.style.boxShadow = '0 0 15px var(--gold)';
-                                handContainerEl.style.borderRadius = '8px';
-                            } else {
-                                handContainerEl.style.boxShadow = 'none';
-                            }
-                        }
-
                         let cardContainer = document.getElementById(`hand-cards-${index}-${hIdx}`);
                         if (cardContainer) {
                             let currCount = cardContainer.children.length;
+                            // Critical clear to purge cards between rounds
                             if (hand.cards.length === 0) cardContainer.innerHTML = '';
                             else if (hand.cards.length > currCount) {
                                 for(let c = currCount; c < hand.cards.length; c++) {
@@ -2598,6 +2603,7 @@
                             if (hand.cards.length > 0) {
                                 scoreUI.innerText = hand.value || calculateValue(hand.cards);
                                 scoreUI.classList.remove('hidden');
+                                // Glowing active state indicator
                                 if (state.activeSeatIndex === index && seatData.currentHand === hIdx && state.status === 'playing') {
                                     scoreUI.classList.add('active-glow');
                                 } else {
@@ -2636,7 +2642,9 @@
                                 let finalWord = hand.result ? hand.result.toUpperCase() + "!" : "";
                                 if (actionResUI.innerText !== finalWord) {
                                     actionResUI.innerText = finalWord;
-                                    actionResUI.style.color = (hand.result === 'lose' || hand.result === 'bust') ? 'var(--red)' : ((hand.result === 'push') ? '#fff' : 'var(--gold)');
+                                    let textColor = (hand.result === 'lose' || hand.result === 'bust') ? 'var(--red)' : ((hand.result === 'push') ? '#fff' : 'var(--gold)');
+                                    actionResUI.style.color = textColor;
+                                    actionResUI.style.borderColor = textColor;
                                     actionResUI.classList.remove('hidden');
                                     actionResUI.classList.add('show');
                                 }
@@ -2644,7 +2652,9 @@
                                 const text = hand.status.toUpperCase() + "!";
                                 if (actionResUI.innerText !== text) {
                                     actionResUI.innerText = text;
-                                    actionResUI.style.color = hand.status === 'bust' ? 'var(--red)' : 'var(--gold)';
+                                    let textColor = hand.status === 'bust' ? 'var(--red)' : 'var(--gold)';
+                                    actionResUI.style.color = textColor;
+                                    actionResUI.style.borderColor = textColor;
                                     actionResUI.classList.remove('hidden');
                                     actionResUI.classList.add('show');
                                 }
@@ -2729,12 +2739,6 @@
                     pScoreUI.style.display = 'none'; 
                     bScoreUI.style.display = 'none';
                     
-                    ['player', 'tie', 'banker'].forEach(choice => {
-                        const badge = document.getElementById(`badge-baccarat-${choice}`);
-                        if(badge) {
-                            badge.classList.add('hidden');
-                        }
-                    });
                     setTimer('bac', data.betEndTime - Date.now(), "BETS CLOSING");
                 } 
                 else if (data.status === 'drawing') { 
@@ -2802,41 +2806,6 @@
 
                     setTimeout(() => {
                         setStatus('bac', data.winner === 'tie' ? "TIE!" : `${data.winner.toUpperCase()} WINS!`);
-                        let totalBet = Object.values(myBaccaratBets).reduce((a,b)=>a+b, 0);
-                        
-                        if (totalBet > 0) {
-                            let myWins = data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase());
-                            if (myWins.length > 0) { 
-                                let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
-                                setStatus('bac', `YOU WON ${formatNumber(totalWin)}!`); 
-                                playSfx('win'); 
-                                addLedgerEntry('BACCARAT WIN', totalWin, true, currentUser.credits + totalWin);
-                                
-                                myWins.forEach(w => {
-                                    const badge = document.getElementById(`badge-baccarat-${w.choice}`);
-                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
-                                });
-                            } 
-                            else if (data.winner === 'tie' && (myBaccaratBets.player > 0 || myBaccaratBets.banker > 0)) { 
-                                setStatus('bac', `PUSH!`); 
-                                playSfx('win'); 
-                                ['player', 'banker'].forEach(c => {
-                                    if(myBaccaratBets[c] > 0) {
-                                        const badge = document.getElementById(`badge-baccarat-${c}`);
-                                        if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(myBaccaratBets[c]); badge.style.background = 'var(--gold)'; }
-                                    }
-                                });
-                            } else { 
-                                setStatus('bac', "HOUSE WINS", true); 
-                                playSfx('lose'); 
-                                ['player', 'banker', 'tie'].forEach(c => {
-                                    if(myBaccaratBets[c] > 0) {
-                                        const badge = document.getElementById(`badge-baccarat-${c}`);
-                                        if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
-                                    }
-                                });
-                            }
-                        }
                     }, delay);
                 }
             });
@@ -2852,11 +2821,6 @@
                     myDvtBets = { dragon: 0, tiger: 0, tie: 0 }; 
                     dCardUI.innerHTML = ''; 
                     tCardUI.innerHTML = '';
-                    
-                    ['dragon', 'tie', 'tiger'].forEach(c => {
-                        const b = document.getElementById(`badge-dvt-${c}`);
-                        if(b) { b.classList.add('hidden'); }
-                    });
                     setTimer('dvt', data.betEndTime - Date.now(), "BETS CLOSING");
                 } 
                 else if (data.status === 'drawing') { 
@@ -2875,41 +2839,6 @@
                     
                     setTimeout(() => {
                         setStatus('dvt', data.winner === 'tie' ? "TIE!" : `${data.winner.toUpperCase()} WINS!`);
-                        let totalBet = Object.values(myDvtBets).reduce((a,b)=>a+b, 0);
-                        
-                        if (totalBet > 0) {
-                            let myWins = data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase());
-                            if (myWins.length > 0) { 
-                                let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
-                                setStatus('dvt', `YOU WON ${formatNumber(totalWin)}!`); 
-                                playSfx('win'); 
-                                addLedgerEntry('DRAGON VS TIGER WIN', totalWin, true, currentUser.credits + totalWin); 
-                                
-                                myWins.forEach(w => {
-                                    const badge = document.getElementById(`badge-dvt-${w.choice}`);
-                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
-                                });
-                            } 
-                            else if (data.winner === 'tie' && (myDvtBets.dragon > 0 || myDvtBets.tiger > 0)) { 
-                                setStatus('dvt', `PUSH (HALF WIN)`); 
-                                playSfx('win'); 
-                                ['dragon', 'tiger'].forEach(c => {
-                                    if(myDvtBets[c] > 0) {
-                                        const badge = document.getElementById(`badge-dvt-${c}`);
-                                        if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(myDvtBets[c]/2); badge.style.background = 'var(--gold)'; }
-                                    }
-                                });
-                            } else { 
-                                setStatus('dvt', "HOUSE WINS", true); 
-                                playSfx('lose'); 
-                                ['dragon', 'tiger', 'tie'].forEach(c => {
-                                    if(myDvtBets[c] > 0) {
-                                        const badge = document.getElementById(`badge-dvt-${c}`);
-                                        if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
-                                    }
-                                });
-                            }
-                        }
                     }, 2500);
                 }
             });
@@ -2930,11 +2859,6 @@
                     d1.classList.remove('shake'); 
                     d2.classList.remove('shake'); 
                     myDiceBets = { under: 0, seven: 0, over: 0 }; 
-                    
-                    ['under', 'seven', 'over'].forEach(c => {
-                        const b = document.getElementById(`badge-dice-${c}`);
-                        if(b) { b.classList.add('hidden'); }
-                    });
                     setTimer('dice', data.betEndTime - Date.now(), "BETS CLOSING");
                 } 
                 else if (data.status === 'rolling') { 
@@ -2954,39 +2878,16 @@
                     d2.innerText = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][data.dice[1]-1]; 
                     
                     setStatus('dice', `RESULT: ${data.total}`);
-                    let totalBet = Object.values(myDiceBets).reduce((a,b)=>a+b, 0);
-                    
-                    if (totalBet > 0) {
-                        let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
-                        if (myWins.length > 0) { 
-                            let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
-                            setStatus('dice', `YOU WON ${formatNumber(totalWin)}!`); 
-                            playSfx('win'); 
-                            addLedgerEntry('HIGH-LOW DICE WIN', totalWin, true, currentUser.credits + totalWin); 
-                            
-                            myWins.forEach(w => {
-                                const badge = document.getElementById(`badge-dice-${w.choice}`);
-                                if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
-                            });
-                        } else { 
-                            setStatus('dice', "HOUSE WINS", true); 
-                            playSfx('lose'); 
-                            ['under', 'seven', 'over'].forEach(c => {
-                                if(myDiceBets[c] > 0) {
-                                    const badge = document.getElementById(`badge-dice-${c}`);
-                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
-                                }
-                            });
-                        }
-                    }
                 }
             });
 
             socket.on('derby_state_update', (data) => {
                 if (currentRoomId !== 'derby') return;
                 
+                const track = document.querySelector('.derby-track');
+
                 if (data.distances) { 
-                    for(let i=0; i<6; i++) { 
+                    for(let i=0; i<4; i++) { 
                         const racer = document.getElementById(`racer-${i}`); 
                         if(racer) racer.style.left = `calc(${data.distances[i]}% - 20px)`; 
                     } 
@@ -2994,54 +2895,27 @@
                 
                 if (data.status === 'betting') { 
                     setStatus('derby', "PLACE YOUR BETS"); 
-                    myDerbyBets = [0, 0, 0, 0, 0, 0]; 
-                    
-                    for(let i=0; i<6; i++) { 
-                        const badge = document.getElementById(`badge-derby-${i}`); 
-                        if(badge) { badge.classList.add('hidden'); }
-                    } 
+                    myDerbyBets = [0, 0, 0, 0]; 
+                    if(track) track.classList.remove('running');
                     setTimer('derby', data.betEndTime - Date.now(), "BETS CLOSING");
                 }
                 else if (data.status === 'racing') { 
                     setTimer('derby', 0); 
                     setStatus('derby', "RACING..."); 
+                    if(track) track.classList.add('running');
                     playSfx('deal'); 
                 }
                 else if (data.status === 'resolving') {
                     const cNames = ['RED', 'BLUE', 'GREEN', 'GOLD']; 
                     setStatus('derby', `${cNames[data.winner]} WINS!`);
-                    
-                    let totalBet = myDerbyBets.reduce((a,b)=>a+b, 0);
-                    if (totalBet > 0) {
-                        let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
-                        if (myWins.length > 0) { 
-                            let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
-                            setStatus('derby', `YOU WON ${formatNumber(totalWin)}!`); 
-                            playSfx('win'); 
-                            addLedgerEntry('8-BIT DERBY WIN', totalWin, true, currentUser.credits + totalWin); 
-                            
-                            myWins.forEach(w => {
-                                const badge = document.getElementById(`badge-derby-${w.choice}`);
-                                if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
-                            });
-                        } else { 
-                            setStatus('derby', "HOUSE WINS", true); 
-                            playSfx('lose'); 
-                            for(let i=0; i<4; i++) {
-                                if(myDerbyBets[i] > 0) {
-                                    const badge = document.getElementById(`badge-derby-${i}`);
-                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
-                                }
-                            }
-                        }
-                    }
+                    if(track) track.classList.remove('running');
                 }
             });
 
             socket.on('derby_race_tick', (data) => { 
                 if (currentRoomId !== 'derby') return; 
                 if(data.distances) { 
-                    for(let i=0; i<6; i++) { 
+                    for(let i=0; i<4; i++) { 
                         const racer = document.getElementById(`racer-${i}`); 
                         if(racer) racer.style.left = `calc(${data.distances[i]}% - 20px)`; 
                     } 
@@ -3056,13 +2930,7 @@
                 if (data.status === 'betting') { 
                     setStatus('color', "PLACE YOUR BETS"); 
                     myColorBets = { red: 0, blue: 0, yellow: 0, green: 0, pink: 0, white: 0 };
-                    
                     dies.forEach(d => { if(d) d.classList.remove('rolling'); });
-                    
-                    ['red', 'blue', 'yellow', 'green', 'pink', 'white'].forEach(c => {
-                        const b = document.getElementById(`badge-color-${c}`);
-                        if(b) { b.classList.add('hidden'); }
-                    }); 
                     setTimer('color', data.betEndTime - Date.now(), "BETS CLOSING");
                 }
                 else if (data.status === 'rolling') { 
@@ -3077,37 +2945,6 @@
                     document.getElementById('col-d2').className = `color-die c-${data.dice[1]}`; 
                     document.getElementById('col-d3').className = `color-die c-${data.dice[2]}`; 
                     setStatus('color', "RESULT!");
-                    
-                    let totalBet = Object.values(myColorBets).reduce((a,b)=>a+b, 0);
-                    if (totalBet > 0) {
-                        let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
-                        if (myWins.length > 0) { 
-                            let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
-                            if (myInventory.includes('orb')) {
-                                let bonus = Math.floor(totalWin * 0.05);
-                                totalWin += bonus; 
-                                currentUser.credits += bonus; 
-                                showToast(`Orb activated! +${formatNumber(bonus)} CR Bonus!`, 'success');
-                            }
-                            setStatus('color', `YOU WON ${formatNumber(totalWin)}!`); 
-                            playSfx('win');
-                            addLedgerEntry('PERYA COLOR WIN', totalWin, true, currentUser.credits + totalWin);
-                            
-                            myWins.forEach(w => {
-                                const badge = document.getElementById(`badge-color-${w.choice}`);
-                                if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
-                            });
-                        } else { 
-                            setStatus('color', "HOUSE WINS", true); 
-                            playSfx('lose'); 
-                            ['red', 'blue', 'yellow', 'green', 'pink', 'white'].forEach(c => {
-                                if(myColorBets[c] > 0) {
-                                    const badge = document.getElementById(`badge-color-${c}`);
-                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
-                                }
-                            });
-                        }
-                    }
                 }
             });
 
@@ -3120,23 +2957,17 @@
                     
                     document.querySelectorAll('.cup-wrapper').forEach(w => {
                         w.classList.remove('reveal');
-                        w.classList.add('shuffling');
                         
                         // Fire actual physical translations based on HTML classes from CSS Part 1
                         if (w.id === 'cup-wrap-0') w.classList.add('anim-cup-1');
                         if (w.id === 'cup-wrap-1') w.classList.add('anim-cup-2');
                         if (w.id === 'cup-wrap-2') w.classList.add('anim-cup-3');
                     }); 
-                    
-                    for(let i=0; i<3; i++) {
-                        const b = document.getElementById(`badge-cups-${i}`);
-                        if(b) { b.classList.add('hidden'); }
-                    }
                 }
                 else if (data.status === 'betting') { 
                     setStatus('cups', "FIND THE BALL"); 
                     document.querySelectorAll('.cup-wrapper').forEach(w => {
-                        w.classList.remove('shuffling', 'anim-cup-1', 'anim-cup-2', 'anim-cup-3');
+                        w.classList.remove('anim-cup-1', 'anim-cup-2', 'anim-cup-3');
                     });
                     setTimer('cups', data.betEndTime - Date.now(), "BETS CLOSING"); 
                 }
@@ -3146,31 +2977,6 @@
                     if(winCupWrap) winCupWrap.classList.add('reveal');
                     
                     setStatus('cups', `CUP ${data.winningCup + 1} REVEALED!`);
-                    
-                    let totalBet = myCupsBets.reduce((a,b)=>a+b, 0);
-                    if (totalBet > 0) {
-                        let myWins = data.winners ? data.winners.filter(w => w.username.toLowerCase() === currentUser.username.toLowerCase()) : [];
-                        if (myWins.length > 0) { 
-                            let totalWin = myWins.reduce((sum, w)=>sum+w.amount, 0); 
-                            setStatus('cups', `YOU WON ${formatNumber(totalWin)}!`); 
-                            playSfx('win'); 
-                            addLedgerEntry('STREET HUSTLE WIN', totalWin, true, currentUser.credits + totalWin); 
-                            
-                            myWins.forEach(w => {
-                                const badge = document.getElementById(`badge-cups-${w.choice}`);
-                                if(badge) { badge.classList.remove('hidden'); badge.innerText = formatNumber(w.amount); badge.style.background = 'var(--green)'; }
-                            });
-                        } else { 
-                            setStatus('cups', "HOUSE WINS", true); 
-                            playSfx('lose'); 
-                            for(let i=0; i<3; i++) {
-                                if(myCupsBets[i] > 0) {
-                                    const badge = document.getElementById(`badge-cups-${i}`);
-                                    if(badge) { badge.classList.remove('hidden'); badge.innerText = '0'; badge.style.background = 'var(--red)'; }
-                                }
-                            }
-                        }
-                    }
                 }
             });
 
