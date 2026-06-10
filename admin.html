@@ -11,53 +11,50 @@
             --bg-dark: #0f172a; --bg-darker: #020617;
             --accent-glow: #8b5cf6; --accent-glow-2: #3b82f6;
             --danger: #ef4444; --success: #10b981; --warning: #fbbf24;
-            --border-std: #222;
+            --border-std: #334155;
+            --text-main: #f8fafc; --text-muted: #94a3b8;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body, input, button, table, th, td, textarea, select { font-family: 'VT323', monospace; letter-spacing: 1px; color: #fff;}
-        body { background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        body, input, button, table, th, td, textarea, select { font-family: 'VT323', monospace; letter-spacing: 1px; color: var(--text-main);}
+        body { background-color: var(--bg-darker); display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
         
         .hidden { display: none !important; }
 
-        /* --- HOVER-ONLY RETRO SCROLLBARS --- */
+        /* SCROLLBARS */
         ::-webkit-scrollbar { width: 14px; height: 14px; background: transparent; }
-        ::-webkit-scrollbar-thumb { background: transparent; border: none; border-radius: 0px; }
-        ::-webkit-scrollbar-corner { background: transparent; }
-        ::-webkit-scrollbar-button:single-button { display: none; }
-
-        .custom-scroll:hover::-webkit-scrollbar { background: #020617; border-left: 2px solid #334155; }
+        ::-webkit-scrollbar-thumb { background: transparent; border: none; }
+        .custom-scroll:hover::-webkit-scrollbar { background: var(--bg-darker); border-left: 2px solid var(--border-std); }
         .custom-scroll:hover::-webkit-scrollbar-thumb { background: #475569; border: 2px solid #000; border-top: 2px solid #94a3b8; border-left: 2px solid #94a3b8; }
         .custom-scroll:hover::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        .custom-scroll:hover::-webkit-scrollbar-button:single-button { display: block; background-color: #1e293b; border: 2px solid #000; border-top: 2px solid #94a3b8; border-left: 2px solid #94a3b8; height: 14px; width: 14px; }
 
-        /* Remove Number Arrows */
         input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
 
-        #admin-console { width: 1600px; height: 900px; max-width: 100vw; max-height: 100vh; background: var(--bg-darker); border-radius: 12px; border: 6px solid #475569; box-shadow: 0 0 50px rgba(0,0,0,1); display: none; overflow: hidden; position: relative; }
+        /* MAIN CONTAINER */
+        #admin-console { width: 1600px; height: 900px; max-width: 100vw; max-height: 100vh; background: var(--bg-darker); border-radius: 12px; border: 4px solid var(--border-std); box-shadow: 0 0 50px rgba(0,0,0,1); display: none; overflow: hidden; position: relative; }
         
         /* LOGIN OVERLAY */
         #admin-login-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(2,6,23,0.95); z-index: 1000;}
-        .login-box { background: var(--bg-dark); border: 2px solid var(--border-std); padding: 40px; text-align: center; border-top: 10px solid var(--danger); box-shadow: 0 10px 30px #000;}
+        .login-box { background: var(--bg-dark); border: 2px solid var(--border-std); padding: 40px; text-align: center; border-top: 10px solid var(--danger); box-shadow: 0 10px 30px #000; border-radius: 8px;}
         
         /* MODALS */
         .overlay-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 500; }
-        .modal-content { background: var(--bg-dark); border: 2px solid var(--border-std); padding: 30px; width: 800px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px #000; overflow: hidden; }
-        .modal-header { font-size: 36px; color: var(--accent-glow-2); border-bottom: 2px solid #334155; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;}
+        .modal-content { background: var(--bg-dark); border: 2px solid var(--border-std); padding: 30px; width: 800px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px #000; overflow: hidden; border-radius: 8px;}
+        .modal-header { font-size: 36px; color: var(--accent-glow-2); border-bottom: 2px solid var(--border-std); padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;}
 
         /* SIDEBAR */
-        .admin-sidebar { width: 320px; background: #0f172a; border-right: 2px solid var(--border-std); display: flex; flex-direction: column; z-index: 10;}
+        .admin-sidebar { width: 320px; background: var(--bg-dark); border-right: 2px solid var(--border-std); display: flex; flex-direction: column; z-index: 10;}
         .sidebar-title { padding: 20px; font-size: 38px; text-align: center; border-bottom: 2px solid var(--border-std); color: var(--danger); text-shadow: 2px 2px 0 #000; font-weight: bold;}
-        .nav-btn { background: transparent; color: #94a3b8; border: none; padding: 20px; font-size: 28px; text-align: left; cursor: pointer; transition: 0.2s; border-bottom: 1px dashed #334155; position: relative;}
+        .nav-btn { background: transparent; color: var(--text-muted); border: none; padding: 20px; font-size: 26px; text-align: left; cursor: pointer; transition: 0.2s; border-bottom: 1px dashed var(--border-std); position: relative;}
         .nav-btn:hover { background: #1e293b; color: #fff; padding-left: 30px;}
-        .nav-btn.active { background: var(--accent-glow-2); color: #fff; border-left: 8px solid #fff; padding-left: 22px;}
+        .nav-btn.active { background: var(--accent-glow-2); color: #fff; border-left: 8px solid #fff; padding-left: 22px; font-weight: bold;}
 
         /* MAIN CONTENT */
-        .admin-content { flex: 1; display: flex; flex-direction: column; background: #020617; position: relative;}
+        .admin-content { flex: 1; display: flex; flex-direction: column; background: var(--bg-darker); position: relative;}
         .view-panel { flex: 1; padding: 25px; display: none; flex-direction: column; overflow: hidden; }
         .view-panel.active { display: flex; }
-        .panel-title { font-size: 45px; color: #fff; text-shadow: 2px 2px 0 #000; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 10px; flex-shrink: 0;}
+        .panel-title { font-size: 40px; color: #fff; text-shadow: 2px 2px 0 #000; margin-bottom: 20px; border-bottom: 2px solid var(--border-std); padding-bottom: 10px; flex-shrink: 0;}
 
         /* ECONOMY WIDGETS */
         .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; flex-shrink: 0; }
@@ -71,31 +68,41 @@
         .stat-value { font-size: 42px; color: #fff; font-weight: bold; text-shadow: 2px 2px 0 #000;}
 
         /* MODULAR PANELS */
-        .control-panel { background: #0f172a; border: 2px solid var(--border-std); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .control-title { font-size: 30px; color: var(--warning); margin-bottom: 15px; border-bottom: 1px dashed #334155; padding-bottom: 5px; }
+        .control-panel { background: var(--bg-dark); border: 2px solid var(--border-std); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .control-title { font-size: 30px; color: var(--warning); margin-bottom: 15px; border-bottom: 1px dashed var(--border-std); padding-bottom: 5px; }
 
-        /* SCROLLABLE TABLES WITH STRICT HEIGHT CAP */
-        .table-wrapper { flex: 1; min-height: 0; overflow-y: auto; border: 2px solid #334155; background: #000; position: relative; max-height: 500px; }
+        /* SCROLLABLE TABLES */
+        .table-wrapper { flex: 1; min-height: 0; overflow-y: auto; border: 2px solid var(--border-std); background: #000; position: relative; border-radius: 8px;}
         .admin-table { width: 100%; border-collapse: collapse; background: transparent; border: none; }
-        .admin-table thead th { position: sticky; top: 0; z-index: 10; background: #1e293b; color: var(--accent-glow-2); padding: 12px; font-size: 24px; text-align: center; border-bottom: 2px solid var(--border-std); box-shadow: 0 2px 0 var(--border-std); }
-        .admin-table td { padding: 12px; font-size: 24px; border-bottom: 1px dashed #334155; vertical-align: middle; text-align: center;}
+        .admin-table thead th { position: sticky; top: 0; z-index: 10; background: #1e293b; color: var(--accent-glow-2); padding: 12px; font-size: 22px; text-align: center; border-bottom: 2px solid var(--border-std); }
+        .admin-table td { padding: 12px; font-size: 22px; border-bottom: 1px dashed #334155; vertical-align: middle; text-align: center;}
         .admin-table tr:hover td { background: #1e293b; }
         
+        .status-badge { padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 18px; }
+        .bg-pending { background: #b45309; color: #fff; }
+        .bg-active { background: #065f46; color: #fff; }
+        .bg-banned { background: #991b1b; color: #fff; }
+        
         /* BUTTONS & INPUTS */
-        .wood-btn { background: #475569; border: 2px solid var(--border-std); color: #fff; padding: 8px 15px; font-size: 22px; cursor: pointer; box-shadow: 2px 2px 0 #000; transition: 0.1s; font-family: 'VT323';}
-        .wood-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 transparent; }
-        .wood-btn.small { padding: 4px 8px; font-size: 20px; }
+        .wood-btn { background: #475569; border: 2px solid var(--border-std); color: #fff; padding: 8px 15px; font-size: 22px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.1s;}
+        .wood-btn:hover:not(:disabled) { background: #64748b; transform: translateY(-2px); }
+        .wood-btn:active:not(:disabled) { transform: translateY(2px); }
+        .wood-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .wood-btn.small { padding: 6px 12px; font-size: 20px; }
         .wood-btn.small.active { background: var(--accent-glow-2); border-color: #fff; }
         
-        .retro-input, select.retro-input, textarea.retro-input { padding: 12px; background: #000; color: #fff; border: 2px solid #64748b; font-size: 24px; outline: none; text-align: left; border-radius: 4px; font-family: 'VT323', monospace;}
-        select.retro-input { cursor: pointer; }
+        .btn-green { background: #059669; border-color: var(--success); } .btn-green:hover { background: #10b981; }
+        .btn-red { background: #b91c1c; border-color: var(--danger); } .btn-red:hover { background: #ef4444; }
+        
+        .retro-input { padding: 12px; background: #000; color: #fff; border: 2px solid #64748b; font-size: 24px; outline: none; text-align: left; border-radius: 6px; font-family: 'VT323', monospace; width: 100%;}
+        .retro-input:focus { border-color: var(--danger); }
         
         /* EYE IN THE SKY LOG */
-        #matrix-log, #watch-matrix-log { flex: 1; background: #000; border: 2px solid #334155; padding: 15px; font-size: 24px; color: #10b981; overflow-y: auto; font-family: monospace; text-shadow: 0 0 5px #10b981; line-height: 1.4;}
+        #matrix-log, #watch-matrix-log { flex: 1; background: #000; border: 2px solid var(--border-std); padding: 15px; font-size: 22px; color: var(--success); overflow-y: auto; font-family: monospace; border-radius: 8px; line-height: 1.4;}
         
-        .toggle-switch { display: flex; align-items: center; justify-content: space-between; background: #1e293b; padding: 10px 20px; border: 2px solid var(--border-std); margin-bottom: 10px; border-radius: 6px;}
-        .switch-label { font-size: 26px; }
-        .btn-toggle { font-size: 22px; padding: 6px 20px; width: 100px; text-align: center; font-weight: bold;}
+        .toggle-switch { display: flex; align-items: center; justify-content: space-between; background: #1e293b; padding: 12px 20px; border: 2px solid var(--border-std); margin-bottom: 10px; border-radius: 6px;}
+        .switch-label { font-size: 24px; }
+        .btn-toggle { font-size: 22px; padding: 6px 20px; width: 120px; text-align: center; font-weight: bold;}
         .btn-toggle.on { background: var(--success); color: #000; }
         .btn-toggle.off { background: var(--danger); color: #fff; }
 
@@ -104,7 +111,7 @@
         .ticket-item:hover { filter: brightness(1.2); }
         .ticket-unread { border-left: 6px solid var(--danger); }
         .ticket-read { border-left: 6px solid #475569; }
-        .msg-bubble { background: #0f172a; border: 2px solid var(--border-std); padding: 15px; border-radius: 8px; margin-bottom: 10px; text-align: left; }
+        .msg-bubble { background: var(--bg-dark); border: 2px solid var(--border-std); padding: 15px; border-radius: 8px; margin-bottom: 10px; text-align: left; }
         .msg-bubble.admin { border-left: 6px solid var(--success); background: #0f1a14;}
         .msg-bubble.player { border-right: 6px solid var(--danger); background: #1a0f14; text-align: right;}
     </style>
@@ -113,150 +120,16 @@
 
     <div id="admin-login-view">
         <div class="login-box">
-            <h1 class="pixel-text" style="font-size: 55px; color: var(--danger); margin-bottom: 10px;">DIRECTOR ACCESS</h1>
-            <input type="password" id="admin-pass" class="retro-input pixel-text" placeholder="MASTER PASSWORD" style="width: 350px; margin-bottom: 15px; display: block; text-align: center;">
-            <button class="wood-btn pixel-text" style="width: 100%; background: var(--danger); font-size: 28px;" onclick="adminLogin()">AUTHENTICATE</button>
-            <p id="login-error" style="color: var(--danger); margin-top: 15px; font-size: 24px;"></p>
+            <h1 style="font-size: 55px; color: var(--danger); margin-bottom: 10px;">DIRECTOR ACCESS</h1>
+            <p style="color:var(--text-muted); font-size:22px; margin-bottom:20px;">AUTHORIZED PERSONNEL ONLY</p>
+            <input type="password" id="admin-pass" class="retro-input" placeholder="MASTER PASSWORD" style="width: 350px; margin-bottom: 15px; text-align: center; letter-spacing: 3px;" onkeypress="if(event.key === 'Enter') adminLogin()">
+            <button class="wood-btn" style="width: 100%; background: var(--danger); font-size: 28px;" onclick="adminLogin()">AUTHENTICATE</button>
+            <p id="login-error" class="hidden" style="color: var(--danger); margin-top: 15px; font-size: 24px;">ACCESS DENIED.</p>
         </div>
     </div>
 
     <div id="admin-console">
         
-        <div id="math-modal" class="overlay-modal hidden">
-            <div class="modal-content" style="width: 600px;">
-                <div class="modal-header">
-                    <span id="math-title" style="color:#fff;">CALCULATION</span>
-                </div>
-                <div id="math-body" style="font-size: 30px; line-height: 1.6; text-align: left; padding: 20px; background: #000; border: 2px dashed #334155; margin-bottom: 20px;"></div>
-                <button class="wood-btn" style="background:var(--danger); width:100%; flex-shrink: 0;" onclick="hideModal('math-modal')">CLOSE</button>
-            </div>
-        </div>
-
-        <div id="round-modal" class="overlay-modal hidden">
-            <div class="modal-content" style="width: 900px; max-height: 85vh;">
-                <div class="modal-header">
-                    <span>ROUND: <span id="rm-id" style="color:#fff;">-</span></span>
-                    <button class="wood-btn small" style="background:var(--danger);" onclick="hideModal('round-modal')">CLOSE</button>
-                </div>
-                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                    <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center;">
-                        <div style="color:#94a3b8; font-size:22px;">GAME</div>
-                        <div id="rm-game" style="font-size:28px; color:var(--accent-glow-2); text-transform: uppercase;">-</div>
-                    </div>
-                    <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center;">
-                        <div style="color:#94a3b8; font-size:22px;">WINNING RESULT</div>
-                        <div id="rm-result" style="font-size:28px; color:var(--success); font-weight: bold; text-transform: uppercase;">-</div>
-                    </div>
-                    <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center;">
-                        <div style="color:#94a3b8; font-size:22px;">HOUSE NET</div>
-                        <div id="rm-net" style="font-size:28px; font-weight: bold;">-</div>
-                    </div>
-                </div>
-                <div class="table-wrapper custom-scroll" style="display:block; max-height: 400px;">
-                    <table class="admin-table">
-                        <thead><tr><th>PLAYER</th><th>BET ON</th><th>WAGER</th><th>WIN/LOSS</th></tr></thead>
-                        <tbody id="rm-list"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="player-modal" class="overlay-modal hidden">
-            <div class="modal-content" style="max-height: 90vh; display: flex; flex-direction: column;">
-                <div class="modal-header" style="flex-shrink: 0;">
-                    <span id="pm-name" style="color:#fff;">PLAYER</span>
-                    <button class="wood-btn small" style="background:var(--danger);" onclick="hideModal('player-modal')">CLOSE</button>
-                </div>
-                
-                <div class="panel-content custom-scroll" style="flex: 1; padding: 0;">
-                    <div style="display:flex; gap:10px; margin-bottom:20px;">
-                        <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center;">
-                            <div style="color:#94a3b8; font-size:22px;">TOTAL WAGERED</div>
-                            <div id="pm-wager" style="font-size:28px; color:var(--danger);">0</div>
-                        </div>
-                        <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center;">
-                            <div style="color:#94a3b8; font-size:22px;">TOTAL WON</div>
-                            <div id="pm-won" style="font-size:28px; color:var(--success);">0</div>
-                        </div>
-                        <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center;">
-                            <div style="color:#94a3b8; font-size:22px;">NET GAME PROFIT</div>
-                            <div id="pm-net" style="font-size:28px; color:#fff;">0</div>
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:10px; margin-bottom:20px;">
-                        <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center;">
-                            <div style="color:#94a3b8; font-size:22px;">IP ADDRESS</div>
-                            <div id="pm-ip" style="font-size:28px;">-</div>
-                        </div>
-                        <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center;">
-                            <div style="color:#94a3b8; font-size:22px;">PROMO RECEIVED</div>
-                            <div id="pm-promo" style="font-size:28px; color:var(--accent-glow-2);">0</div>
-                        </div>
-                    </div>
-                    
-                    <div style="color:var(--warning); font-size:28px; margin-bottom:10px; flex-shrink: 0;">PLAYER INVENTORY</div>
-                    <div id="pm-inventory" class="custom-scroll" style="background:#000; border:2px solid #334155; padding:15px; font-size:24px; color:#10b981; margin-bottom:20px; max-height:120px; overflow-y:auto; display:flex; flex-wrap:wrap; gap:10px;">
-                    </div>
-
-                    <div style="color:var(--warning); font-size:28px; margin-bottom:10px; flex-shrink: 0;">TRANSACTION LEDGER (LATEST 50)</div>
-                    <div class="table-wrapper custom-scroll" style="display:block; max-height: 200px;">
-                        <table class="admin-table">
-                            <thead>
-                                <tr><th>DATE (PHT)</th><th>TYPE</th><th>AMOUNT</th><th>BALANCE</th><th>STATUS</th></tr>
-                            </thead>
-                            <tbody id="pm-ledger"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="batch-modal" class="overlay-modal hidden">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span>BATCH: <span id="bm-name" style="color:#fff;">-</span></span>
-                    <div>
-                        <button class="wood-btn small" style="background:var(--accent-glow-2);" onclick="copyAllUnused()">COPY ALL UNUSED</button>
-                        <button class="wood-btn small" style="background:var(--danger);" onclick="hideModal('batch-modal')">CLOSE</button>
-                    </div>
-                </div>
-                <div class="table-wrapper custom-scroll" style="display:block; max-height: 400px;">
-                    <table class="admin-table">
-                        <thead><tr><th>CODE</th><th>VALUE</th><th>STATUS</th><th>ACTION</th></tr></thead>
-                        <tbody id="bm-list"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="watch-modal" class="overlay-modal hidden">
-            <div class="modal-content" style="height: 700px;">
-                <div class="modal-header">
-                    <span>SURVEILLANCE: <span id="watch-target-name" style="color:#fff;">-</span></span>
-                    <button class="wood-btn small" style="background:var(--danger);" onclick="closeWatchModal()">CLOSE MONITOR</button>
-                </div>
-                <div id="watch-matrix-log" class="custom-scroll"></div>
-            </div>
-        </div>
-
-        <div id="ticket-modal" class="overlay-modal hidden">
-            <div class="modal-content" style="width: 750px; height: 750px; max-height: 90vh;">
-                <div class="modal-header">
-                    <span><span id="tm-name" style="color:#fff;">-</span></span>
-                    <button class="wood-btn small" style="background:var(--danger);" onclick="hideModal('ticket-modal')">CLOSE</button>
-                </div>
-                <div style="font-size:24px; color:var(--warning); margin-bottom:15px; border-bottom:1px dashed #555; padding-bottom:10px;">SUBJ: <span id="tm-subject" style="color:#fff;">-</span></div>
-                
-                <div id="tm-messages" class="custom-scroll" style="flex:1; background:#000; border:2px solid #334155; padding:15px; overflow-y:auto; margin-bottom:15px;"></div>
-                
-                <div id="tm-reply-box" style="display:flex; gap:10px; flex-shrink:0;">
-                    <input type="text" id="tm-input" class="retro-input" placeholder="TYPE RESPONSE..." style="flex:1;">
-                    <button class="wood-btn" style="background:var(--success); color:#000;" onclick="adminSendReply()">SEND</button>
-                </div>
-                <button id="tm-close-btn" class="wood-btn" style="background:var(--danger); width:100%; margin-top:10px;" onclick="adminCloseTicket()">MARK AS RESOLVED</button>
-            </div>
-        </div>
-
         <div class="admin-sidebar">
             <div class="sidebar-title">CASINO ROYALE<br><span style="font-size: 24px; color:#fff;">DIRECTOR PANEL</span></div>
             <button class="nav-btn active" onclick="switchView('dashboard', this)">FLOOR CONTROL</button>
@@ -265,20 +138,22 @@
             <button class="nav-btn" onclick="switchView('history', this)">GAME HISTORY</button>
             <button class="nav-btn admin-only" onclick="switchView('promo', this)">PROMO ENGINE</button>
             <button class="nav-btn" onclick="switchView('eye', this)">EYE IN THE SKY</button>
-            
             <button class="nav-btn" onclick="switchView('notify', this)">
                 SUPPORT INBOX 
                 <span id="admin-notif-badge" class="hidden" style="background:var(--danger); border:2px solid #fff; border-radius:50%; width:30px; height:30px; display:inline-flex; justify-content:center; align-items:center; font-size:22px; font-weight:bold; float:right;">0</span>
             </button>
-            
             <button class="nav-btn admin-only" onclick="switchView('settings', this)">SETTINGS</button>
+            
+            <div style="margin-top: auto; padding: 20px;">
+                <button class="wood-btn btn-red" style="width: 100%;" onclick="location.reload()">LOGOUT</button>
+            </div>
         </div>
 
         <div class="admin-content">
             
             <div id="view-dashboard" class="view-panel active">
                 <h2 class="panel-title">LIVE ECONOMY & FLOOR CONTROL</h2>
-                <div class="panel-content custom-scroll">
+                <div class="panel-content custom-scroll" style="align-items: stretch; overflow-y:auto; padding-right:10px;">
                     <div class="stat-grid">
                         <div class="stat-box" onclick="showMath('vault')">
                             <div class="stat-label">LIQUID VAULT</div>
@@ -304,15 +179,18 @@
                             <div class="toggle-switch"><span class="switch-label">3-Seat Blackjack</span><button id="ks-3seat" class="wood-btn btn-toggle on" onclick="toggleGame('3seat', this)">ON</button></div>
                             <div class="toggle-switch"><span class="switch-label">5-Seat Blackjack</span><button id="ks-5seat" class="wood-btn btn-toggle on" onclick="toggleGame('5seat', this)">ON</button></div>
                             <div class="toggle-switch"><span class="switch-label">High-Low Dice</span><button id="ks-dice" class="wood-btn btn-toggle on" onclick="toggleGame('dice', this)">ON</button></div>
-                            <div class="toggle-switch"><span class="switch-label">8-Bit Derby & Coin</span><button id="ks-derby" class="wood-btn btn-toggle on" onclick="toggleGame('derby', this)">ON</button></div>
-                            <div class="toggle-switch"><span class="switch-label">Classic Color Game</span><button id="ks-color" class="wood-btn btn-toggle on" onclick="toggleGame('color', this)">ON</button></div>
+                            <div class="toggle-switch"><span class="switch-label">8-Bit Derby</span><button id="ks-derby" class="wood-btn btn-toggle on" onclick="toggleGame('derby', this)">ON</button></div>
+                            <div class="toggle-switch"><span class="switch-label">Perya Color Game</span><button id="ks-color" class="wood-btn btn-toggle on" onclick="toggleGame('color', this)">ON</button></div>
+                            <div class="toggle-switch"><span class="switch-label">Punto Banco (Baccarat)</span><button id="ks-baccarat" class="wood-btn btn-toggle on" onclick="toggleGame('baccarat', this)">ON</button></div>
+                            <div class="toggle-switch"><span class="switch-label">Dragon vs Tiger</span><button id="ks-dvt" class="wood-btn btn-toggle on" onclick="toggleGame('dvt', this)">ON</button></div>
+                            <div class="toggle-switch"><span class="switch-label">Street Hustle (Cups)</span><button id="ks-cups" class="wood-btn btn-toggle on" onclick="toggleGame('cups', this)">ON</button></div>
                         </div>
 
                         <div class="control-panel admin-only" style="flex: 1;">
                             <div class="control-title">RNG ANALYTICS & SECURITY</div>
-                            <div style="background:#000; padding:15px; border:2px solid #334155; margin-bottom:15px; border-radius: 6px;">
+                            <div style="background:#000; padding:15px; border:2px solid var(--border-std); margin-bottom:15px; border-radius: 6px;">
                                 <div style="font-size:26px; color:var(--warning); margin-bottom:5px;">RNG PANIC SWITCH</div>
-                                <p style="font-size:20px; color:#94a3b8; margin-bottom:10px;">Forces server math to roll against the heaviest side to rapidly recover GGR.</p>
+                                <p style="font-size:20px; color:var(--text-muted); margin-bottom:10px;">Forces server math to roll against the heaviest side to rapidly recover GGR.</p>
                                 <button id="rtp-btn" class="wood-btn" style="width:100%; background: var(--danger);" onclick="toggleRTP()">RTP MODIFIER: OFF</button>
                             </div>
                         </div>
@@ -321,7 +199,7 @@
             </div>
 
             <div id="view-cashier" class="view-panel" style="display: flex; flex-direction: column; max-height: 100%;">
-                <h2 class="panel-title">PENDING BANK REQUESTS & RISK ANALYSIS</h2>
+                <h2 class="panel-title">PENDING BANK REQUESTS</h2>
                 <div class="table-wrapper custom-scroll">
                     <table class="admin-table">
                         <thead><tr><th>DATE (PHT)</th><th>USER</th><th>TYPE</th><th>AMOUNT</th><th>ACTION</th></tr></thead>
@@ -331,11 +209,20 @@
             </div>
 
             <div id="view-players" class="view-panel" style="display: flex; flex-direction: column; max-height: 100%;">
-                <h2 class="panel-title">GOD-MODE PLAYER DATABASE</h2>
+                <h2 class="panel-title" style="display:flex; justify-content:space-between; align-items:center;">
+                    GOD-MODE PLAYER DATABASE
+                    <div style="display:flex; gap:10px;">
+                        <button class="wood-btn btn-green small" onclick="openCreateUserModal()">+ MINT USER</button>
+                        <button class="wood-btn btn-blue small" onclick="refreshUsers()">REFRESH</button>
+                    </div>
+                </h2>
                 
-                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-shrink: 0;">
-                    <button id="pdb-tab-active" class="wood-btn small active" onclick="setPlayerDbTab('active')">ACTIVE / BANNED PLAYERS</button>
-                    <button id="pdb-tab-pending" class="wood-btn small" onclick="setPlayerDbTab('pending')">SIGN-UP REQUESTS <span id="pending-badge" style="color:var(--danger); font-weight:bold; margin-left: 8px;"></span></button>
+                <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center;">
+                    <input type="text" id="user-search" class="retro-input" placeholder="SEARCH USERNAME..." style="width: 300px; padding: 6px 12px;" oninput="filterUsers()">
+                    <div style="display: flex; gap: 10px;">
+                        <button id="pdb-tab-active" class="wood-btn small active" onclick="setPlayerDbTab('active')">ACTIVE / BANNED</button>
+                        <button id="pdb-tab-pending" class="wood-btn small" onclick="setPlayerDbTab('pending')">SIGN-UP REQUESTS <span id="pending-badge" style="color:var(--danger); font-weight:bold; margin-left: 8px;"></span></button>
+                    </div>
                 </div>
                 
                 <div class="table-wrapper custom-scroll">
@@ -349,13 +236,16 @@
             <div id="view-history" class="view-panel" style="display: flex; flex-direction: column; max-height: 100%;">
                 <h2 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
                     GLOBAL GAME HISTORY
-                    <button class="wood-btn small" onclick="fetchGameHistory()">REFRESH LOGS</button>
+                    <button class="wood-btn btn-blue small" onclick="fetchGameHistory()">REFRESH LOGS</button>
                 </h2>
                 
-                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-shrink: 0;">
-                    <button id="hist-tab-dice" class="wood-btn small active" onclick="setHistoryTab('dice')">HIGH-LOW DICE</button>
-                    <button id="hist-tab-derby" class="wood-btn small" onclick="setHistoryTab('derby')">8-BIT DERBY</button>
-                    <button id="hist-tab-color" class="wood-btn small" onclick="setHistoryTab('color')">COLOR GAME</button>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-shrink: 0; flex-wrap:wrap;">
+                    <button id="hist-tab-dice" class="wood-btn small active" onclick="setHistoryTab('dice')">DICE</button>
+                    <button id="hist-tab-derby" class="wood-btn small" onclick="setHistoryTab('derby')">DERBY</button>
+                    <button id="hist-tab-color" class="wood-btn small" onclick="setHistoryTab('color')">COLOR</button>
+                    <button id="hist-tab-baccarat" class="wood-btn small" onclick="setHistoryTab('baccarat')">BACCARAT</button>
+                    <button id="hist-tab-dvt" class="wood-btn small" onclick="setHistoryTab('dvt')">DVT</button>
+                    <button id="hist-tab-cups" class="wood-btn small" onclick="setHistoryTab('cups')">CUPS</button>
                 </div>
                 
                 <div class="table-wrapper custom-scroll">
@@ -372,7 +262,7 @@
                     <input type="text" id="gc-batch" class="retro-input" placeholder="BATCH NAME" style="text-align: center; margin:0;">
                     <input type="number" id="gc-amount" class="retro-input" placeholder="CREDIT VALUE" style="text-align: center; margin:0;">
                     <input type="number" id="gc-qty" class="retro-input" placeholder="QUANTITY" style="text-align: center; margin:0;">
-                    <button class="wood-btn" style="background: var(--success); color:#000; padding: 0 30px; margin:0;" onclick="generateCodes()">GENERATE</button>
+                    <button class="wood-btn btn-green" style="padding: 0 30px; margin:0;" onclick="generateCodes()">GENERATE</button>
                 </div>
                 <div class="table-wrapper custom-scroll">
                     <table class="admin-table">
@@ -386,14 +276,13 @@
                 <h2 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
                     <span>LIVE MATRIX FEED</span>
                     <div style="display: flex; gap: 10px;">
-                        <button class="wood-btn small" onclick="wipeChat('blackjack')">WIPE BJ CHAT</button>
-                        <button class="wood-btn small" onclick="wipeChat('dice')">WIPE DICE CHAT</button>
-                        <button class="wood-btn small" onclick="wipeChat('derby')">WIPE DERBY CHAT</button>
-                        <button class="wood-btn small" onclick="wipeChat('color')">WIPE COLOR CHAT</button>
+                        <button class="wood-btn btn-red small" onclick="wipeChat('global')">WIPE GLOBAL CHAT</button>
+                        <button class="wood-btn btn-red small" onclick="wipeChat('blackjack')">WIPE BJ CHAT</button>
+                        <button class="wood-btn btn-red small" onclick="wipeChat('derby')">WIPE DERBY CHAT</button>
                     </div>
                 </h2>
-                <div id="matrix-log" class="panel-content custom-scroll" style="background: #000; border: 2px solid #334155; padding: 15px; font-size: 24px; color: #10b981; font-family: monospace; text-shadow: 0 0 5px #10b981; line-height: 1.4;">
-                    <div style="color: #64748b;">▶ SYSTEM: Awaiting secure websocket connection...</div>
+                <div id="matrix-log" class="custom-scroll">
+                    <div style="color: var(--text-muted);">▶ SYSTEM: Awaiting secure websocket connection...</div>
                 </div>
             </div>
 
@@ -403,32 +292,34 @@
                 <div style="display: flex; gap: 20px; flex: 1; min-height: 0;">
                     <div style="flex: 1; background:#1e293b; padding:20px; border:2px solid var(--border-std); border-radius:8px; display:flex; flex-direction:column; min-height: 0;">
                         <div class="control-title">SEND NEW COMMUNICATION</div>
+                        
                         <div style="margin-bottom: 15px;">
-                            <span style="font-size: 24px; color: #cbd5e1; margin-right: 15px;">TYPE:</span>
-                            <select id="notify-type" class="retro-input" style="width: calc(100% - 90px); display: inline-block;" onchange="updateTargetOptions(this.value)">
+                            <select id="notify-type" class="retro-input" style="width: 100%;" onchange="updateTargetOptions(this.value)">
                                 <option value="announcement">GLOBAL ANNOUNCEMENT (Read-Only)</option>
                                 <option value="message">DIRECT MESSAGE (Allows Reply)</option>
                             </select>
                         </div>
+                        
                         <div style="margin-bottom: 15px;">
-                            <span style="font-size: 24px; color: #cbd5e1; margin-right: 15px;">TARGET:</span>
-                            <select id="notify-target" class="retro-input" style="width: calc(100% - 110px); display: inline-block;" onchange="toggleSpecificDropdowns(this.value)">
+                            <select id="notify-target" class="retro-input" style="width: 100%;" onchange="toggleSpecificDropdowns(this.value)">
                                 <option value="all">ALL PLAYERS</option>
                                 <option value="active">ALL ONLINE PLAYERS</option>
                                 <option value="specific_online">SPECIFIC ONLINE PLAYER</option>
                                 <option value="specific_all">SPECIFIC PLAYER (ALL)</option>
                             </select>
-                            
-                            <select id="notify-specific-online" class="retro-input custom-scroll" style="width: 100%; display: none; margin-top: 10px;"></select>
-                            <select id="notify-specific-all" class="retro-input custom-scroll" style="width: 100%; display: none; margin-top: 10px;"></select>
+                            <select id="notify-specific-online" class="retro-input custom-scroll hidden" style="width: 100%; margin-top: 10px;"></select>
+                            <select id="notify-specific-all" class="retro-input custom-scroll hidden" style="width: 100%; margin-top: 10px;"></select>
                         </div>
+                        
                         <div style="margin-bottom: 15px;">
                             <input type="text" id="notify-subject" class="retro-input" placeholder="SUBJECT LINE" style="width: 100%;">
                         </div>
+                        
                         <div style="flex: 1; display: flex; flex-direction: column; margin-bottom: 15px; min-height: 0;">
                             <textarea id="notify-msg" class="retro-input custom-scroll" style="flex: 1; width: 100%; text-align: left; resize: none;" placeholder="ENTER MESSAGE CONTENT..."></textarea>
                         </div>
-                        <button class="wood-btn" style="width: 100%; background: var(--accent-glow-2); flex-shrink: 0;" onclick="sendNotification()">SEND COMMUNICATION</button>
+                        
+                        <button class="wood-btn btn-blue" style="width: 100%; flex-shrink: 0;" onclick="sendNotification()">SEND COMMUNICATION</button>
                     </div>
 
                     <div style="flex: 1; background:#1e293b; padding:20px; border:2px solid var(--border-std); border-radius:8px; display:flex; flex-direction:column; min-height: 0;">
@@ -437,31 +328,31 @@
                         <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-shrink: 0;">
                             <button id="admin-tab-announcement" class="wood-btn small active" onclick="setAdminInboxTab('announcement')">ANNOUNCEMENTS</button>
                             <button id="admin-tab-message" class="wood-btn small" onclick="setAdminInboxTab('message')">MESSAGES</button>
-                            <button id="admin-tab-support" class="wood-btn small" onclick="setAdminInboxTab('support')">SUPPORT TICKETS</button>
+                            <button id="admin-tab-support" class="wood-btn small" onclick="setAdminInboxTab('support')">TICKETS</button>
                         </div>
 
-                        <div id="admin-inbox-list" class="custom-scroll" style="flex: 1; background: #000; border: 2px solid #334155; padding: 10px; overflow-y: auto; display: flex; flex-direction: column;">
-                            <div style="color: #64748b; font-size: 24px; text-align: center; margin-top: 20px;">LOADING INBOX...</div>
+                        <div id="admin-inbox-list" class="custom-scroll" style="flex: 1; background: #000; border: 2px solid var(--border-std); border-radius:8px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column;">
+                            <div style="color: var(--text-muted); font-size: 24px; text-align: center; margin-top: 20px;">LOADING INBOX...</div>
                         </div>
-                        <button class="wood-btn small" style="width: 100%; margin-top: 15px; background: #475569; flex-shrink: 0;" onclick="fetchAdminInbox()">REFRESH INBOX</button>
+                        <button class="wood-btn btn-blue small" style="width: 100%; margin-top: 15px; flex-shrink: 0;" onclick="fetchAdminInbox()">REFRESH INBOX</button>
                     </div>
                 </div>
             </div>
 
             <div id="view-settings" class="view-panel admin-only">
                 <h2 class="panel-title">SYSTEM SETTINGS & CREDENTIALS</h2>
-                <div class="panel-content custom-scroll">
-                    <div class="control-panel admin-only" style="margin-top: 20px;">
+                <div class="panel-content custom-scroll" style="align-items: flex-start;">
+                    <div class="control-panel admin-only" style="margin-top: 20px; width:100%; max-width:600px;">
                         <div class="control-title">SECURITY CREDENTIALS</div>
-                        <div style="background:#000; padding:15px; border:2px solid #334155; border-radius: 6px;">
-                            <p style="font-size:20px; color:#94a3b8; margin-bottom:10px;">Update the database passwords for dashboard access.</p>
-                            <div style="display: flex; gap: 10px;">
-                                <select id="pw-role" class="retro-input" style="width: 200px;">
+                        <div style="background:#000; padding:15px; border:2px solid var(--border-std); border-radius: 6px;">
+                            <p style="font-size:20px; color:var(--text-muted); margin-bottom:15px;">Update the database passwords for dashboard access.</p>
+                            <div style="display: flex; gap: 10px; flex-direction:column;">
+                                <select id="pw-role" class="retro-input">
                                     <option value="admin">MASTER ADMIN</option>
                                     <option value="mod">MODERATOR</option>
                                 </select>
                                 <input type="text" id="pw-new" class="retro-input" placeholder="NEW PASSWORD">
-                                <button class="wood-btn" style="background:var(--warning); color:#000;" onclick="changePassword()">UPDATE IN DB</button>
+                                <button class="wood-btn btn-gold" onclick="changePassword()">UPDATE IN DB</button>
                             </div>
                         </div>
                     </div>
@@ -470,6 +361,201 @@
 
         </div>
     </div>
+
+    <div id="math-modal" class="overlay-modal hidden">
+        <div class="modal-content" style="width: 600px;">
+            <div class="modal-header">
+                <span id="math-title" style="color:#fff;">CALCULATION</span>
+            </div>
+            <div id="math-body" style="font-size: 30px; line-height: 1.6; text-align: left; padding: 20px; background: #000; border: 2px dashed var(--border-std); margin-bottom: 20px; border-radius:8px;"></div>
+            <button class="wood-btn btn-red" style="width:100%; flex-shrink: 0;" onclick="hideModal('math-modal')">CLOSE</button>
+        </div>
+    </div>
+
+    <div id="round-modal" class="overlay-modal hidden">
+        <div class="modal-content" style="width: 900px;">
+            <div class="modal-header">
+                <span>ROUND: <span id="rm-id" style="color:#fff;">-</span></span>
+                <button class="wood-btn btn-red small" onclick="hideModal('round-modal')">CLOSE</button>
+            </div>
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center; border-radius:6px;">
+                    <div style="color:var(--text-muted); font-size:22px;">GAME</div>
+                    <div id="rm-game" style="font-size:28px; color:var(--accent-glow-2); text-transform: uppercase;">-</div>
+                </div>
+                <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center; border-radius:6px;">
+                    <div style="color:var(--text-muted); font-size:22px;">WINNING RESULT</div>
+                    <div id="rm-result" style="font-size:28px; color:var(--success); font-weight: bold; text-transform: uppercase;">-</div>
+                </div>
+                <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center; border-radius:6px;">
+                    <div style="color:var(--text-muted); font-size:22px;">HOUSE NET</div>
+                    <div id="rm-net" style="font-size:28px; font-weight: bold;">-</div>
+                </div>
+            </div>
+            <div class="table-wrapper custom-scroll" style="display:block; max-height: 400px;">
+                <table class="admin-table">
+                    <thead><tr><th>PLAYER</th><th>BET ON</th><th>WAGER</th><th>WIN/LOSS</th></tr></thead>
+                    <tbody id="rm-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="player-modal" class="overlay-modal hidden">
+        <div class="modal-content" style="max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="flex-shrink: 0;">
+                <span id="pm-name" style="color:#fff;">PLAYER</span>
+                <button class="wood-btn btn-red small" onclick="hideModal('player-modal')">CLOSE</button>
+            </div>
+            
+            <div class="panel-content custom-scroll" style="flex: 1; padding: 0;">
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center; border-radius:6px;">
+                        <div style="color:var(--text-muted); font-size:22px;">TOTAL WAGERED</div>
+                        <div id="pm-wager" style="font-size:28px; color:var(--danger);">0</div>
+                    </div>
+                    <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center; border-radius:6px;">
+                        <div style="color:var(--text-muted); font-size:22px;">TOTAL WON</div>
+                        <div id="pm-won" style="font-size:28px; color:var(--success);">0</div>
+                    </div>
+                    <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center; border-radius:6px;">
+                        <div style="color:var(--text-muted); font-size:22px;">NET GAME PROFIT</div>
+                        <div id="pm-net" style="font-size:28px; color:#fff;">0</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center; border-radius:6px;">
+                        <div style="color:var(--text-muted); font-size:22px;">IP ADDRESS</div>
+                        <div id="pm-ip" style="font-size:28px;">-</div>
+                    </div>
+                    <div style="flex:1; background:#1e293b; padding:15px; border:2px solid var(--border-std); text-align:center; border-radius:6px;">
+                        <div style="color:var(--text-muted); font-size:22px;">PROMO RECEIVED</div>
+                        <div id="pm-promo" style="font-size:28px; color:var(--accent-glow-2);">0</div>
+                    </div>
+                </div>
+                
+                <div style="color:var(--warning); font-size:28px; margin-bottom:10px; flex-shrink: 0; align-self:flex-start;">PLAYER INVENTORY</div>
+                <div id="pm-inventory" class="custom-scroll" style="background:#000; border:2px solid var(--border-std); padding:15px; font-size:24px; margin-bottom:20px; max-height:120px; overflow-y:auto; display:flex; flex-wrap:wrap; gap:10px; width:100%; border-radius:8px;"></div>
+
+                <div style="color:var(--warning); font-size:28px; margin-bottom:10px; flex-shrink: 0; align-self:flex-start;">TRANSACTION LEDGER (LATEST 50)</div>
+                <div class="table-wrapper custom-scroll" style="display:block; max-height: 250px; width:100%;">
+                    <table class="admin-table">
+                        <thead><tr><th>DATE (PHT)</th><th>TYPE</th><th>AMOUNT</th><th>BALANCE</th><th>STATUS</th></tr></thead>
+                        <tbody id="pm-ledger"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="batch-modal" class="overlay-modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>BATCH: <span id="bm-name" style="color:#fff;">-</span></span>
+                <div>
+                    <button class="wood-btn btn-blue small" onclick="copyAllUnused()">COPY ALL UNUSED</button>
+                    <button class="wood-btn btn-red small" onclick="hideModal('batch-modal')">CLOSE</button>
+                </div>
+            </div>
+            <div class="table-wrapper custom-scroll" style="display:block; max-height: 400px;">
+                <table class="admin-table">
+                    <thead><tr><th>CODE</th><th>VALUE</th><th>STATUS</th><th>ACTION</th></tr></thead>
+                    <tbody id="bm-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="watch-modal" class="overlay-modal hidden">
+        <div class="modal-content" style="height: 700px;">
+            <div class="modal-header">
+                <span>SURVEILLANCE: <span id="watch-target-name" style="color:#fff;">-</span></span>
+                <button class="wood-btn btn-red small" onclick="closeWatchModal()">CLOSE MONITOR</button>
+            </div>
+            <div id="watch-matrix-log" class="custom-scroll"></div>
+        </div>
+    </div>
+
+    <div id="ticket-modal" class="overlay-modal hidden">
+        <div class="modal-content" style="width: 750px; height: 750px; max-height: 90vh;">
+            <div class="modal-header">
+                <span><span id="tm-name" style="color:#fff;">-</span></span>
+                <button class="wood-btn btn-red small" onclick="hideModal('ticket-modal')">CLOSE</button>
+            </div>
+            <div style="font-size:24px; color:var(--warning); margin-bottom:15px; border-bottom:1px dashed var(--border-std); padding-bottom:10px;">SUBJ: <span id="tm-subject" style="color:#fff;">-</span></div>
+            
+            <div id="tm-messages" class="custom-scroll" style="flex:1; background:#000; border:2px solid var(--border-std); padding:15px; overflow-y:auto; margin-bottom:15px; border-radius:8px;"></div>
+            
+            <div id="tm-reply-box" style="display:flex; gap:10px; flex-shrink:0;">
+                <input type="text" id="tm-input" class="retro-input" placeholder="TYPE RESPONSE..." style="flex:1;">
+                <button class="wood-btn btn-green" onclick="adminSendReply()">SEND</button>
+            </div>
+            <button id="tm-close-btn" class="wood-btn btn-red" style="width:100%; margin-top:10px;" onclick="adminCloseTicket()">MARK AS RESOLVED</button>
+        </div>
+    </div>
+
+    <div id="create-user-modal" class="overlay-modal hidden">
+        <div class="modal-content" style="width: 500px; border-color:var(--green);">
+            <h2 style="color:var(--green); font-size:32px; border-bottom:2px solid var(--border-std); padding-bottom:10px; margin-bottom:15px;">MINT NEW ACCOUNT</h2>
+            <div>
+                <label style="color:var(--text-muted); font-size:20px;">USERNAME:</label>
+                <input type="text" id="create-username" class="retro-input" style="width:100%; margin-top:5px; margin-bottom:15px;">
+                
+                <label style="color:var(--text-muted); font-size:20px;">PASSWORD:</label>
+                <input type="text" id="create-password" class="retro-input" style="width:100%; margin-top:5px; margin-bottom:15px;">
+
+                <label style="color:var(--text-muted); font-size:20px;">ROLE:</label>
+                <select id="create-role" class="retro-input" style="width:100%; margin-top:5px; margin-bottom:15px;">
+                    <option value="player">PLAYER</option>
+                    <option value="vip">VIP</option>
+                    <option value="team">TEAM</option>
+                    <option value="admin">ADMIN</option>
+                </select>
+
+                <label style="color:var(--text-muted); font-size:20px;">INITIAL STATUS:</label>
+                <select id="create-status" class="retro-input" style="width:100%; margin-top:5px; margin-bottom:25px;">
+                    <option value="active">ACTIVE (APPROVED)</option>
+                    <option value="pending">PENDING</option>
+                    <option value="banned">BANNED</option>
+                </select>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="wood-btn btn-green" style="flex:1;" onclick="submitCreateUser()">MINT ACCOUNT</button>
+                <button class="wood-btn btn-red" style="flex:1;" onclick="hideModal('create-user-modal')">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-user-modal" class="overlay-modal hidden">
+        <div class="modal-content" style="width: 500px; border-color:var(--blue);">
+            <h2 style="color:var(--blue); font-size:32px; border-bottom:2px solid var(--border-std); padding-bottom:10px; margin-bottom:15px;">EDIT: <span id="edit-username" style="color:#fff;"></span></h2>
+            <div>
+                <label style="color:var(--text-muted); font-size:20px;">ACCOUNT STATUS:</label>
+                <select id="edit-status" class="retro-input" style="width:100%; margin-top:5px; margin-bottom:15px;">
+                    <option value="pending">PENDING (LOCKED)</option>
+                    <option value="active">ACTIVE (APPROVED)</option>
+                    <option value="banned">BANNED</option>
+                </select>
+
+                <label style="color:var(--text-muted); font-size:20px;">ACCOUNT ROLE:</label>
+                <select id="edit-role" class="retro-input" style="width:100%; margin-top:5px; margin-bottom:15px;">
+                    <option value="player">PLAYER</option>
+                    <option value="vip">VIP</option>
+                    <option value="team">TEAM</option>
+                    <option value="admin">ADMIN</option>
+                </select>
+
+                <label style="color:var(--text-muted); font-size:20px;">INJECT / REMOVE CREDITS:</label>
+                <input type="number" id="edit-credits" class="retro-input" placeholder="Amount (e.g. 5000 or -5000)" style="width:100%; margin-top:5px; margin-bottom:5px;">
+                <div style="color:var(--gold); font-size:18px; margin-bottom:25px;">Leave blank to keep current balance.</div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="wood-btn btn-blue" style="flex:1;" onclick="saveUserChanges()">SAVE CHANGES</button>
+                <button class="wood-btn btn-red" style="flex:1;" onclick="hideModal('edit-user-modal')">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         const socket = io();
@@ -494,11 +580,13 @@
         let globalGameHistory = [];
         let currentHistoryTab = 'dice';
 
+        // --- UTILS ---
         function formatNumber(num) { return num.toLocaleString(); }
         function showModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function hideModal(id) { document.getElementById(id).classList.add('hidden'); }
         function getPHTTime(dateString) { return new Date(dateString).toLocaleString('en-US', { timeZone: 'Asia/Manila' }); }
 
+        // --- AUTHENTICATION ---
         async function adminLogin() {
             const p = document.getElementById('admin-pass').value;
             const res = await fetch('/api/admin/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({password: p}) });
@@ -514,13 +602,15 @@
                     document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
                 }
 
-                socket.emit('admin_join');
+                initSocket();
                 fetchData();
                 fetchAdminInbox();
                 fetchGameHistory();
                 setInterval(fetchData, 5000); 
             } else {
-                document.getElementById('login-error').innerText = "INVALID PASSWORD";
+                const err = document.getElementById('login-error');
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 3000);
             }
         }
 
@@ -546,6 +636,7 @@
             }
         }
 
+        // --- NAVIGATION ---
         function switchView(view, btnEl) {
             document.querySelectorAll('.view-panel').forEach(v => { v.style.display = 'none'; v.classList.remove('active'); });
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -560,6 +651,46 @@
             else if(view !== 'eye') fetchData();
         }
 
+        // --- SOCKET EVENT HANDLERS ---
+        function initSocket() {
+            socket.emit('admin_join');
+
+            socket.on('admin_log', (msg) => {
+                const globalLog = document.getElementById('matrix-log');
+                
+                let logColor = 'var(--success)'; 
+                if(msg.includes('[CHAT]')) logColor = 'var(--accent-glow-2)';
+                if(msg.includes('[BET]')) logColor = 'var(--warning)';
+                if(msg.includes('[SPECTATOR]')) logColor = 'var(--text-muted)';
+                if(msg.includes('disconnected') || msg.includes('left')) logColor = 'var(--danger)';
+
+                const logLine = `<div style="color:${logColor}; margin-bottom: 4px;">${msg}</div>`;
+
+                globalLog.innerHTML += logLine;
+                globalLog.scrollTop = globalLog.scrollHeight;
+                if(globalLog.children.length > 100) globalLog.removeChild(globalLog.firstChild);
+
+                if (watchingUser && msg.toLowerCase().includes(watchingUser.toLowerCase())) {
+                    const watchLog = document.getElementById('watch-matrix-log');
+                    watchLog.innerHTML += logLine;
+                    watchLog.scrollTop = watchLog.scrollHeight;
+                    if(watchLog.children.length > 50) watchLog.removeChild(watchLog.firstChild);
+                }
+            });
+
+            socket.on('game_lock_state', (locks) => {
+                ['3seat', '5seat', 'dice', 'derby', 'color', 'baccarat', 'dvt', 'cups'].forEach(g => {
+                    const btn = document.getElementById(`ks-${g}`);
+                    if(btn) {
+                        if(locks[g]) { btn.className = 'wood-btn btn-toggle off'; btn.innerText = 'OFF'; }
+                        else { btn.className = 'wood-btn btn-toggle on'; btn.innerText = 'ON'; }
+                    }
+                });
+            });
+            
+            socket.on('admin_inbox_update', () => { fetchAdminInbox(); });
+        }
+
         function toggleGame(game, btn) {
             const isLocked = btn.classList.contains('on'); 
             socket.emit('admin_action', { action: 'toggle_game', game, locked: isLocked });
@@ -572,385 +703,7 @@
             logBox.scrollTop = logBox.scrollHeight;
         }
 
-        // --- SMART DROPDOWNS & BROADCASTING ---
-        function updateTargetOptions(type) {
-            const targetSelect = document.getElementById('notify-target');
-            if(type === 'message') {
-                targetSelect.value = 'specific_all';
-                targetSelect.innerHTML = `
-                    <option value="specific_online">SPECIFIC ONLINE PLAYER</option>
-                    <option value="specific_all">SPECIFIC PLAYER (ALL)</option>
-                `;
-            } else {
-                targetSelect.innerHTML = `
-                    <option value="all">ALL PLAYERS</option>
-                    <option value="active">ALL ONLINE PLAYERS</option>
-                    <option value="specific_online">SPECIFIC ONLINE PLAYER</option>
-                    <option value="specific_all">SPECIFIC PLAYER (ALL)</option>
-                `;
-            }
-            toggleSpecificDropdowns(targetSelect.value);
-        }
-
-        function toggleSpecificDropdowns(targetVal) {
-            document.getElementById('notify-specific-online').style.display = targetVal === 'specific_online' ? 'block' : 'none';
-            document.getElementById('notify-specific-all').style.display = targetVal === 'specific_all' ? 'block' : 'none';
-        }
-
-        function sendNotification() {
-            const type = document.getElementById('notify-type').value;
-            const target = document.getElementById('notify-target').value;
-            const subject = document.getElementById('notify-subject').value;
-            const message = document.getElementById('notify-msg').value;
-            
-            let username = '';
-            if(target === 'specific_online') username = document.getElementById('notify-specific-online').value;
-            if(target === 'specific_all') username = document.getElementById('notify-specific-all').value;
-
-            if(!subject.trim()) return alert("Subject line cannot be empty.");
-            if(!message.trim()) return alert("Message body cannot be empty.");
-            if((target === 'specific_online' || target === 'specific_all') && !username) return alert("Please select a specific player from the dropdown.");
-
-            socket.emit('admin_notify', { target, username, type, subject, message });
-            
-            document.getElementById('notify-subject').value = '';
-            document.getElementById('notify-msg').value = '';
-            alert("Communication sent successfully.");
-            fetchAdminInbox();
-        }
-
-        // --- ADMIN INBOX SYSTEM ---
-        function fetchAdminInbox() {
-            socket.emit('req_admin_inbox');
-        }
-
-        function setAdminInboxTab(tab) {
-            currentAdminInboxTab = tab;
-            document.getElementById('admin-tab-announcement').classList.remove('active');
-            document.getElementById('admin-tab-message').classList.remove('active');
-            document.getElementById('admin-tab-support').classList.remove('active');
-            document.getElementById(`admin-tab-${tab}`).classList.add('active');
-            renderAdminInbox();
-        }
-
-        socket.on('admin_inbox_data', (tickets) => {
-            allAdminTickets = tickets;
-            renderAdminInbox();
-        });
-
-        function renderAdminInbox() {
-            const list = document.getElementById('admin-inbox-list');
-            
-            const unreadCount = allAdminTickets.filter(t => t.unreadAdmin).length;
-            const badge = document.getElementById('admin-notif-badge');
-            if (unreadCount > 0) {
-                badge.innerText = unreadCount;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-
-            let filtered = allAdminTickets.filter(t => t.type === currentAdminInboxTab);
-
-            if(filtered.length === 0) {
-                list.innerHTML = '<div style="color: #64748b; font-size: 24px; text-align: center; margin-top: 20px;">NO RECORDS IN THIS CATEGORY</div>';
-                return;
-            }
-
-            list.innerHTML = filtered.map(t => {
-                const date = new Date(t.updatedAt).toLocaleDateString('en-US', { timeZone: 'Asia/Manila' });
-                const time = new Date(t.updatedAt).toLocaleTimeString('en-US', { timeZone: 'Asia/Manila', hour: '2-digit', minute:'2-digit' });
-                const borderClass = t.unreadAdmin ? 'ticket-unread' : 'ticket-read';
-                const tag = t.unreadAdmin ? `<span style="color:var(--danger); font-weight:bold;">[ NEW REPLY ]</span>` : '';
-                const statTag = t.status === 'closed' ? `<span style="color:#64748b;">[ CLOSED ]</span>` : '';
-                
-                let typeVisual = '';
-                if(t.type === 'announcement') typeVisual = `<span style="color:var(--warning);">[ANNOUNCEMENT]</span>`;
-                else if(t.type === 'message') typeVisual = `<span style="color:var(--accent-glow-2);">[MESSAGE]</span>`;
-                else if(t.type === 'support') typeVisual = `<span style="color:var(--success);">[SUPPORT]</span>`;
-
-                const encodedMsg = encodeURIComponent(JSON.stringify(t.messages));
-                const encodedSub = encodeURIComponent(t.subject || 'NO SUBJECT');
-                
-                return `
-                <div class="ticket-item ${borderClass}" onclick="openAdminTicket('${t._id}', '${t.username}', '${t.type}', '${encodedMsg}', '${encodedSub}', '${t.status}')">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                        <span style="font-size:24px; color:#fff; font-weight:bold;">${typeVisual} TO/FROM: ${t.username} ${tag} ${statTag}</span>
-                        <span style="font-size:20px; color:#94a3b8;">${date} ${time}</span>
-                    </div>
-                    <div style="font-size:22px; color:#94a3b8;">SUBJ: ${t.subject || 'N/A'}</div>
-                </div>`;
-            }).join('');
-        }
-
-        function openAdminTicket(id, username, type, encodedMsg, subjectStr, status) {
-            activeTicketId = id;
-            document.getElementById('tm-name').innerText = username.toUpperCase();
-            document.getElementById('tm-subject').innerText = decodeURIComponent(subjectStr);
-            socket.emit('admin_read_ticket', { id });
-            
-            const messages = JSON.parse(decodeURIComponent(encodedMsg));
-            renderAdminThread(messages, status, type);
-            showModal('ticket-modal');
-        }
-
-        function renderAdminThread(messages, status, type) {
-            const list = document.getElementById('tm-messages');
-            list.innerHTML = messages.map(m => {
-                const isAdmin = m.sender === 'ADMIN';
-                const time = new Date(m.date).toLocaleTimeString('en-US', { timeZone: 'Asia/Manila', hour: '2-digit', minute:'2-digit' });
-                return `
-                <div class="msg-bubble ${isAdmin ? 'admin' : 'player'}">
-                    <div style="font-size:18px; color:#64748b; margin-bottom:5px;">${isAdmin ? 'ADMIN' : m.sender.toUpperCase()} - ${time}</div>
-                    <div style="font-size:24px; color:#fff; white-space:pre-wrap;">${m.text}</div>
-                </div>`;
-            }).join('');
-            list.scrollTop = list.scrollHeight;
-
-            const replyBox = document.getElementById('tm-reply-box');
-            const closeBtn = document.getElementById('tm-close-btn');
-            
-            if(type === 'announcement') {
-                replyBox.style.display = 'none';
-                closeBtn.style.display = 'none';
-            } else if(status === 'closed') {
-                replyBox.style.display = 'none';
-                closeBtn.style.display = 'none';
-            } else {
-                replyBox.style.display = 'flex';
-                closeBtn.style.display = 'block';
-            }
-        }
-
-        function adminSendReply() {
-            const input = document.getElementById('tm-input');
-            const text = input.value.trim();
-            if(!text || !activeTicketId) return;
-            socket.emit('admin_reply', { id: activeTicketId, text });
-            input.value = '';
-        }
-
-        function adminCloseTicket() {
-            if(!activeTicketId) return;
-            if(confirm("Mark this conversation as Resolved? The player will no longer be able to reply.")) {
-                socket.emit('admin_close_ticket', { id: activeTicketId });
-                hideModal('ticket-modal');
-            }
-        }
-
-        socket.on('admin_inbox_update', () => {
-            fetchAdminInbox();
-        });
-
-        // --- MATH & ECONOMY MODALS ---
-        function showMath(type) {
-            if(!currentEconomy) return;
-            const b = document.getElementById('math-body');
-            const t = document.getElementById('math-title');
-            const e = currentEconomy;
-            
-            if(type === 'vault') {
-                t.innerText = "LIQUID VAULT COMPUTATION";
-                b.innerHTML = `
-                    <div style="color:var(--success);">+ ${formatNumber(e.baseVault)} (BASE HOUSE MONEY)</div>
-                    <div style="color:var(--success);">+ ${formatNumber(e.deposits)} (TOTAL APPROVED DEPOSITS)</div>
-                    <div style="color:var(--danger);">- ${formatNumber(e.withdrawals)} (TOTAL APPROVED WITHDRAWALS)</div>
-                    <hr style="border: 1px dashed #555; margin: 10px 0;">
-                    <div style="color:#fff;">= ${formatNumber(e.vault)} TOTAL LIQUIDITY</div>
-                `;
-            } else if (type === 'ggr') {
-                t.innerText = "GROSS GAMING REVENUE COMPUTATION";
-                b.innerHTML = `
-                    <div style="color:var(--success);">+ ${formatNumber(e.totalBets)} (TOTAL CHIPS WAGERED)</div>
-                    <div style="color:var(--danger);">- ${formatNumber(e.totalWins)} (TOTAL CHIPS WON BY PLAYERS)</div>
-                    <hr style="border: 1px dashed #555; margin: 10px 0;">
-                    <div style="color:${e.ggr >= 0 ? 'var(--success)' : 'var(--danger)'};">= ${formatNumber(e.ggr)} NET PROFIT</div>
-                `;
-            } else if (type === 'promo') {
-                t.innerText = "PROMOTIONAL LIABILITY COMPUTATION";
-                b.innerHTML = `
-                    <div style="color:#94a3b8;">Sum of all Daily Rewards & Gift Codes injected into player accounts.</div>
-                    <div style="color:var(--accent-glow-2); margin-top:10px;">= ${formatNumber(e.promoIssued)} TOTAL FREE CHIPS</div>
-                `;
-            } else if (type === 'liab') {
-                t.innerText = "CIRCULATING LIABILITY COMPUTATION";
-                b.innerHTML = `
-                    <div style="color:#94a3b8;">Exact sum of all chips currently sitting in every player's wallet.</div>
-                    <div style="color:var(--danger); margin-top:10px;">= ${formatNumber(e.circulating)} TOTAL POTENTIAL PAYOUT</div>
-                `;
-            }
-            showModal('math-modal');
-        }
-
-        // --- GAME HISTORY ---
-        async function fetchGameHistory() {
-            if(!adminPass) return;
-            const res = await fetch('/api/admin/game_rounds', { headers: { 'x-admin-pass': adminPass }});
-            if(res.ok) {
-                globalGameHistory = await res.json();
-                renderGameHistory();
-            }
-        }
-
-        function setHistoryTab(tab) {
-            currentHistoryTab = tab;
-            document.getElementById('hist-tab-dice').classList.remove('active');
-            document.getElementById('hist-tab-derby').classList.remove('active');
-            document.getElementById('hist-tab-color').classList.remove('active');
-            document.getElementById(`hist-tab-${tab}`).classList.add('active');
-            renderGameHistory();
-        }
-
-        function renderGameHistory() {
-            const list = document.getElementById('history-list');
-            const filteredRounds = globalGameHistory.filter(r => r.game === currentHistoryTab);
-
-            if (filteredRounds.length === 0) {
-                list.innerHTML = `<tr><td colspan="6" style="color:#64748b; padding:20px;">NO ROUNDS LOGGED</td></tr>`;
-                return;
-            }
-
-            list.innerHTML = filteredRounds.map(r => {
-                let totalBets = 0;
-                let totalWins = 0;
-                r.players.forEach(p => {
-                    totalBets += p.bet;
-                    totalWins += p.win;
-                });
-                
-                let houseNet = totalBets - totalWins;
-                let netColor = houseNet > 0 ? 'var(--success)' : (houseNet < 0 ? 'var(--danger)' : '#fff');
-                
-                let displayResult = '';
-                if(r.game === 'dice') displayResult = r.result;
-                else if (r.game === 'derby') displayResult = `LANE ${r.result + 1}`;
-                else if (r.game === 'color') displayResult = r.result.map(c => c.charAt(0).toUpperCase()).join('-');
-
-                return `
-                <tr>
-                    <td>${getPHTTime(r.timestamp)}</td>
-                    <td style="color:#94a3b8; letter-spacing:2px;">${r.roundId}</td>
-                    <td style="color:var(--warning); font-weight:bold;">${displayResult}</td>
-                    <td style="color:#fff;">${formatNumber(totalBets)}</td>
-                    <td style="color:${netColor}; font-weight:bold;">${formatNumber(houseNet)}</td>
-                    <td><button class="wood-btn small" style="background:var(--accent-glow-2);" onclick="openRoundDetails('${r.roundId}')">VIEW</button></td>
-                </tr>
-                `;
-            }).join('');
-        }
-
-        function openRoundDetails(roundId) {
-            const round = globalGameHistory.find(r => r.roundId === roundId);
-            if(!round) return;
-
-            document.getElementById('rm-id').innerText = round.roundId;
-            document.getElementById('rm-game').innerText = round.game;
-            
-            let displayResult = '';
-            if(round.game === 'dice') displayResult = round.result;
-            else if (round.game === 'derby') displayResult = `LANE ${round.result + 1}`;
-            else if (round.game === 'color') displayResult = round.result.map(c => c.toUpperCase()).join(', ');
-            document.getElementById('rm-result').innerText = displayResult;
-
-            let totalBets = 0;
-            let totalWins = 0;
-            const list = document.getElementById('rm-list');
-            
-            if(round.players.length === 0) {
-                list.innerHTML = `<tr><td colspan="4" style="color:#64748b; padding:20px;">NO BETS THIS ROUND</td></tr>`;
-            } else {
-                list.innerHTML = round.players.map(p => {
-                    totalBets += p.bet;
-                    totalWins += p.win;
-                    let pNet = p.win - p.bet;
-                    let pColor = pNet > 0 ? 'var(--success)' : (pNet < 0 ? 'var(--danger)' : '#fff');
-                    
-                    return `
-                    <tr>
-                        <td style="color:#fff;">${p.username}</td>
-                        <td style="color:#94a3b8;">${p.choice.toUpperCase()}</td>
-                        <td style="color:var(--warning);">${formatNumber(p.bet)}</td>
-                        <td style="color:${pColor}; font-weight:bold;">${pNet > 0 ? '+' : ''}${formatNumber(pNet)}</td>
-                    </tr>
-                    `;
-                }).join('');
-            }
-
-            let houseNet = totalBets - totalWins;
-            let netColor = houseNet > 0 ? 'var(--success)' : (houseNet < 0 ? 'var(--danger)' : '#fff');
-            const netEl = document.getElementById('rm-net');
-            netEl.innerText = `${houseNet > 0 ? '+' : ''}${formatNumber(houseNet)}`;
-            netEl.style.color = netColor;
-
-            showModal('round-modal');
-        }
-
-        // --- PLAYER DB TABS & RENDERING ---
-        function setPlayerDbTab(tab) {
-            currentPlayerDbTab = tab;
-            document.getElementById('pdb-tab-active').classList.remove('active');
-            document.getElementById('pdb-tab-pending').classList.remove('active');
-            document.getElementById(`pdb-tab-${tab}`).classList.add('active');
-            renderPlayerDB();
-        }
-
-        function renderPlayerDB() {
-            const pendingUsers = globalAllUsers.filter(u => u.status === 'pending');
-            const activeUsers = globalAllUsers.filter(u => u.status !== 'pending');
-            
-            const badge = document.getElementById('pending-badge');
-            badge.innerText = pendingUsers.length > 0 ? `(${pendingUsers.length})` : '';
-
-            let displayUsers = currentPlayerDbTab === 'pending' ? pendingUsers : activeUsers;
-
-            let sortedUsers = displayUsers.sort((a,b) => {
-                const aOnline = globalOnlineUsers.includes(a.username);
-                const bOnline = globalOnlineUsers.includes(b.username);
-                if(aOnline && !bOnline) return -1;
-                if(!aOnline && bOnline) return 1;
-                return b.credits - a.credits;
-            });
-
-            const playerList = document.getElementById('player-list');
-            if (sortedUsers.length === 0) {
-                playerList.innerHTML = `<tr><td colspan="5" style="color:#64748b; padding:20px;">NO PLAYERS FOUND IN THIS CATEGORY</td></tr>`;
-                return;
-            }
-
-            playerList.innerHTML = sortedUsers.map(u => {
-                let isOnline = globalOnlineUsers.includes(u.username);
-                let statusColor = '#94a3b8'; let displayStatus = 'OFFLINE';
-                
-                if (u.status === 'banned') { statusColor = 'var(--danger)'; displayStatus = 'BANNED'; isOnline = false; }
-                else if (u.status === 'pending') { statusColor = 'var(--warning)'; displayStatus = 'PENDING'; }
-                else if (isOnline) { statusColor = 'var(--success)'; displayStatus = 'ONLINE'; }
-
-                let actionHtml = '';
-                if(u.status === 'pending') {
-                    actionHtml = `
-                        <button class="wood-btn small" style="background:var(--success); color:#000;" onclick="changeStatus('${u.username}', 'active')">APPROVE</button>
-                        <button class="wood-btn small" style="background:var(--danger);" onclick="changeStatus('${u.username}', 'banned')">DENY</button>
-                    `;
-                } else {
-                    actionHtml = `
-                        <button class="wood-btn small" style="background:var(--accent-glow-2);" onclick="openPlayerModal('${u.username}')">VIEW</button>
-                        <button class="wood-btn small" style="background:#0f766e;" onclick="watchPlayer('${u.username}')">WATCH</button>
-                        ${u.status !== 'active' ? `<button class="wood-btn small" style="background:var(--success); color:#000;" onclick="changeStatus('${u.username}', 'active')">ACTIVATE</button>` : ''}
-                        ${u.status !== 'banned' && adminRole === 'admin' ? `<button class="wood-btn small" style="background:var(--danger);" onclick="changeStatus('${u.username}', 'banned')">BAN</button>` : ''}
-                    `;
-                }
-
-                return `
-                <tr>
-                    <td style="color:${u.nameColor}; font-weight:bold; font-size:28px;">${u.username}</td>
-                    <td style="color:var(--warning);">${formatNumber(u.credits)}</td>
-                    <td><button class="wood-btn small" style="background:#475569;" onclick="this.innerText='${u.ipAddress || 'UNKNOWN'}'">[CLICK TO REVEAL]</button></td>
-                    <td style="color:${statusColor}; font-weight:bold;">${displayStatus}</td>
-                    <td>${actionHtml}</td>
-                </tr>
-            `}).join('');
-        }
-
+        // --- MAIN DATA FETCHING LOOP ---
         async function fetchData() {
             if(!adminPass) return;
             const res = await fetch('/api/admin/economy', { headers: { 'x-admin-pass': adminPass }});
@@ -982,8 +735,8 @@
                     ? allUsersAlpha.map(u => `<option value="${u}">${u}</option>`).join('') 
                     : '<option value="">NO PLAYERS FOUND</option>';
 
-                // Sync Game Kill Switches
-                ['3seat', '5seat', 'dice', 'derby', 'color'].forEach(g => {
+                // Sync Game Kill Switches Locally
+                ['3seat', '5seat', 'dice', 'derby', 'color', 'baccarat', 'dvt', 'cups'].forEach(g => {
                     const btn = document.getElementById(`ks-${g}`);
                     if(btn) {
                         if(data.gameLocks[g]) { btn.className = 'wood-btn btn-toggle off'; btn.innerText = 'OFF'; }
@@ -1002,19 +755,19 @@
                             <td style="color:${t.type.includes('DEPOSIT')?'var(--success)':'var(--danger)'}; font-weight:bold;">${t.type}</td>
                             <td>${formatNumber(t.amount)}</td>
                             <td>
-                                <button class="wood-btn small" style="background:var(--success); color:#000;" onclick="resolveBank('${t._id}', 'approve')">APPROVE</button>
-                                <button class="wood-btn small" style="background:var(--danger);" onclick="resolveBank('${t._id}', 'deny')">DENY</button>
+                                <button class="wood-btn btn-green small" onclick="resolveBank('${t._id}', 'approve')">APPROVE</button>
+                                <button class="wood-btn btn-red small" onclick="resolveBank('${t._id}', 'deny')">DENY</button>
                             </td>
                         </tr>
                     `}).join('');
                 }
 
-                // Player DB Tabs & Render
+                // Player DB Updates
                 globalAllUsers = data.users;
                 globalOnlineUsers = data.onlineUsers || [];
                 renderPlayerDB();
 
-                // Promo Engine
+                // Promo Engine Updates
                 if(adminRole === 'admin') {
                     currentBatches = {};
                     data.codes.forEach(c => {
@@ -1033,7 +786,7 @@
                             <td style="color:#fff; font-weight:bold;">${bName}</td>
                             <td style="color:var(--accent-glow-2); font-weight:bold;">${total}</td>
                             <td style="color:${claimed === total ? 'var(--danger)' : 'var(--warning)'};">${claimed} / ${total}</td>
-                            <td><button class="wood-btn small" style="background:#475569;" onclick="openBatchModal('${bName}')">VIEW CODES</button></td>
+                            <td><button class="wood-btn small" onclick="openBatchModal('${bName}')">VIEW CODES</button></td>
                         </tr>
                         `;
                     }).join('');
@@ -1041,6 +794,488 @@
             }
         }
 
+        // --- MATH & ECONOMY MODALS ---
+        function showMath(type) {
+            if(!currentEconomy) return;
+            const b = document.getElementById('math-body');
+            const t = document.getElementById('math-title');
+            const e = currentEconomy;
+            
+            if(type === 'vault') {
+                t.innerText = "LIQUID VAULT COMPUTATION";
+                b.innerHTML = `
+                    <div style="color:var(--success);">+ ${formatNumber(e.baseVault)} (BASE HOUSE MONEY)</div>
+                    <div style="color:var(--success);">+ ${formatNumber(e.deposits)} (TOTAL APPROVED DEPOSITS)</div>
+                    <div style="color:var(--danger);">- ${formatNumber(e.withdrawals)} (TOTAL APPROVED WITHDRAWALS)</div>
+                    <hr style="border: 1px dashed var(--border-std); margin: 10px 0;">
+                    <div style="color:#fff;">= ${formatNumber(e.vault)} TOTAL LIQUIDITY</div>
+                `;
+            } else if (type === 'ggr') {
+                t.innerText = "GROSS GAMING REVENUE COMPUTATION";
+                b.innerHTML = `
+                    <div style="color:var(--success);">+ ${formatNumber(e.totalBets)} (TOTAL CHIPS WAGERED)</div>
+                    <div style="color:var(--danger);">- ${formatNumber(e.totalWins)} (TOTAL CHIPS WON BY PLAYERS)</div>
+                    <hr style="border: 1px dashed var(--border-std); margin: 10px 0;">
+                    <div style="color:${e.ggr >= 0 ? 'var(--success)' : 'var(--danger)'};">= ${formatNumber(e.ggr)} NET PROFIT</div>
+                `;
+            } else if (type === 'promo') {
+                t.innerText = "PROMOTIONAL LIABILITY COMPUTATION";
+                b.innerHTML = `
+                    <div style="color:var(--text-muted);">Sum of all Daily Rewards & Gift Codes injected into player accounts.</div>
+                    <div style="color:var(--accent-glow-2); margin-top:10px;">= ${formatNumber(e.promoIssued)} TOTAL FREE CHIPS</div>
+                `;
+            } else if (type === 'liab') {
+                t.innerText = "CIRCULATING LIABILITY COMPUTATION";
+                b.innerHTML = `
+                    <div style="color:var(--text-muted);">Exact sum of all chips currently sitting in every player's wallet.</div>
+                    <div style="color:var(--danger); margin-top:10px;">= ${formatNumber(e.circulating)} TOTAL POTENTIAL PAYOUT</div>
+                `;
+            }
+            showModal('math-modal');
+        }
+
+        // --- SUPPORT INBOX SYSTEM ---
+        function updateTargetOptions(type) {
+            const targetSelect = document.getElementById('notify-target');
+            if(type === 'message') {
+                targetSelect.value = 'specific_all';
+                targetSelect.innerHTML = `
+                    <option value="specific_online">SPECIFIC ONLINE PLAYER</option>
+                    <option value="specific_all">SPECIFIC PLAYER (ALL)</option>
+                `;
+            } else {
+                targetSelect.innerHTML = `
+                    <option value="all">ALL PLAYERS</option>
+                    <option value="active">ALL ONLINE PLAYERS</option>
+                    <option value="specific_online">SPECIFIC ONLINE PLAYER</option>
+                    <option value="specific_all">SPECIFIC PLAYER (ALL)</option>
+                `;
+            }
+            toggleSpecificDropdowns(targetSelect.value);
+        }
+
+        function toggleSpecificDropdowns(targetVal) {
+            document.getElementById('notify-specific-online').classList.toggle('hidden', targetVal !== 'specific_online');
+            document.getElementById('notify-specific-all').classList.toggle('hidden', targetVal !== 'specific_all');
+        }
+
+        function sendNotification() {
+            const type = document.getElementById('notify-type').value;
+            const target = document.getElementById('notify-target').value;
+            const subject = document.getElementById('notify-subject').value;
+            const message = document.getElementById('notify-msg').value;
+            
+            let username = '';
+            if(target === 'specific_online') username = document.getElementById('notify-specific-online').value;
+            if(target === 'specific_all') username = document.getElementById('notify-specific-all').value;
+
+            if(!subject.trim()) return alert("Subject line cannot be empty.");
+            if(!message.trim()) return alert("Message body cannot be empty.");
+            if((target === 'specific_online' || target === 'specific_all') && !username) return alert("Please select a specific player from the dropdown.");
+
+            socket.emit('admin_notify', { target, username, type, subject, message });
+            
+            document.getElementById('notify-subject').value = '';
+            document.getElementById('notify-msg').value = '';
+            alert("Communication sent successfully.");
+            fetchAdminInbox();
+        }
+
+        function fetchAdminInbox() { socket.emit('req_admin_inbox'); }
+
+        function setAdminInboxTab(tab) {
+            currentAdminInboxTab = tab;
+            document.getElementById('admin-tab-announcement').classList.remove('active');
+            document.getElementById('admin-tab-message').classList.remove('active');
+            document.getElementById('admin-tab-support').classList.remove('active');
+            document.getElementById(`admin-tab-${tab}`).classList.add('active');
+            renderAdminInbox();
+        }
+
+        socket.on('admin_inbox_data', (tickets) => {
+            allAdminTickets = tickets;
+            renderAdminInbox();
+        });
+
+        function renderAdminInbox() {
+            const list = document.getElementById('admin-inbox-list');
+            
+            const unreadCount = allAdminTickets.filter(t => t.unreadAdmin).length;
+            const badge = document.getElementById('admin-notif-badge');
+            if (unreadCount > 0) {
+                badge.innerText = unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            let filtered = allAdminTickets.filter(t => t.type === currentAdminInboxTab);
+
+            if(filtered.length === 0) {
+                list.innerHTML = '<div style="color: var(--text-muted); font-size: 24px; text-align: center; margin-top: 20px;">NO RECORDS IN THIS CATEGORY</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(t => {
+                const date = new Date(t.updatedAt).toLocaleDateString('en-US', { timeZone: 'Asia/Manila' });
+                const time = new Date(t.updatedAt).toLocaleTimeString('en-US', { timeZone: 'Asia/Manila', hour: '2-digit', minute:'2-digit' });
+                const borderClass = t.unreadAdmin ? 'ticket-unread' : 'ticket-read';
+                const tag = t.unreadAdmin ? `<span style="color:var(--danger); font-weight:bold;">[ NEW REPLY ]</span>` : '';
+                const statTag = t.status === 'closed' ? `<span style="color:var(--text-muted);">[ CLOSED ]</span>` : '';
+                
+                let typeVisual = '';
+                if(t.type === 'announcement') typeVisual = `<span style="color:var(--warning);">[ANNOUNCEMENT]</span>`;
+                else if(t.type === 'message') typeVisual = `<span style="color:var(--accent-glow-2);">[MESSAGE]</span>`;
+                else if(t.type === 'support') typeVisual = `<span style="color:var(--success);">[SUPPORT]</span>`;
+
+                const encodedMsg = encodeURIComponent(JSON.stringify(t.messages));
+                const encodedSub = encodeURIComponent(t.subject || 'NO SUBJECT');
+                
+                return `
+                <div class="ticket-item ${borderClass}" onclick="openAdminTicket('${t._id}', '${t.username}', '${t.type}', '${encodedMsg}', '${encodedSub}', '${t.status}')">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <span style="font-size:24px; color:#fff; font-weight:bold;">${typeVisual} TO/FROM: ${t.username} ${tag} ${statTag}</span>
+                        <span style="font-size:20px; color:var(--text-muted);">${date} ${time}</span>
+                    </div>
+                    <div style="font-size:22px; color:var(--text-muted);">SUBJ: ${t.subject || 'N/A'}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function openAdminTicket(id, username, type, encodedMsg, subjectStr, status) {
+            activeTicketId = id;
+            document.getElementById('tm-name').innerText = username.toUpperCase();
+            document.getElementById('tm-subject').innerText = decodeURIComponent(subjectStr);
+            socket.emit('admin_read_ticket', { id });
+            
+            const messages = JSON.parse(decodeURIComponent(encodedMsg));
+            renderAdminThread(messages, status, type);
+            showModal('ticket-modal');
+        }
+
+        function renderAdminThread(messages, status, type) {
+            const list = document.getElementById('tm-messages');
+            list.innerHTML = messages.map(m => {
+                const isAdmin = m.sender === 'ADMIN' || m.sender === 'SYSTEM ADMIN';
+                const time = new Date(m.date).toLocaleTimeString('en-US', { timeZone: 'Asia/Manila', hour: '2-digit', minute:'2-digit' });
+                return `
+                <div class="msg-bubble ${isAdmin ? 'admin' : 'player'}">
+                    <div style="font-size:18px; color:var(--text-muted); margin-bottom:5px;">${isAdmin ? 'ADMIN' : m.sender.toUpperCase()} - ${time}</div>
+                    <div style="font-size:24px; color:#fff; white-space:pre-wrap;">${m.text}</div>
+                </div>`;
+            }).join('');
+            list.scrollTop = list.scrollHeight;
+
+            const replyBox = document.getElementById('tm-reply-box');
+            const closeBtn = document.getElementById('tm-close-btn');
+            
+            if(type === 'announcement' || status === 'closed') {
+                replyBox.classList.add('hidden');
+                closeBtn.classList.add('hidden');
+            } else {
+                replyBox.classList.remove('hidden');
+                closeBtn.classList.remove('hidden');
+            }
+        }
+
+        function adminSendReply() {
+            const input = document.getElementById('tm-input');
+            const text = input.value.trim();
+            if(!text || !activeTicketId) return;
+            socket.emit('admin_reply', { id: activeTicketId, text });
+            input.value = '';
+        }
+
+        function adminCloseTicket() {
+            if(!activeTicketId) return;
+            if(confirm("Mark this conversation as Resolved? The player will no longer be able to reply.")) {
+                socket.emit('admin_close_ticket', { id: activeTicketId });
+                hideModal('ticket-modal');
+            }
+        }
+
+        // --- GAME HISTORY SYSTEM ---
+        async function fetchGameHistory() {
+            if(!adminPass) return;
+            const res = await fetch('/api/admin/game_rounds', { headers: { 'x-admin-pass': adminPass }});
+            if(res.ok) {
+                globalGameHistory = await res.json();
+                renderGameHistory();
+            }
+        }
+
+        function setHistoryTab(tab) {
+            currentHistoryTab = tab;
+            document.querySelectorAll('#view-history .wood-btn.small').forEach(b => b.classList.remove('active'));
+            document.getElementById(`hist-tab-${tab}`).classList.add('active');
+            renderGameHistory();
+        }
+
+        function renderGameHistory() {
+            const list = document.getElementById('history-list');
+            const filteredRounds = globalGameHistory.filter(r => r.game === currentHistoryTab);
+
+            if (filteredRounds.length === 0) {
+                list.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted); padding:20px;">NO ROUNDS LOGGED</td></tr>`;
+                return;
+            }
+
+            list.innerHTML = filteredRounds.map(r => {
+                let totalBets = 0; let totalWins = 0;
+                r.players.forEach(p => { totalBets += p.bet; totalWins += p.win; });
+                
+                let houseNet = totalBets - totalWins;
+                let netColor = houseNet > 0 ? 'var(--success)' : (houseNet < 0 ? 'var(--danger)' : '#fff');
+                
+                let displayResult = '';
+                if(r.game === 'dice') displayResult = r.result;
+                else if (r.game === 'derby') displayResult = `LANE ${r.result + 1}`;
+                else if (r.game === 'color') displayResult = r.result.map(c => c.charAt(0).toUpperCase()).join('-');
+                else if (r.game === 'cups') displayResult = `CUP ${r.result + 1}`;
+                else displayResult = r.result.toUpperCase(); // Baccarat, DVT
+
+                return `
+                <tr>
+                    <td>${getPHTTime(r.timestamp)}</td>
+                    <td style="color:var(--text-muted); letter-spacing:2px;">${r.roundId}</td>
+                    <td style="color:var(--warning); font-weight:bold;">${displayResult}</td>
+                    <td style="color:#fff;">${formatNumber(totalBets)}</td>
+                    <td style="color:${netColor}; font-weight:bold;">${formatNumber(houseNet)}</td>
+                    <td><button class="wood-btn btn-blue small" onclick="openRoundDetails('${r.roundId}')">VIEW</button></td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function openRoundDetails(roundId) {
+            const round = globalGameHistory.find(r => r.roundId === roundId);
+            if(!round) return;
+
+            document.getElementById('rm-id').innerText = round.roundId;
+            document.getElementById('rm-game').innerText = round.game;
+            
+            let displayResult = '';
+            if(round.game === 'dice') displayResult = round.result;
+            else if (round.game === 'derby') displayResult = `LANE ${round.result + 1}`;
+            else if (round.game === 'color') displayResult = round.result.map(c => c.toUpperCase()).join(', ');
+            else if (round.game === 'cups') displayResult = `CUP ${round.result + 1}`;
+            else displayResult = round.result.toUpperCase();
+            
+            document.getElementById('rm-result').innerText = displayResult;
+
+            let totalBets = 0; let totalWins = 0;
+            const list = document.getElementById('rm-list');
+            
+            if(round.players.length === 0) {
+                list.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); padding:20px;">NO BETS THIS ROUND</td></tr>`;
+            } else {
+                list.innerHTML = round.players.map(p => {
+                    totalBets += p.bet; totalWins += p.win;
+                    let pNet = p.win - p.bet;
+                    let pColor = pNet > 0 ? 'var(--success)' : (pNet < 0 ? 'var(--danger)' : '#fff');
+                    
+                    return `
+                    <tr>
+                        <td style="color:#fff;">${p.username}</td>
+                        <td style="color:var(--text-muted);">${p.choice.toUpperCase()}</td>
+                        <td style="color:var(--warning);">${formatNumber(p.bet)}</td>
+                        <td style="color:${pColor}; font-weight:bold;">${pNet > 0 ? '+' : ''}${formatNumber(pNet)}</td>
+                    </tr>
+                    `;
+                }).join('');
+            }
+
+            let houseNet = totalBets - totalWins;
+            let netColor = houseNet > 0 ? 'var(--success)' : (houseNet < 0 ? 'var(--danger)' : '#fff');
+            const netEl = document.getElementById('rm-net');
+            netEl.innerText = `${houseNet > 0 ? '+' : ''}${formatNumber(houseNet)}`;
+            netEl.style.color = netColor;
+
+            showModal('round-modal');
+        }
+
+        // --- PLAYER DB SYSTEM ---
+        function setPlayerDbTab(tab) {
+            currentPlayerDbTab = tab;
+            document.getElementById('pdb-tab-active').classList.remove('active');
+            document.getElementById('pdb-tab-pending').classList.remove('active');
+            document.getElementById(`pdb-tab-${tab}`).classList.add('active');
+            renderPlayerDB();
+        }
+
+        function renderPlayerDB() {
+            const pendingUsers = globalAllUsers.filter(u => u.status === 'pending');
+            const activeUsers = globalAllUsers.filter(u => u.status !== 'pending');
+            
+            const badge = document.getElementById('pending-badge');
+            badge.innerText = pendingUsers.length > 0 ? `(${pendingUsers.length})` : '';
+
+            let displayUsers = currentPlayerDbTab === 'pending' ? pendingUsers : activeUsers;
+
+            let sortedUsers = displayUsers.sort((a,b) => {
+                const aOnline = globalOnlineUsers.includes(a.username);
+                const bOnline = globalOnlineUsers.includes(b.username);
+                if(aOnline && !bOnline) return -1;
+                if(!aOnline && bOnline) return 1;
+                return b.credits - a.credits;
+            });
+
+            const playerList = document.getElementById('player-list');
+            if (sortedUsers.length === 0) {
+                playerList.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted); padding:20px;">NO PLAYERS FOUND IN THIS CATEGORY</td></tr>`;
+                return;
+            }
+
+            playerList.innerHTML = sortedUsers.map(u => {
+                let isOnline = globalOnlineUsers.includes(u.username);
+                let statusColor = 'var(--text-muted)'; let displayStatus = 'OFFLINE';
+                
+                if (u.status === 'banned') { statusColor = 'var(--danger)'; displayStatus = 'BANNED'; isOnline = false; }
+                else if (u.status === 'pending') { statusColor = 'var(--warning)'; displayStatus = 'PENDING'; }
+                else if (isOnline) { statusColor = 'var(--success)'; displayStatus = 'ONLINE'; }
+
+                let actionHtml = '';
+                if(u.status === 'pending') {
+                    actionHtml = `
+                        <button class="wood-btn btn-green small" onclick="changeStatus('${u.username}', 'active')">APPROVE</button>
+                        <button class="wood-btn btn-red small" onclick="changeStatus('${u.username}', 'banned')">DENY</button>
+                    `;
+                } else {
+                    actionHtml = `
+                        <button class="wood-btn btn-blue small" onclick="openPlayerModal('${u.username}')">VIEW</button>
+                        <button class="wood-btn small" style="background:#0f766e;" onclick="watchPlayer('${u.username}')">WATCH</button>
+                        <button class="wood-btn btn-blue small" onclick="openEditModal('${u.username}', '${u.status}', '${u.role}')">EDIT</button>
+                        ${u.status !== 'active' ? `<button class="wood-btn btn-green small" onclick="changeStatus('${u.username}', 'active')">ACTIVATE</button>` : ''}
+                        ${u.status !== 'banned' && adminRole === 'admin' ? `<button class="wood-btn btn-red small" onclick="changeStatus('${u.username}', 'banned')">BAN</button>` : ''}
+                    `;
+                }
+
+                return `
+                <tr>
+                    <td style="color:${u.nameColor}; font-weight:bold; font-size:28px;">${u.username}</td>
+                    <td style="color:var(--warning);">${formatNumber(u.credits)}</td>
+                    <td><button class="wood-btn small" style="background:var(--border-std);" onclick="this.innerText='${u.ipAddress || 'UNKNOWN'}'">[REVEAL]</button></td>
+                    <td style="color:${statusColor}; font-weight:bold;">${displayStatus}</td>
+                    <td style="display:flex; gap:5px;">${actionHtml}</td>
+                </tr>
+            `}).join('');
+        }
+
+        function filterUsers() {
+            const term = document.getElementById('user-search').value.toLowerCase();
+            const baseUsers = currentPlayerDbTab === 'pending' ? globalAllUsers.filter(u => u.status === 'pending') : globalAllUsers.filter(u => u.status !== 'pending');
+            const filtered = baseUsers.filter(u => u.username.toLowerCase().includes(term));
+            
+            const playerList = document.getElementById('player-list');
+            playerList.innerHTML = filtered.map(u => {
+                let isOnline = globalOnlineUsers.includes(u.username);
+                let statusColor = 'var(--text-muted)'; let displayStatus = 'OFFLINE';
+                if (u.status === 'banned') { statusColor = 'var(--danger)'; displayStatus = 'BANNED'; isOnline = false; }
+                else if (u.status === 'pending') { statusColor = 'var(--warning)'; displayStatus = 'PENDING'; }
+                else if (isOnline) { statusColor = 'var(--success)'; displayStatus = 'ONLINE'; }
+
+                let actionHtml = u.status === 'pending' ? 
+                    `<button class="wood-btn btn-green small" onclick="changeStatus('${u.username}', 'active')">APPROVE</button>
+                     <button class="wood-btn btn-red small" onclick="changeStatus('${u.username}', 'banned')">DENY</button>` :
+                    `<button class="wood-btn btn-blue small" onclick="openPlayerModal('${u.username}')">VIEW</button>
+                     <button class="wood-btn small" style="background:#0f766e;" onclick="watchPlayer('${u.username}')">WATCH</button>
+                     <button class="wood-btn btn-blue small" onclick="openEditModal('${u.username}', '${u.status}', '${u.role}')">EDIT</button>
+                     ${u.status !== 'active' ? `<button class="wood-btn btn-green small" onclick="changeStatus('${u.username}', 'active')">ACTIVATE</button>` : ''}
+                     ${u.status !== 'banned' && adminRole === 'admin' ? `<button class="wood-btn btn-red small" onclick="changeStatus('${u.username}', 'banned')">BAN</button>` : ''}`;
+
+                return `
+                <tr>
+                    <td style="color:${u.nameColor}; font-weight:bold; font-size:28px;">${u.username}</td>
+                    <td style="color:var(--warning);">${formatNumber(u.credits)}</td>
+                    <td><button class="wood-btn small" style="background:var(--border-std);" onclick="this.innerText='${u.ipAddress || 'UNKNOWN'}'">[REVEAL]</button></td>
+                    <td style="color:${statusColor}; font-weight:bold;">${displayStatus}</td>
+                    <td style="display:flex; gap:5px;">${actionHtml}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function refreshUsers() { fetchData(); }
+
+        // --- ACCOUNT MINTING ---
+        function openCreateUserModal() {
+            document.getElementById('create-username').value = '';
+            document.getElementById('create-password').value = '';
+            document.getElementById('create-role').value = 'player';
+            document.getElementById('create-status').value = 'active';
+            showModal('create-user-modal');
+        }
+
+        async function submitCreateUser() {
+            const username = document.getElementById('create-username').value.trim();
+            const password = document.getElementById('create-password').value.trim();
+            const role = document.getElementById('create-role').value;
+            const status = document.getElementById('create-status').value;
+
+            if(!username || !password) return alert("Username and Password are required.");
+
+            try {
+                const res = await fetch('/api/admin/create_user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass },
+                    body: JSON.stringify({ username, password, role, status })
+                });
+                const data = await res.json();
+                
+                if(res.ok) {
+                    alert("Account successfully minted!");
+                    hideModal('create-user-modal');
+                    fetchData();
+                } else {
+                    alert("Error: " + (data.error || "Creation failed."));
+                }
+            } catch(e) {
+                alert("Server connection failed.");
+            }
+        }
+
+        // --- ACCOUNT EDITING ---
+        function openEditModal(username, status, role) {
+            document.getElementById('edit-username').innerText = username;
+            document.getElementById('edit-status').value = status;
+            document.getElementById('edit-role').value = role;
+            document.getElementById('edit-credits').value = '';
+            showModal('edit-user-modal');
+        }
+
+        async function saveUserChanges() {
+            const username = document.getElementById('edit-username').innerText;
+            const status = document.getElementById('edit-status').value;
+            const role = document.getElementById('edit-role').value;
+            const credits = document.getElementById('edit-credits').value;
+
+            try {
+                const res = await fetch('/api/admin/update_user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass },
+                    body: JSON.stringify({ username, status, role, addCredits: credits })
+                });
+                
+                if(res.ok) {
+                    hideModal('edit-user-modal');
+                    fetchData();
+                } else {
+                    alert("Failed to update user.");
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        async function changeStatus(username, status) {
+            try {
+                await fetch('/api/admin/update_user', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass }, 
+                    body: JSON.stringify({ username, status }) 
+                });
+                fetchData();
+            } catch(e) { console.error(e); }
+        }
+
+        // --- FULL PLAYER PROFILE MODAL ---
         async function openPlayerModal(username) {
             const res = await fetch(`/api/admin/player_full/${username}`, { headers: { 'x-admin-pass': adminPass }});
             if(res.ok) {
@@ -1048,7 +1283,7 @@
                 document.getElementById('pm-name').innerText = username.toUpperCase();
                 
                 if(adminRole === 'admin') {
-                    document.getElementById('pm-ip').innerHTML = `<button class="wood-btn small" style="background:#475569;" onclick="this.innerText='${data.user.ipAddress || 'UNKNOWN'}'">[CLICK TO REVEAL]</button>`;
+                    document.getElementById('pm-ip').innerHTML = `<button class="wood-btn small" style="background:var(--border-std);" onclick="this.innerText='${data.user.ipAddress || 'UNKNOWN'}'">[CLICK TO REVEAL]</button>`;
                 } else {
                     document.getElementById('pm-ip').innerText = "HIDDEN";
                 }
@@ -1059,7 +1294,7 @@
                 
                 data.txs.forEach(tx => {
                     if(tx.status === 'completed') {
-                        if(['DAILY REWARD', 'GIFT CODE'].includes(tx.type)) totalPromo += tx.amount;
+                        if(['DAILY REWARD', 'GIFT CODE', 'ADMIN CREDIT INJECTION'].includes(tx.type)) totalPromo += tx.amount;
                         else if(tx.amount < 0 && !tx.type.includes('BANK')) totalWager += Math.abs(tx.amount);
                         else if(tx.amount > 0 && !tx.type.includes('BANK')) totalWon += tx.amount;
                     }
@@ -1068,26 +1303,18 @@
                     let isDeposit = tx.type === 'BANK DEPOSIT';
                     
                     let displayAmt = Math.abs(tx.amount);
-                    let prefix = '';
-                    let amtColor = '#fff';
+                    let prefix = ''; let amtColor = '#fff';
                     
-                    if (isWithdrawal) {
-                        prefix = '-';
-                        amtColor = 'var(--danger)';
-                    } else if (isDeposit) {
-                        prefix = '+';
-                        amtColor = 'var(--success)';
-                    } else {
-                        prefix = tx.amount > 0 ? '+' : (tx.amount < 0 ? '-' : '');
-                        amtColor = tx.amount > 0 ? 'var(--success)' : (tx.amount < 0 ? 'var(--danger)' : '#fff');
-                    }
+                    if (isWithdrawal) { prefix = '-'; amtColor = 'var(--danger)'; } 
+                    else if (isDeposit) { prefix = '+'; amtColor = 'var(--success)'; } 
+                    else { prefix = tx.amount > 0 ? '+' : (tx.amount < 0 ? '-' : ''); amtColor = tx.amount > 0 ? 'var(--success)' : (tx.amount < 0 ? 'var(--danger)' : '#fff'); }
                     
                     let statusColor = tx.status === 'pending' ? 'var(--warning)' : (tx.status === 'completed' ? 'var(--success)' : 'var(--danger)');
                     
                     ledgerHTML += `
                     <tr>
                         <td style="font-size:22px;">${getPHTTime(tx.date)}</td>
-                        <td style="color:#94a3b8;">${tx.type}</td>
+                        <td style="color:var(--text-muted);">${tx.type}</td>
                         <td style="color:${amtColor}; font-weight:bold;">${prefix}${formatNumber(displayAmt)}</td>
                         <td style="color:var(--warning); font-weight:bold;">${formatNumber(currentBal)}</td>
                         <td style="color:${statusColor}; font-size:20px;">${tx.status.toUpperCase()}</td>
@@ -1112,27 +1339,45 @@
 
                 document.getElementById('pm-promo').innerText = formatNumber(totalPromo);
                 
-                // INVENTORY LOGIC
+                // Inventory Rendering (Grouped)
                 let invHtml = '';
                 if(!data.user.inventory || data.user.inventory.length === 0) {
-                    invHtml = '<span style="color:#64748b;">INVENTORY IS EMPTY</span>';
+                    invHtml = '<span style="color:var(--text-muted);">INVENTORY IS EMPTY</span>';
                 } else {
                     let counts = {};
                     data.user.inventory.forEach(i => counts[i] = (counts[i] || 0) + 1);
                     invHtml = Object.keys(counts).map(item => `
                         <div style="background:#1e293b; border:2px solid var(--border-std); border-radius:4px; padding:5px 10px; display:flex; align-items:center; gap:10px;">
-                            <span>📦</span>
                             <span style="color:#fff;">${item.toUpperCase()}</span>
                             <span style="color:var(--accent-glow-2); font-weight:bold;">x${counts[item]}</span>
                         </div>
                     `).join('');
                 }
                 document.getElementById('pm-inventory').innerHTML = invHtml;
-
-                document.getElementById('pm-ledger').innerHTML = ledgerHTML || '<tr><td colspan="5" style="color:#475569;">NO TRANSACTIONS FOUND</td></tr>';
+                document.getElementById('pm-ledger').innerHTML = ledgerHTML || '<tr><td colspan="5" style="color:var(--text-muted);">NO TRANSACTIONS FOUND</td></tr>';
                 
                 showModal('player-modal');
             }
+        }
+
+        // --- CASHIER ACTIONS ---
+        async function resolveBank(id, action) {
+            await fetch('/api/admin/tx/resolve', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass }, body: JSON.stringify({ id, action }) });
+            fetchData();
+        }
+
+        // --- PROMO BATCH SYSTEM ---
+        async function generateCodes() {
+            const batchName = document.getElementById('gc-batch').value || 'ADMIN';
+            const amount = parseInt(document.getElementById('gc-amount').value);
+            const quantity = parseInt(document.getElementById('gc-qty').value);
+            if(isNaN(amount) || isNaN(quantity)) return alert("Enter valid numbers for Amount and Quantity.");
+            
+            await fetch('/api/admin/giftcode', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass }, body: JSON.stringify({ batchName, amount, quantity }) });
+            document.getElementById('gc-batch').value = '';
+            document.getElementById('gc-amount').value = ''; 
+            document.getElementById('gc-qty').value = '';
+            fetchData();
         }
 
         function openBatchModal(batchName) {
@@ -1155,9 +1400,7 @@
             showModal('batch-modal');
         }
 
-        function copyText(text) {
-            navigator.clipboard.writeText(text).then(() => {}).catch(err => prompt('Copy manually:', text));
-        }
+        function copyText(text) { navigator.clipboard.writeText(text).then(() => {}).catch(err => prompt('Copy manually:', text)); }
 
         function copyAllUnused() {
             if(!currentViewBatch) return;
@@ -1167,10 +1410,11 @@
             alert("Unused codes copied to clipboard!");
         }
 
+        // --- EYE IN THE SKY ---
         function watchPlayer(username) {
             watchingUser = username;
             document.getElementById('watch-target-name').innerText = username.toUpperCase();
-            document.getElementById('watch-matrix-log').innerHTML = `<div style="color:#64748b;">▶ SYSTEM: Uplink established. Isolating activity for [${username}]...</div>`;
+            document.getElementById('watch-matrix-log').innerHTML = `<div style="color:var(--text-muted);">▶ SYSTEM: Uplink established. Isolating activity for [${username}]...</div>`;
             showModal('watch-modal');
         }
 
@@ -1178,71 +1422,6 @@
             watchingUser = null;
             hideModal('watch-modal');
         }
-
-        async function resolveBank(id, action) {
-            await fetch('/api/admin/tx/resolve', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass }, body: JSON.stringify({ id, action }) });
-            fetchData();
-        }
-
-        async function changeStatus(username, status) {
-            await fetch('/api/admin/user/status', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass }, body: JSON.stringify({ username, status }) });
-            fetchData();
-        }
-
-        async function generateCodes() {
-            const batchName = document.getElementById('gc-batch').value || 'ADMIN';
-            const amount = parseInt(document.getElementById('gc-amount').value);
-            const quantity = parseInt(document.getElementById('gc-qty').value);
-            if(isNaN(amount) || isNaN(quantity)) return alert("Enter valid numbers for Amount and Quantity.");
-            
-            await fetch('/api/admin/giftcode', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass }, body: JSON.stringify({ batchName, amount, quantity }) });
-            document.getElementById('gc-batch').value = '';
-            document.getElementById('gc-amount').value = ''; 
-            document.getElementById('gc-qty').value = '';
-            fetchData();
-        }
-
-        async function toggleRTP() {
-            strictRTP = !strictRTP;
-            await fetch('/api/admin/settings', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass }, body: JSON.stringify({ strictHouseEdge: strictRTP }) });
-            fetchData();
-        }
-
-        socket.on('game_lock_state', (locks) => {
-            ['3seat', '5seat', 'dice', 'derby', 'color'].forEach(g => {
-                const btn = document.getElementById(`ks-${g}`);
-                if(btn) {
-                    if(locks[g]) { btn.className = 'wood-btn btn-toggle off'; btn.innerText = 'OFF'; }
-                    else { btn.className = 'wood-btn btn-toggle on'; btn.innerText = 'ON'; }
-                }
-            });
-        });
-
-        // Live Eye in the Sky Socket
-        socket.on('admin_log', (msg) => {
-            const globalLog = document.getElementById('matrix-log');
-            
-            let logColor = '#10b981'; 
-            if(msg.includes('[CHAT]')) logColor = 'var(--accent-glow-2)';
-            if(msg.includes('[BET]')) logColor = 'var(--warning)';
-            if(msg.includes('[SPECTATOR]')) logColor = '#94a3b8';
-            if(msg.includes('disconnected') || msg.includes('left')) logColor = 'var(--danger)';
-
-            const logLine = `<div style="color:${logColor}; margin-bottom: 4px;">${msg}</div>`;
-
-            // Update Global Matrix
-            globalLog.innerHTML += logLine;
-            globalLog.scrollTop = globalLog.scrollHeight;
-            if(globalLog.children.length > 100) globalLog.removeChild(globalLog.firstChild);
-
-            // Update Targeted Player Matrix if watching
-            if (watchingUser && msg.toLowerCase().includes(watchingUser.toLowerCase())) {
-                const watchLog = document.getElementById('watch-matrix-log');
-                watchLog.innerHTML += logLine;
-                watchLog.scrollTop = watchLog.scrollHeight;
-                if(watchLog.children.length > 50) watchLog.removeChild(watchLog.firstChild);
-            }
-        });
 
         // --- SECURITY: DISABLE DEV TOOLS & RIGHT CLICK ---
         document.addEventListener('contextmenu', event => event.preventDefault());
